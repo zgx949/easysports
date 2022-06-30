@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SportItemMapper">
+    
+    <resultMap type="SportItem" id="SportItemResult">
+        <result property="id"    column="id"    />
+        <result property="itemName"    column="item_name"    />
+        <result property="maxPerson"    column="max_person"    />
+        <result property="type"    column="type"    />
+        <result property="unit"    column="unit"    />
+        <result property="isDesc"    column="is_desc"    />
+    </resultMap>
+
+    <sql id="selectSportItemVo">
+        select id, item_name, max_person, type, unit, is_desc from sport_item
+    </sql>
+
+    <select id="selectSportItemList" parameterType="SportItem" resultMap="SportItemResult">
+        <include refid="selectSportItemVo"/>
+        <where>  
+            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="maxPerson != null "> and max_person = #{maxPerson}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="isDesc != null "> and is_desc = #{isDesc}</if>
+        </where>
+    </select>
+    
+    <select id="selectSportItemById" parameterType="Long" resultMap="SportItemResult">
+        <include refid="selectSportItemVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSportItem" parameterType="SportItem" useGeneratedKeys="true" keyProperty="id">
+        insert into sport_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemName != null">item_name,</if>
+            <if test="maxPerson != null">max_person,</if>
+            <if test="type != null">type,</if>
+            <if test="unit != null">unit,</if>
+            <if test="isDesc != null">is_desc,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemName != null">#{itemName},</if>
+            <if test="maxPerson != null">#{maxPerson},</if>
+            <if test="type != null">#{type},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="isDesc != null">#{isDesc},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSportItem" parameterType="SportItem">
+        update sport_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemName != null">item_name = #{itemName},</if>
+            <if test="maxPerson != null">max_person = #{maxPerson},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="isDesc != null">is_desc = #{isDesc},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSportItemById" parameterType="Long">
+        delete from sport_item where id = #{id}
+    </delete>
+
+    <delete id="deleteSportItemByIds" parameterType="String">
+        delete from sport_item where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SportFieldsMapper">
+    
+    <resultMap type="SportFields" id="SportFieldsResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="maxPerson"    column="max_person"    />
+        <result property="parentId"    column="parent_id"    />
+    </resultMap>
+
+    <sql id="selectSportFieldsVo">
+        select id, name, max_person, parent_id from sport_fields
+    </sql>
+
+    <select id="selectSportFieldsList" parameterType="SportFields" resultMap="SportFieldsResult">
+        <include refid="selectSportFieldsVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="maxPerson != null "> and max_person = #{maxPerson}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSportFieldsById" parameterType="Long" resultMap="SportFieldsResult">
+        <include refid="selectSportFieldsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSportFields" parameterType="SportFields" useGeneratedKeys="true" keyProperty="id">
+        insert into sport_fields
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="maxPerson != null">max_person,</if>
+            <if test="parentId != null">parent_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="maxPerson != null">#{maxPerson},</if>
+            <if test="parentId != null">#{parentId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSportFields" parameterType="SportFields">
+        update sport_fields
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="maxPerson != null">max_person = #{maxPerson},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSportFieldsById" parameterType="Long">
+        delete from sport_fields where id = #{id}
+    </delete>
+
+    <delete id="deleteSportFieldsByIds" parameterType="String">
+        delete from sport_fields where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

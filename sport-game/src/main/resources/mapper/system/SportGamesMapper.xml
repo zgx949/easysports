@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SportGamesMapper">
+    
+    <resultMap type="SportGames" id="SportGamesResult">
+        <result property="id"    column="id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="gameName"    column="game_name"    />
+        <result property="nextGame"    column="next_game"    />
+        <result property="gender"    column="gender"    />
+        <result property="fieldId"    column="field_id"    />
+        <result property="maxPerson"    column="max_person"    />
+        <result property="status"    column="status"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSportGamesVo">
+        select id, item_id, game_name, next_game, gender, field_id, max_person, status, start_time, end_time, create_time from sport_games
+    </sql>
+
+    <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">
+        <include refid="selectSportGamesVo"/>
+        <where>  
+            <if test="itemId != null "> and item_id = #{itemId}</if>
+            <if test="gameName != null  and gameName != ''"> and game_name like concat('%', #{gameName}, '%')</if>
+            <if test="nextGame != null "> and next_game = #{nextGame}</if>
+            <if test="gender != null "> and gender = #{gender}</if>
+            <if test="fieldId != null "> and field_id = #{fieldId}</if>
+            <if test="maxPerson != null "> and max_person = #{maxPerson}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesResult">
+        <include refid="selectSportGamesVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSportGames" parameterType="SportGames" useGeneratedKeys="true" keyProperty="id">
+        insert into sport_games
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">item_id,</if>
+            <if test="gameName != null">game_name,</if>
+            <if test="nextGame != null">next_game,</if>
+            <if test="gender != null">gender,</if>
+            <if test="fieldId != null">field_id,</if>
+            <if test="maxPerson != null">max_person,</if>
+            <if test="status != null">status,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">#{itemId},</if>
+            <if test="gameName != null">#{gameName},</if>
+            <if test="nextGame != null">#{nextGame},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="fieldId != null">#{fieldId},</if>
+            <if test="maxPerson != null">#{maxPerson},</if>
+            <if test="status != null">#{status},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSportGames" parameterType="SportGames">
+        update sport_games
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemId != null">item_id = #{itemId},</if>
+            <if test="gameName != null">game_name = #{gameName},</if>
+            <if test="nextGame != null">next_game = #{nextGame},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="fieldId != null">field_id = #{fieldId},</if>
+            <if test="maxPerson != null">max_person = #{maxPerson},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSportGamesById" parameterType="Long">
+        delete from sport_games where id = #{id}
+    </delete>
+
+    <delete id="deleteSportGamesByIds" parameterType="String">
+        delete from sport_games where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
