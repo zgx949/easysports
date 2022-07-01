@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="" prop="idNum">
+      <el-form-item label="号码" prop="idNum">
         <el-input
           v-model="queryParams.idNum"
-          placeholder="请输入"
+          placeholder="请输入号码"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="${comment}" prop="userId">
+      <el-form-item label="用户" prop="userId">
         <el-input
           v-model="queryParams.userId"
-          placeholder="请输入${comment}"
+          placeholder="请输入用户"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -71,9 +71,9 @@
 
     <el-table v-loading="loading" :data="numsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="" align="center" prop="id"/>
-      <el-table-column label="" align="center" prop="idNum"/>
-      <el-table-column label="${comment}" align="center" prop="userId"/>
+      <el-table-column label="id" align="center" prop="id"/>
+      <el-table-column label="号码" align="center" prop="idNum"/>
+      <el-table-column label="用户" align="center" prop="userId"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -106,11 +106,11 @@
     <!-- 添加或修改号码段管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="" prop="idNum">
-          <el-input v-model="form.idNum" placeholder="请输入"/>
+        <el-form-item label="号码" prop="idNum">
+          <el-input v-model="form.idNum" placeholder="请输入号码"/>
         </el-form-item>
-        <el-form-item label="${comment}" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入${comment}"/>
+        <el-form-item label="用户" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入用户"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
