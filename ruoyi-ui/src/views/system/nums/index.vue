@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="${comment}" prop="idNum">
+      <el-form-item label="" prop="idNum">
         <el-input
           v-model="queryParams.idNum"
-          placeholder="请输入${comment}"
+          placeholder="请输入"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="${comment}" prop="collegeId">
+      <el-form-item label="${comment}" prop="userId">
         <el-input
-          v-model="queryParams.collegeId"
+          v-model="queryParams.userId"
           placeholder="请输入${comment}"
           clearable
           @keyup.enter.native="handleQuery"
@@ -70,10 +70,10 @@
     </el-row>
 
     <el-table v-loading="loading" :data="numsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
-      <el-table-column label="${comment}" align="center" prop="idNum" />
-      <el-table-column label="${comment}" align="center" prop="collegeId" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="" align="center" prop="id"/>
+      <el-table-column label="" align="center" prop="idNum"/>
+      <el-table-column label="${comment}" align="center" prop="userId"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -82,7 +82,8 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:nums:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -93,7 +94,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -105,11 +106,11 @@
     <!-- 添加或修改号码段管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="${comment}" prop="idNum">
-          <el-input v-model="form.idNum" placeholder="请输入${comment}" />
+        <el-form-item label="" prop="idNum">
+          <el-input v-model="form.idNum" placeholder="请输入"/>
         </el-form-item>
-        <el-form-item label="${comment}" prop="collegeId">
-          <el-input v-model="form.collegeId" placeholder="请输入${comment}" />
+        <el-form-item label="${comment}" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入${comment}"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -150,7 +151,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         idNum: null,
-        collegeId: null
+        userId: null
       },
       // 表单参数
       form: {},
@@ -182,7 +183,7 @@ export default {
       this.form = {
         id: null,
         idNum: null,
-        collegeId: null
+        userId: null
       };
       this.resetForm("form");
     },

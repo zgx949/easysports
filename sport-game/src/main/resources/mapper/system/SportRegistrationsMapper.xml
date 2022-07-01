@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SportRegistrationsMapper">
-    
+
     <resultMap type="SportRegistrations" id="SportRegistrationsResult">
         <result property="id"    column="id"    />
         <result property="gameId"    column="game_id"    />
         <result property="userId"    column="user_id"    />
         <result property="fieldId"    column="field_id"    />
         <result property="status"    column="status"    />
+        <result property="score" column="score"/>
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectSportRegistrationsVo">
-        select id, game_id, user_id, field_id, status, create_time, update_time from sport_registrations
+        select id,
+               game_id,
+               user_id,
+               field_id,
+               status,
+               score,
+               create_time,
+               update_time
+        from sport_registrations
     </sql>
 
     <select id="selectSportRegistrationsList" parameterType="SportRegistrations" resultMap="SportRegistrationsResult">
         <include refid="selectSportRegistrationsVo"/>
-        <where>  
-            <if test="gameId != null "> and game_id = #{gameId}</if>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="fieldId != null "> and field_id = #{fieldId}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
+        <where>
+            <if test="gameId != null ">and game_id = #{gameId}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="fieldId != null ">and field_id = #{fieldId}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+            <if test="score != null ">and score = #{score}</if>
         </where>
     </select>
-    
+
     <select id="selectSportRegistrationsById" parameterType="Long" resultMap="SportRegistrationsResult">
         <include refid="selectSportRegistrationsVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSportRegistrations" parameterType="SportRegistrations">
         insert into sport_registrations
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -41,18 +51,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">user_id,</if>
             <if test="fieldId != null">field_id,</if>
             <if test="status != null">status,</if>
+            <if test="score != null">score,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="gameId != null">#{gameId},</if>
             <if test="userId != null">#{userId},</if>
             <if test="fieldId != null">#{fieldId},</if>
             <if test="status != null">#{status},</if>
+            <if test="score != null">#{score},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSportRegistrations" parameterType="SportRegistrations">
@@ -62,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">user_id = #{userId},</if>
             <if test="fieldId != null">field_id = #{fieldId},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="score != null">score = #{score},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
@@ -73,7 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSportRegistrationsByIds" parameterType="String">
-        delete from sport_registrations where id in 
+        delete from sport_registrations where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

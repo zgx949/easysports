@@ -10,19 +10,18 @@ import com.ruoyi.system.service.ISportRegistrationsService;
 
 /**
  * 报名管理Service业务层处理
- * 
- * @author ruoyi
- * @date 2022-06-30
+ *
+ * @author leftHand
+ * @date 2022-07-01
  */
 @Service
-public class SportRegistrationsServiceImpl implements ISportRegistrationsService 
-{
+public class SportRegistrationsServiceImpl implements ISportRegistrationsService {
     @Autowired
     private SportRegistrationsMapper sportRegistrationsMapper;
 
     /**
      * 查询报名管理
-     * 
+     *
      * @param id 报名管理主键
      * @return 报名管理
      */
@@ -34,7 +33,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
     /**
      * 查询报名管理列表
-     * 
+     *
      * @param sportRegistrations 报名管理
      * @return 报名管理
      */
@@ -46,7 +45,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
     /**
      * 新增报名管理
-     * 
+     *
      * @param sportRegistrations 报名管理
      * @return 结果
      */
@@ -59,7 +58,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
     /**
      * 修改报名管理
-     * 
+     *
      * @param sportRegistrations 报名管理
      * @return 结果
      */
@@ -72,7 +71,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
     /**
      * 批量删除报名管理
-     * 
+     *
      * @param ids 需要删除的报名管理主键
      * @return 结果
      */
@@ -84,7 +83,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
     /**
      * 删除报名管理信息
-     * 
+     *
      * @param id 报名管理主键
      * @return 结果
      */

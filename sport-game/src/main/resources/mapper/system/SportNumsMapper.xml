@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SportNumsMapper">
-    
+
     <resultMap type="SportNums" id="SportNumsResult">
         <result property="id"    column="id"    />
         <result property="idNum"    column="id_num"    />
-        <result property="collegeId"    column="college_id"    />
+        <result property="userId" column="user_id"/>
     </resultMap>
 
     <sql id="selectSportNumsVo">
-        select id, id_num, college_id from sport_nums
+        select id, id_num, user_id
+        from sport_nums
     </sql>
 
     <select id="selectSportNumsList" parameterType="SportNums" resultMap="SportNumsResult">
         <include refid="selectSportNumsVo"/>
-        <where>  
-            <if test="idNum != null "> and id_num = #{idNum}</if>
-            <if test="collegeId != null "> and college_id = #{collegeId}</if>
+        <where>
+            <if test="idNum != null ">and id_num = #{idNum}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
         </where>
     </select>
-    
+
     <select id="selectSportNumsById" parameterType="Long" resultMap="SportNumsResult">
         <include refid="selectSportNumsVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSportNums" parameterType="SportNums" useGeneratedKeys="true" keyProperty="id">
         insert into sport_nums
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="idNum != null">id_num,</if>
-            <if test="collegeId != null">college_id,</if>
-         </trim>
+            <if test="userId != null">user_id,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="idNum != null">#{idNum},</if>
-            <if test="collegeId != null">#{collegeId},</if>
-         </trim>
+            <if test="userId != null">#{userId},</if>
+        </trim>
     </insert>
 
     <update id="updateSportNums" parameterType="SportNums">
         update sport_nums
         <trim prefix="SET" suffixOverrides=",">
             <if test="idNum != null">id_num = #{idNum},</if>
-            <if test="collegeId != null">college_id = #{collegeId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -53,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSportNumsByIds" parameterType="String">
-        delete from sport_nums where id in 
+        delete from sport_nums where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

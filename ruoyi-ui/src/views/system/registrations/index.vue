@@ -1,26 +1,34 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="${comment}" prop="gameId">
+      <el-form-item label="比赛" prop="gameId">
         <el-input
           v-model="queryParams.gameId"
-          placeholder="请输入${comment}"
+          placeholder="请输入比赛"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="${comment}" prop="userId">
+      <el-form-item label="用户" prop="userId">
         <el-input
           v-model="queryParams.userId"
-          placeholder="请输入${comment}"
+          placeholder="请输入用户"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="${comment}" prop="fieldId">
+      <el-form-item label="场地" prop="fieldId">
         <el-input
           v-model="queryParams.fieldId"
-          placeholder="请输入${comment}"
+          placeholder="请输入场地"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="成绩" prop="score">
+        <el-input
+          v-model="queryParams.score"
+          placeholder="请输入成绩"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -78,12 +86,13 @@
     </el-row>
 
     <el-table v-loading="loading" :data="registrationsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
-      <el-table-column label="${comment}" align="center" prop="gameId" />
-      <el-table-column label="${comment}" align="center" prop="userId" />
-      <el-table-column label="${comment}" align="center" prop="fieldId" />
-      <el-table-column label="${comment}" align="center" prop="status" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="id" align="center" prop="id"/>
+      <el-table-column label="比赛" align="center" prop="gameId"/>
+      <el-table-column label="用户" align="center" prop="userId"/>
+      <el-table-column label="场地" align="center" prop="fieldId"/>
+      <el-table-column label="状态" align="center" prop="status"/>
+      <el-table-column label="成绩" align="center" prop="score"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -92,7 +101,8 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:registrations:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -103,7 +113,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -115,14 +125,17 @@
     <!-- 添加或修改报名管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="${comment}" prop="gameId">
-          <el-input v-model="form.gameId" placeholder="请输入${comment}" />
+        <el-form-item label="比赛" prop="gameId">
+          <el-input v-model="form.gameId" placeholder="请输入比赛"/>
         </el-form-item>
-        <el-form-item label="${comment}" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入${comment}" />
+        <el-form-item label="用户" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入用户"/>
         </el-form-item>
-        <el-form-item label="${comment}" prop="fieldId">
-          <el-input v-model="form.fieldId" placeholder="请输入${comment}" />
+        <el-form-item label="场地" prop="fieldId">
+          <el-input v-model="form.fieldId" placeholder="请输入场地"/>
+        </el-form-item>
+        <el-form-item label="成绩" prop="score">
+          <el-input v-model="form.score" placeholder="请输入成绩"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -166,6 +179,7 @@ export default {
         userId: null,
         fieldId: null,
         status: null,
+        score: null,
       },
       // 表单参数
       form: {},
@@ -200,6 +214,7 @@ export default {
         userId: null,
         fieldId: null,
         status: "0",
+        score: null,
         createTime: null,
         updateTime: null
       };

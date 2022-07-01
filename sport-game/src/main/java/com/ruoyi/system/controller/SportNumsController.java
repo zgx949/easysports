@@ -23,9 +23,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 号码段管理Controller
- * 
+ *
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-01
  */
 @RestController
 @RequestMapping("/system/nums")
@@ -96,7 +96,7 @@ public class SportNumsController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:nums:remove')")
     @Log(title = "号码段管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sportNumsService.deleteSportNumsByIds(ids));

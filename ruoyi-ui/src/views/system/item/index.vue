@@ -17,6 +17,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="项目类型" prop="type">
+        <el-select v-model="queryParams.type" placeholder="请选择项目类型" clearable>
+          <el-option
+            v-for="dict in dict.type.sport_item_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="成绩单位" prop="unit">
         <el-input
           v-model="queryParams.unit"
@@ -26,12 +36,14 @@
         />
       </el-form-item>
       <el-form-item label="是否降序排序" prop="isDesc">
-        <el-input
-          v-model="queryParams.isDesc"
-          placeholder="请输入是否降序排序"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isDesc" placeholder="请选择是否降序排序" clearable>
+          <el-option
+            v-for="dict in dict.type.sport_sort_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -86,13 +98,21 @@
     </el-row>
 
     <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="自增id" align="center" prop="id" />
-      <el-table-column label="项目名称" align="center" prop="itemName" />
-      <el-table-column label="限制最多人数" align="center" prop="maxPerson" />
-      <el-table-column label="项目类型" align="center" prop="type" />
-      <el-table-column label="成绩单位" align="center" prop="unit" />
-      <el-table-column label="是否降序排序" align="center" prop="isDesc" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="自增id" align="center" prop="id"/>
+      <el-table-column label="项目名称" align="center" prop="itemName"/>
+      <el-table-column label="限制最多人数" align="center" prop="maxPerson"/>
+      <el-table-column label="项目类型" align="center" prop="type">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sport_item_type" :value="scope.row.type"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="成绩单位" align="center" prop="unit"/>
+      <el-table-column label="是否降序排序" align="center" prop="isDesc">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sport_sort_type" :value="scope.row.isDesc"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -101,7 +121,8 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:item:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -112,7 +133,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -125,16 +146,33 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="项目名称" prop="itemName">
-          <el-input v-model="form.itemName" placeholder="请输入项目名称" />
+          <el-input v-model="form.itemName" placeholder="请输入项目名称"/>
         </el-form-item>
         <el-form-item label="限制最多人数" prop="maxPerson">
-          <el-input v-model="form.maxPerson" placeholder="请输入限制最多人数" />
+          <el-input v-model="form.maxPerson" placeholder="请输入限制最多人数"/>
+        </el-form-item>
+        <el-form-item label="项目类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择项目类型">
+            <el-option
+              v-for="dict in dict.type.sport_item_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="成绩单位" prop="unit">
-          <el-input v-model="form.unit" placeholder="请输入成绩单位" />
+          <el-input v-model="form.unit" placeholder="请输入成绩单位"/>
         </el-form-item>
         <el-form-item label="是否降序排序" prop="isDesc">
-          <el-input v-model="form.isDesc" placeholder="请输入是否降序排序" />
+          <el-select v-model="form.isDesc" placeholder="请选择是否降序排序">
+            <el-option
+              v-for="dict in dict.type.sport_sort_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -150,6 +188,7 @@ import { listItem, getItem, delItem, addItem, updateItem } from "@/api/system/it
 
 export default {
   name: "Item",
+  dicts: ['sport_item_type', 'sport_sort_type'],
   data() {
     return {
       // 遮罩层

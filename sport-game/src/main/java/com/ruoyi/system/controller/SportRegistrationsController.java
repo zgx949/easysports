@@ -23,9 +23,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 报名管理Controller
- * 
- * @author ruoyi
- * @date 2022-06-30
+ *
+ * @author leftHand
+ * @date 2022-07-01
  */
 @RestController
 @RequestMapping("/system/registrations")
@@ -96,7 +96,7 @@ public class SportRegistrationsController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
     @Log(title = "报名管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sportRegistrationsService.deleteSportRegistrationsByIds(ids));

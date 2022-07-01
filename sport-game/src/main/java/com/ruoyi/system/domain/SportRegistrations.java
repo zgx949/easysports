@@ -7,89 +7,107 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 报名管理对象 sport_registrations
- * 
- * @author ruoyi
- * @date 2022-06-30
+ *
+ * @author leftHand
+ * @date 2022-07-01
  */
-public class SportRegistrations extends BaseEntity
-{
+public class SportRegistrations extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /** $column.columnComment */
+    /**
+     * id
+     */
     private Long id;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**
+     * 比赛
+     */
+    @Excel(name = "比赛")
     private Long gameId;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**
+     * 用户
+     */
+    @Excel(name = "用户")
     private Long userId;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**
+     * 场地
+     */
+    @Excel(name = "场地")
     private Long fieldId;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**
+     * 状态
+     */
+    @Excel(name = "状态")
     private String status;
 
-    public void setId(Long id) 
-    {
+    /**
+     * 成绩
+     */
+    @Excel(name = "成绩")
+    private Long score;
+
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getId() 
-    {
+    public Long getId() {
         return id;
     }
-    public void setGameId(Long gameId) 
-    {
+
+    public void setGameId(Long gameId) {
         this.gameId = gameId;
     }
 
-    public Long getGameId() 
-    {
+    public Long getGameId() {
         return gameId;
     }
-    public void setUserId(Long userId) 
-    {
+
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Long getUserId() 
-    {
+    public Long getUserId() {
         return userId;
     }
-    public void setFieldId(Long fieldId) 
-    {
+
+    public void setFieldId(Long fieldId) {
         this.fieldId = fieldId;
     }
 
-    public Long getFieldId() 
-    {
+    public Long getFieldId() {
         return fieldId;
     }
-    public void setStatus(String status) 
-    {
+
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getStatus() 
-    {
+    public String getStatus() {
         return status;
+    }
+
+    public void setScore(Long score) {
+        this.score = score;
+    }
+
+    public Long getScore() {
+        return score;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("gameId", getGameId())
-            .append("userId", getUserId())
-            .append("fieldId", getFieldId())
-            .append("status", getStatus())
-            .append("createTime", getCreateTime())
-            .append("updateTime", getUpdateTime())
-            .toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("gameId", getGameId())
+                .append("userId", getUserId())
+                .append("fieldId", getFieldId())
+                .append("status", getStatus())
+                .append("score", getScore())
+                .append("createTime", getCreateTime())
+                .append("updateTime", getUpdateTime())
+                .toString();
     }
 }

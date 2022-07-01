@@ -9,19 +9,18 @@ import com.ruoyi.system.service.ISportNumsService;
 
 /**
  * 号码段管理Service业务层处理
- * 
+ *
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-01
  */
 @Service
-public class SportNumsServiceImpl implements ISportNumsService 
-{
+public class SportNumsServiceImpl implements ISportNumsService {
     @Autowired
     private SportNumsMapper sportNumsMapper;
 
     /**
      * 查询号码段管理
-     * 
+     *
      * @param id 号码段管理主键
      * @return 号码段管理
      */
@@ -33,7 +32,7 @@ public class SportNumsServiceImpl implements ISportNumsService
 
     /**
      * 查询号码段管理列表
-     * 
+     *
      * @param sportNums 号码段管理
      * @return 号码段管理
      */
@@ -45,7 +44,7 @@ public class SportNumsServiceImpl implements ISportNumsService
 
     /**
      * 新增号码段管理
-     * 
+     *
      * @param sportNums 号码段管理
      * @return 结果
      */
@@ -57,7 +56,7 @@ public class SportNumsServiceImpl implements ISportNumsService
 
     /**
      * 修改号码段管理
-     * 
+     *
      * @param sportNums 号码段管理
      * @return 结果
      */
@@ -69,7 +68,7 @@ public class SportNumsServiceImpl implements ISportNumsService
 
     /**
      * 批量删除号码段管理
-     * 
+     *
      * @param ids 需要删除的号码段管理主键
      * @return 结果
      */
@@ -81,7 +80,7 @@ public class SportNumsServiceImpl implements ISportNumsService
 
     /**
      * 删除号码段管理信息
-     * 
+     *
      * @param id 号码段管理主键
      * @return 结果
      */

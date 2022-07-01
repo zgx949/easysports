@@ -5,15 +5,14 @@ import com.ruoyi.system.domain.SportNums;
 
 /**
  * 号码段管理Mapper接口
- * 
+ *
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-01
  */
-public interface SportNumsMapper 
-{
+public interface SportNumsMapper {
     /**
      * 查询号码段管理
-     * 
+     *
      * @param id 号码段管理主键
      * @return 号码段管理
      */
@@ -21,7 +20,7 @@ public interface SportNumsMapper
 
     /**
      * 查询号码段管理列表
-     * 
+     *
      * @param sportNums 号码段管理
      * @return 号码段管理集合
      */
@@ -29,7 +28,7 @@ public interface SportNumsMapper
 
     /**
      * 新增号码段管理
-     * 
+     *
      * @param sportNums 号码段管理
      * @return 结果
      */
@@ -37,7 +36,7 @@ public interface SportNumsMapper
 
     /**
      * 修改号码段管理
-     * 
+     *
      * @param sportNums 号码段管理
      * @return 结果
      */
@@ -45,7 +44,7 @@ public interface SportNumsMapper
 
     /**
      * 删除号码段管理
-     * 
+     *
      * @param id 号码段管理主键
      * @return 结果
      */
@@ -53,7 +52,7 @@ public interface SportNumsMapper
 
     /**
      * 批量删除号码段管理
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */

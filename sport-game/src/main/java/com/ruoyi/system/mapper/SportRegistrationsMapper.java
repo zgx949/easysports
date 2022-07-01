@@ -5,15 +5,14 @@ import com.ruoyi.system.domain.SportRegistrations;
 
 /**
  * 报名管理Mapper接口
- * 
- * @author ruoyi
- * @date 2022-06-30
+ *
+ * @author leftHand
+ * @date 2022-07-01
  */
-public interface SportRegistrationsMapper 
-{
+public interface SportRegistrationsMapper {
     /**
      * 查询报名管理
-     * 
+     *
      * @param id 报名管理主键
      * @return 报名管理
      */
@@ -21,7 +20,7 @@ public interface SportRegistrationsMapper
 
     /**
      * 查询报名管理列表
-     * 
+     *
      * @param sportRegistrations 报名管理
      * @return 报名管理集合
      */
@@ -29,7 +28,7 @@ public interface SportRegistrationsMapper
 
     /**
      * 新增报名管理
-     * 
+     *
      * @param sportRegistrations 报名管理
      * @return 结果
      */
@@ -37,7 +36,7 @@ public interface SportRegistrationsMapper
 
     /**
      * 修改报名管理
-     * 
+     *
      * @param sportRegistrations 报名管理
      * @return 结果
      */
@@ -45,7 +44,7 @@ public interface SportRegistrationsMapper
 
     /**
      * 删除报名管理
-     * 
+     *
      * @param id 报名管理主键
      * @return 结果
      */
@@ -53,7 +52,7 @@ public interface SportRegistrationsMapper
 
     /**
      * 批量删除报名管理
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
