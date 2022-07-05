@@ -7,9 +7,10 @@ import com.ruoyi.system.domain.SportRegistrations;
  * 报名管理Mapper接口
  *
  * @author leftHand
- * @date 2022-07-01
+ * @date 2022-07-05
  */
-public interface SportRegistrationsMapper {
+public interface SportRegistrationsMapper
+{
     /**
      * 查询报名管理
      *

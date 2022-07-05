@@ -9,14 +9,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="限制最多人数" prop="maxPerson">
-        <el-input
-          v-model="queryParams.maxPerson"
-          placeholder="请输入限制最多人数"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="限制最多人数" prop="maxPerson">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.maxPerson"-->
+<!--          placeholder="请输入限制最多人数"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="项目类型" prop="type">
         <el-select v-model="queryParams.type" placeholder="请选择项目类型" clearable>
           <el-option
@@ -27,16 +27,16 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="成绩单位" prop="unit">
-        <el-input
-          v-model="queryParams.unit"
-          placeholder="请输入成绩单位"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="是否降序排序" prop="isDesc">
-        <el-select v-model="queryParams.isDesc" placeholder="请选择是否降序排序" clearable>
+<!--      <el-form-item label="成绩单位" prop="unit">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.unit"-->
+<!--          placeholder="请输入成绩单位"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+      <el-form-item label="排序方式" prop="isDesc">
+        <el-select v-model="queryParams.isDesc" placeholder="请选成绩择排序方式" clearable>
           <el-option
             v-for="dict in dict.type.sport_sort_type"
             :key="dict.value"

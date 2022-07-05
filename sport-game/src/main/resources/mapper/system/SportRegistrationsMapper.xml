@@ -10,31 +10,27 @@
         <result property="userId"    column="user_id"    />
         <result property="fieldId"    column="field_id"    />
         <result property="status"    column="status"    />
-        <result property="score" column="score"/>
+        <result property="score"    column="score"    />
+        <result property="points"    column="points"    />
+        <result property="comment"    column="comment"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectSportRegistrationsVo">
-        select id,
-               game_id,
-               user_id,
-               field_id,
-               status,
-               score,
-               create_time,
-               update_time
-        from sport_registrations
+        select id, game_id, user_id, field_id, status, score, points, comment, create_time, update_time from sport_registrations
     </sql>
 
     <select id="selectSportRegistrationsList" parameterType="SportRegistrations" resultMap="SportRegistrationsResult">
         <include refid="selectSportRegistrationsVo"/>
         <where>
-            <if test="gameId != null ">and game_id = #{gameId}</if>
-            <if test="userId != null ">and user_id = #{userId}</if>
-            <if test="fieldId != null ">and field_id = #{fieldId}</if>
-            <if test="status != null  and status != ''">and status = #{status}</if>
-            <if test="score != null ">and score = #{score}</if>
+            <if test="gameId != null "> and game_id = #{gameId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="fieldId != null "> and field_id = #{fieldId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="points != null "> and points = #{points}</if>
+            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
         </where>
     </select>
 
@@ -52,6 +48,8 @@
             <if test="fieldId != null">field_id,</if>
             <if test="status != null">status,</if>
             <if test="score != null">score,</if>
+            <if test="points != null">points,</if>
+            <if test="comment != null">comment,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
         </trim>
@@ -62,6 +60,8 @@
             <if test="fieldId != null">#{fieldId},</if>
             <if test="status != null">#{status},</if>
             <if test="score != null">#{score},</if>
+            <if test="points != null">#{points},</if>
+            <if test="comment != null">#{comment},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
@@ -75,6 +75,8 @@
             <if test="fieldId != null">field_id = #{fieldId},</if>
             <if test="status != null">status = #{status},</if>
             <if test="score != null">score = #{score},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="comment != null">comment = #{comment},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>

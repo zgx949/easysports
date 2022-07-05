@@ -25,10 +25,36 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="成绩" prop="score">
+      <el-form-item label="审核状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择审核状态" clearable>
+          <el-option
+            v-for="dict in dict.type.sport_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="比赛成绩" prop="score">
         <el-input
           v-model="queryParams.score"
-          placeholder="请输入成绩"
+          placeholder="请输入比赛成绩"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="比赛积分" prop="points">
+        <el-input
+          v-model="queryParams.points"
+          placeholder="请输入比赛积分"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="备注信息(是否破纪录等)" prop="comment">
+        <el-input
+          v-model="queryParams.comment"
+          placeholder="请输入备注信息(是否破纪录等)"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -86,13 +112,19 @@
     </el-row>
 
     <el-table v-loading="loading" :data="registrationsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="id" align="center" prop="id"/>
-      <el-table-column label="比赛" align="center" prop="gameId"/>
-      <el-table-column label="用户" align="center" prop="userId"/>
-      <el-table-column label="场地" align="center" prop="fieldId"/>
-      <el-table-column label="状态" align="center" prop="status"/>
-      <el-table-column label="成绩" align="center" prop="score"/>
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="比赛" align="center" prop="gameId" />
+      <el-table-column label="用户" align="center" prop="userId" />
+      <el-table-column label="场地" align="center" prop="fieldId" />
+      <el-table-column label="审核状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sport_status" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="比赛成绩" align="center" prop="score" />
+      <el-table-column label="比赛积分" align="center" prop="points" />
+      <el-table-column label="备注信息(是否破纪录等)" align="center" prop="comment" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -101,8 +133,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:registrations:edit']"
-          >修改
-          </el-button>
+          >修改</el-button>
           <el-button
             size="mini"
             type="text"
@@ -113,7 +144,7 @@
         </template>
       </el-table-column>
     </el-table>
-
+    
     <pagination
       v-show="total>0"
       :total="total"
@@ -126,16 +157,31 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="比赛" prop="gameId">
-          <el-input v-model="form.gameId" placeholder="请输入比赛"/>
+          <el-input v-model="form.gameId" placeholder="请输入比赛" />
         </el-form-item>
         <el-form-item label="用户" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户"/>
+          <el-input v-model="form.userId" placeholder="请输入用户" />
         </el-form-item>
         <el-form-item label="场地" prop="fieldId">
-          <el-input v-model="form.fieldId" placeholder="请输入场地"/>
+          <el-input v-model="form.fieldId" placeholder="请输入场地" />
         </el-form-item>
-        <el-form-item label="成绩" prop="score">
-          <el-input v-model="form.score" placeholder="请输入成绩"/>
+        <el-form-item label="审核状态">
+          <el-radio-group v-model="form.status">
+            <el-radio
+              v-for="dict in dict.type.sport_status"
+              :key="dict.value"
+:label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="比赛成绩" prop="score">
+          <el-input v-model="form.score" placeholder="请输入比赛成绩" />
+        </el-form-item>
+        <el-form-item label="比赛积分" prop="points">
+          <el-input v-model="form.points" placeholder="请输入比赛积分" />
+        </el-form-item>
+        <el-form-item label="备注信息(是否破纪录等)" prop="comment">
+          <el-input v-model="form.comment" placeholder="请输入备注信息(是否破纪录等)" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -151,6 +197,7 @@ import { listRegistrations, getRegistrations, delRegistrations, addRegistrations
 
 export default {
   name: "Registrations",
+  dicts: ['sport_status'],
   data() {
     return {
       // 遮罩层
@@ -180,6 +227,8 @@ export default {
         fieldId: null,
         status: null,
         score: null,
+        points: null,
+        comment: null,
       },
       // 表单参数
       form: {},
@@ -215,6 +264,8 @@ export default {
         fieldId: null,
         status: "0",
         score: null,
+        points: null,
+        comment: null,
         createTime: null,
         updateTime: null
       };

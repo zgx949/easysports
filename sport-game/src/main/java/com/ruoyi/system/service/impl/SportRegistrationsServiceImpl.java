@@ -12,10 +12,11 @@ import com.ruoyi.system.service.ISportRegistrationsService;
  * 报名管理Service业务层处理
  *
  * @author leftHand
- * @date 2022-07-01
+ * @date 2022-07-05
  */
 @Service
-public class SportRegistrationsServiceImpl implements ISportRegistrationsService {
+public class SportRegistrationsServiceImpl implements ISportRegistrationsService
+{
     @Autowired
     private SportRegistrationsMapper sportRegistrationsMapper;
 
