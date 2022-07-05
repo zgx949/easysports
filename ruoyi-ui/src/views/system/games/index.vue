@@ -18,12 +18,20 @@
         />
       </el-form-item>
       <el-form-item label="决赛" prop="nextGame">
-        <el-input
-          v-model="queryParams.nextGame"
-          placeholder="请输入决赛"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>
+          <el-option
+            v-for="dict in dict.type.sys_user_sex"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+<!--        <el-input-->
+<!--          v-model="queryParams.nextGame"-->
+<!--          placeholder="请输入决赛"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
       </el-form-item>
       <el-form-item label="性别" prop="gender">
         <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>

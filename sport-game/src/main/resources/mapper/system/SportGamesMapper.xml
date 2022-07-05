@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SportGamesMapper">
-    
+
     <resultMap type="SportGames" id="SportGamesResult">
         <result property="id"    column="id"    />
         <result property="itemId"    column="item_id"    />
@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">
         <include refid="selectSportGamesVo"/>
-        <where>  
+        <where>
             <if test="itemId != null "> and item_id = #{itemId}</if>
             <if test="gameName != null  and gameName != ''"> and game_name like concat('%', #{gameName}, '%')</if>
             <if test="nextGame != null "> and next_game = #{nextGame}</if>
@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="endTime != null "> and end_time = #{endTime}</if>
         </where>
     </select>
-    
+
     <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesSportItemResult">
         select a.id, a.item_id, a.game_name, a.next_game, a.gender, a.field_id, a.max_person, a.status, a.start_time, a.end_time, a.create_time,
  b.id as sub_id, b.item_name as sub_item_name, b.max_person as sub_max_person, b.type as sub_type, b.unit as sub_unit, b.is_desc as sub_is_desc
@@ -57,7 +57,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sport_item b on b.item_name = a.id
         where a.id = #{id}
     </select>
-        
+
+    <select id="selectSportGamesDict" resultType="com.ruoyi.system.domain.Dict">
+
+    </select>
+
     <insert id="insertSportGames" parameterType="SportGames" useGeneratedKeys="true" keyProperty="id">
         insert into sport_games
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -108,14 +112,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSportGamesByIds" parameterType="String">
-        delete from sport_games where id in 
+        delete from sport_games where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    
+
     <delete id="deleteSportItemByItemNames" parameterType="String">
-        delete from sport_item where item_name in 
+        delete from sport_item where item_name in
         <foreach item="itemName" collection="array" open="(" separator="," close=")">
             #{itemName}
         </foreach>

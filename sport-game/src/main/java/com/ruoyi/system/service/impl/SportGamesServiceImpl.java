@@ -2,6 +2,7 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.Dict;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -21,8 +22,21 @@ import com.ruoyi.system.service.ISportGamesService;
 @Service
 public class SportGamesServiceImpl implements ISportGamesService
 {
+
+
     @Autowired
     private SportGamesMapper sportGamesMapper;
+
+    /**
+     * 查询比赛预决赛字典信息
+     *
+     * @return 比赛管理
+     */
+    @Override
+    public List<Dict> selectSportGamesDict() {
+        // TODO: 查询预决赛字典信息
+        return sportGamesMapper.selectSportGamesDict();
+    }
 
     /**
      * 查询比赛管理
