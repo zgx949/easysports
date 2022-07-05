@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain;
 
+import java.util.List;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,9 +10,9 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 比赛管理对象 sport_games
- *
+ * 
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-05
  */
 public class SportGames extends BaseEntity
 {
@@ -49,104 +50,117 @@ public class SportGames extends BaseEntity
     private Long status;
 
     /** 开始时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date startTime;
 
     /** 结束时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date endTime;
 
-    public void setId(Long id)
+    /** 项目管理信息 */
+    private List<SportItem> sportItemList;
+
+    public void setId(Long id) 
     {
         this.id = id;
     }
 
-    public Long getId()
+    public Long getId() 
     {
         return id;
     }
-    public void setItemId(Long itemId)
+    public void setItemId(Long itemId) 
     {
         this.itemId = itemId;
     }
 
-    public Long getItemId()
+    public Long getItemId() 
     {
         return itemId;
     }
-    public void setGameName(String gameName)
+    public void setGameName(String gameName) 
     {
         this.gameName = gameName;
     }
 
-    public String getGameName()
+    public String getGameName() 
     {
         return gameName;
     }
-    public void setNextGame(Long nextGame)
+    public void setNextGame(Long nextGame) 
     {
         this.nextGame = nextGame;
     }
 
-    public Long getNextGame()
+    public Long getNextGame() 
     {
         return nextGame;
     }
-    public void setGender(Integer gender)
+    public void setGender(Integer gender) 
     {
         this.gender = gender;
     }
 
-    public Integer getGender()
+    public Integer getGender() 
     {
         return gender;
     }
-    public void setFieldId(Long fieldId)
+    public void setFieldId(Long fieldId) 
     {
         this.fieldId = fieldId;
     }
 
-    public Long getFieldId()
+    public Long getFieldId() 
     {
         return fieldId;
     }
-    public void setMaxPerson(Long maxPerson)
+    public void setMaxPerson(Long maxPerson) 
     {
         this.maxPerson = maxPerson;
     }
 
-    public Long getMaxPerson()
+    public Long getMaxPerson() 
     {
         return maxPerson;
     }
-    public void setStatus(Long status)
+    public void setStatus(Long status) 
     {
         this.status = status;
     }
 
-    public Long getStatus()
+    public Long getStatus() 
     {
         return status;
     }
-    public void setStartTime(Date startTime)
+    public void setStartTime(Date startTime) 
     {
         this.startTime = startTime;
     }
 
-    public Date getStartTime()
+    public Date getStartTime() 
     {
         return startTime;
     }
-    public void setEndTime(Date endTime)
+    public void setEndTime(Date endTime) 
     {
         this.endTime = endTime;
     }
 
-    public Date getEndTime()
+    public Date getEndTime() 
     {
         return endTime;
+    }
+
+    public List<SportItem> getSportItemList()
+    {
+        return sportItemList;
+    }
+
+    public void setSportItemList(List<SportItem> sportItemList)
+    {
+        this.sportItemList = sportItemList;
     }
 
     @Override
@@ -163,6 +177,7 @@ public class SportGames extends BaseEntity
             .append("startTime", getStartTime())
             .append("endTime", getEndTime())
             .append("createTime", getCreateTime())
+            .append("sportItemList", getSportItemList())
             .toString();
     }
 }

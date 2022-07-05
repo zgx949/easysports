@@ -18,6 +18,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
     </resultMap>
 
+    <resultMap id="SportGamesSportItemResult" type="SportGames" extends="SportGamesResult">
+        <collection property="sportItemList" notNullColumn="sub_id" javaType="java.util.List" resultMap="SportItemResult" />
+    </resultMap>
+
+    <resultMap type="SportItem" id="SportItemResult">
+        <result property="id"    column="sub_id"    />
+        <result property="itemName"    column="sub_item_name"    />
+        <result property="maxPerson"    column="sub_max_person"    />
+        <result property="type"    column="sub_type"    />
+        <result property="unit"    column="sub_unit"    />
+        <result property="isDesc"    column="sub_is_desc"    />
+    </resultMap>
+
     <sql id="selectSportGamesVo">
         select id, item_id, game_name, next_game, gender, field_id, max_person, status, start_time, end_time, create_time from sport_games
     </sql>
@@ -37,9 +50,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesResult">
-        <include refid="selectSportGamesVo"/>
-        where id = #{id}
+    <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesSportItemResult">
+        select a.id, a.item_id, a.game_name, a.next_game, a.gender, a.field_id, a.max_person, a.status, a.start_time, a.end_time, a.create_time,
+ b.id as sub_id, b.item_name as sub_item_name, b.max_person as sub_max_person, b.type as sub_type, b.unit as sub_unit, b.is_desc as sub_is_desc
+        from sport_games a
+        left join sport_item b on b.item_name = a.id
+        where a.id = #{id}
     </select>
         
     <insert id="insertSportGames" parameterType="SportGames" useGeneratedKeys="true" keyProperty="id">
@@ -97,4 +113,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <delete id="deleteSportItemByItemNames" parameterType="String">
+        delete from sport_item where item_name in 
+        <foreach item="itemName" collection="array" open="(" separator="," close=")">
+            #{itemName}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSportItemByItemName" parameterType="Long">
+        delete from sport_item where item_name = #{itemName}
+    </delete>
+
+    <insert id="batchSportItem">
+        insert into sport_item( id, item_name, max_person, type, unit, is_desc) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.itemName}, #{item.maxPerson}, #{item.type}, #{item.unit}, #{item.isDesc})
+        </foreach>
+    </insert>
 </mapper>

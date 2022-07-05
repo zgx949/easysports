@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 项目管理对象 sport_item
  * 
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-05
  */
 public class SportItem extends BaseEntity
 {

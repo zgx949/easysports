@@ -7,7 +7,7 @@ import com.ruoyi.system.domain.SportGames;
  * 比赛管理Service接口
  * 
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-05
  */
 public interface ISportGamesService 
 {

@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 比赛管理Controller
  * 
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-05
  */
 @RestController
 @RequestMapping("/system/games")
