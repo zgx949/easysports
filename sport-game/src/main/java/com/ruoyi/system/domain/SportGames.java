@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain;
 
+import java.util.List;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,7 +12,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 比赛管理对象 sport_games
  *
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-05
  */
 public class SportGames extends BaseEntity
 {
@@ -57,6 +58,9 @@ public class SportGames extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
+
+    /** 项目管理信息 */
+    private List<SportItem> sportItemList;
 
     public void setId(Long id)
     {
@@ -149,6 +153,16 @@ public class SportGames extends BaseEntity
         return endTime;
     }
 
+    public List<SportItem> getSportItemList()
+    {
+        return sportItemList;
+    }
+
+    public void setSportItemList(List<SportItem> sportItemList)
+    {
+        this.sportItemList = sportItemList;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -163,6 +177,7 @@ public class SportGames extends BaseEntity
             .append("startTime", getStartTime())
             .append("endTime", getEndTime())
             .append("createTime", getCreateTime())
+            .append("sportItemList", getSportItemList())
             .toString();
     }
 }

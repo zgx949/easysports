@@ -23,9 +23,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 比赛管理Controller
- * 
+ *
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-05
  */
 @RestController
 @RequestMapping("/system/games")
@@ -63,8 +63,18 @@ public class SportGamesController extends BaseController
      * 获取比赛管理详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:games:query')")
+    @GetMapping(value = "/dict")
+    public AjaxResult getInfo()
+    {
+        return AjaxResult.success(sportGamesService.selectSportGamesDict());
+    }
+
+    /**
+     * 获取比赛字典信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
+    public AjaxResult getDict(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sportGamesService.selectSportGamesById(id));
     }
