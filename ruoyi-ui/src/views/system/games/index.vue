@@ -10,12 +10,6 @@
             :value="dict.value"
           />
         </el-select>
-<!--        <el-input-->
-<!--          v-model="queryParams.itemId"-->
-<!--          placeholder="请输入项目"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
       </el-form-item>
       <el-form-item label="比赛" prop="gameName">
         <el-input
@@ -25,16 +19,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="决赛" prop="nextGame">-->
-<!--        <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>-->
-<!--          <el-option-->
-<!--            v-for="dict in dict.type.sys_user_sex"-->
-<!--            :key="dict.value"-->
-<!--            :label="dict.label"-->
-<!--            :value="dict.value"-->
-<!--          />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
       <el-form-item label="性别" prop="gender">
         <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>
           <el-option
@@ -46,9 +30,9 @@
         </el-select>
       </el-form-item>
       <el-form-item label="场地" prop="fieldId">
-        <el-select v-model="queryParams.gender" placeholder="请选择场地" clearable>
+        <el-select v-model="queryParams.fieldId" placeholder="请选择场地" clearable>
           <el-option
-            v-for="dict in dict.type.sys_user_sex"
+            v-for="dict in fieldDict"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"

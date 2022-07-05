@@ -99,7 +99,7 @@
 
     <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="自增id" align="center" prop="id"/>
+      <el-table-column label="id" align="center" prop="id"/>
       <el-table-column label="项目名称" align="center" prop="itemName"/>
       <el-table-column label="限制最多人数" align="center" prop="maxPerson"/>
       <el-table-column label="项目类型" align="center" prop="type">
