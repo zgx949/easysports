@@ -33,6 +33,17 @@ public class SportFieldsController extends BaseController
     @Autowired
     private ISportFieldsService sportFieldsService;
 
+
+    /**
+     * 获取场地字典
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:query')")
+    @GetMapping(value = "/dict")
+    public AjaxResult getInfo()
+    {
+        return AjaxResult.success(sportFieldsService.selectSportFieldsDict());
+    }
+
     /**
      * 查询场地管理列表
      */

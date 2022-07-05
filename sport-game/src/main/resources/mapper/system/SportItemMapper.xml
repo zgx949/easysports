@@ -17,6 +17,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, item_name, max_person, type, unit, is_desc from sport_item
     </sql>
 
+
+    <select id="selectSportItemsDict" resultType="com.ruoyi.common.core.domain.Dict">
+        SELECT id as `value`, item_name as `label` FROM sport_item
+    </select>
+
     <select id="selectSportItemList" parameterType="SportItem" resultMap="SportItemResult">
         <include refid="selectSportItemVo"/>
         <where>  
@@ -32,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSportItemVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSportItem" parameterType="SportItem" useGeneratedKeys="true" keyProperty="id">
         insert into sport_item
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -1,6 +1,8 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.Dict;
 import com.ruoyi.system.domain.SportFields;
 
 /**
@@ -11,6 +13,13 @@ import com.ruoyi.system.domain.SportFields;
  */
 public interface ISportFieldsService 
 {
+    /**
+     * 查询场地字典信息
+     *
+     * @return 比赛管理
+     */
+    public List<Dict> selectSportFieldsDict();
+
     /**
      * 查询场地管理
      * 

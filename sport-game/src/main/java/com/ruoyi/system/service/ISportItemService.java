@@ -1,6 +1,8 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.Dict;
 import com.ruoyi.system.domain.SportItem;
 
 /**
@@ -11,6 +13,13 @@ import com.ruoyi.system.domain.SportItem;
  */
 public interface ISportItemService 
 {
+    /**
+     * 查询比赛预决赛字典信息
+     *
+     * @return 比赛管理
+     */
+    public List<Dict> selectSportItemsDict();
+
     /**
      * 查询项目管理
      * 

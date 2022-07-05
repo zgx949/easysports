@@ -34,6 +34,18 @@ public class SportGamesController extends BaseController
     @Autowired
     private ISportGamesService sportGamesService;
 
+
+
+    /**
+     * 获取比赛字典信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:query')")
+    @GetMapping(value = "/dict")
+    public AjaxResult getInfo()
+    {
+        return AjaxResult.success(sportGamesService.selectSportGamesDict());
+    }
+
     /**
      * 查询比赛管理列表
      */
@@ -59,15 +71,6 @@ public class SportGamesController extends BaseController
         util.exportExcel(response, list, "比赛管理数据");
     }
 
-    /**
-     * 获取比赛管理详细信息
-     */
-    @PreAuthorize("@ss.hasPermi('system:games:query')")
-    @GetMapping(value = "/dict")
-    public AjaxResult getInfo()
-    {
-        return AjaxResult.success(sportGamesService.selectSportGamesDict());
-    }
 
     /**
      * 获取比赛字典信息

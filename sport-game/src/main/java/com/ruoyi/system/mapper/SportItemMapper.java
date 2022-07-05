@@ -1,6 +1,8 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.Dict;
 import com.ruoyi.system.domain.SportItem;
 
 /**
@@ -11,6 +13,13 @@ import com.ruoyi.system.domain.SportItem;
  */
 public interface SportItemMapper 
 {
+    /**
+     * 获取项目字典
+     *
+     * @return 结果
+     */
+    public List<Dict> selectSportItemsDict();
+
     /**
      * 查询项目管理
      * 

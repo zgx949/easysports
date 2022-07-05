@@ -15,6 +15,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, name, max_person, parent_id from sport_fields
     </sql>
 
+    <select id="selectSportFieldsDict" resultType="com.ruoyi.common.core.domain.Dict">
+        SELECT
+            b.id `value`,
+	        CONCAT(a.`name`,'--',b.`name`) `label`
+        FROM
+            sport_fields a,
+            sport_fields b
+        WHERE
+            a.id=b.parent_id
+    </select>
+
     <select id="selectSportFieldsList" parameterType="SportFields" resultMap="SportFieldsResult">
         <include refid="selectSportFieldsVo"/>
         <where>  

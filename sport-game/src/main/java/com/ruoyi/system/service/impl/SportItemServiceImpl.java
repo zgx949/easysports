@@ -1,6 +1,8 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.Dict;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SportItemMapper;
@@ -18,6 +20,16 @@ public class SportItemServiceImpl implements ISportItemService
 {
     @Autowired
     private SportItemMapper sportItemMapper;
+
+    /**
+     * 查询比赛预决赛字典信息
+     *
+     * @return 项目管理
+     */
+    @Override
+    public List<Dict> selectSportItemsDict() {
+        return sportItemMapper.selectSportItemsDict();
+    }
 
     /**
      * 查询项目管理

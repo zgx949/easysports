@@ -2,7 +2,7 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 
-import com.ruoyi.system.domain.Dict;
+import com.ruoyi.common.core.domain.Dict;
 import com.ruoyi.system.domain.SportGames;
 
 /**

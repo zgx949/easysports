@@ -2,14 +2,22 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="项目" prop="itemId">
-        <el-input
-          v-model="queryParams.itemId"
-          placeholder="请输入项目"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.itemId" placeholder="请选择项目" clearable>
+          <el-option
+            v-for="dict in itemDict"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+<!--        <el-input-->
+<!--          v-model="queryParams.itemId"-->
+<!--          placeholder="请输入项目"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
       </el-form-item>
-      <el-form-item label="比赛名" prop="gameName">
+      <el-form-item label="比赛" prop="gameName">
         <el-input
           v-model="queryParams.gameName"
           placeholder="请输入比赛名"
@@ -17,22 +25,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="决赛" prop="nextGame">
-        <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>
-          <el-option
-            v-for="dict in dict.type.sys_user_sex"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-<!--        <el-input-->
-<!--          v-model="queryParams.nextGame"-->
-<!--          placeholder="请输入决赛"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-      </el-form-item>
+<!--      <el-form-item label="决赛" prop="nextGame">-->
+<!--        <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>-->
+<!--          <el-option-->
+<!--            v-for="dict in dict.type.sys_user_sex"-->
+<!--            :key="dict.value"-->
+<!--            :label="dict.label"-->
+<!--            :value="dict.value"-->
+<!--          />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item label="性别" prop="gender">
         <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>
           <el-option
@@ -44,21 +46,29 @@
         </el-select>
       </el-form-item>
       <el-form-item label="场地" prop="fieldId">
-        <el-input
-          v-model="queryParams.fieldId"
-          placeholder="请输入场地"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.gender" placeholder="请选择场地" clearable>
+          <el-option
+            v-for="dict in dict.type.sys_user_sex"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+<!--        <el-input-->
+<!--          v-model="queryParams.fieldId"-->
+<!--          placeholder="请选择场地"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
       </el-form-item>
-      <el-form-item label="限制人数" prop="maxPerson">
-        <el-input
-          v-model="queryParams.maxPerson"
-          placeholder="请输入限制人数"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="限制人数" prop="maxPerson">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.maxPerson"-->
+<!--          placeholder="请输入限制人数"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
@@ -140,7 +150,7 @@
     <el-table v-loading="loading" :data="gamesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="项目" align="center" prop="itemId" />
+      <el-table-column label="项目" align="center" prop="itemId" :formatter="itemFormatter" />
       <el-table-column label="比赛名" align="center" prop="gameName" />
       <el-table-column label="决赛" align="center" prop="nextGame" />
       <el-table-column label="性别" align="center" prop="gender">
@@ -148,7 +158,7 @@
           <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.gender"/>
         </template>
       </el-table-column>
-      <el-table-column label="场地" align="center" prop="fieldId" />
+      <el-table-column label="场地" align="center" prop="fieldId" :formatter="fieldFormatter" />
       <el-table-column label="限制人数" align="center" prop="maxPerson" />
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
@@ -197,7 +207,15 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="项目" prop="itemId">
-          <el-input v-model="form.itemId" placeholder="请输入项目" />
+          <el-select v-model="form.itemId" placeholder="请选择项目">
+            <el-option
+              v-for="dict in itemDict"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+<!--          <el-input v-model="form.itemId" placeholder="请输入项目" />-->
         </el-form-item>
         <el-form-item label="比赛名" prop="gameName">
           <el-input v-model="form.gameName" placeholder="请输入比赛名" />
@@ -216,10 +234,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="场地" prop="fieldId">
-          <el-input v-model="form.fieldId" placeholder="请输入场地" />
+          <el-select v-model="form.fieldId" placeholder="请选择场地">
+            <el-option
+              v-for="dict in fieldDict"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+<!--          <el-input v-model="form.fieldId" placeholder="请输入" />-->
         </el-form-item>
         <el-form-item label="限制人数" prop="maxPerson">
-          <el-input v-model="form.maxPerson" placeholder="请输入限制人数" />
+          <el-input-number v-model="form.maxPerson" placeholder="请输入限制人数" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -304,6 +330,8 @@
 
 <script>
 import { listGames, getGames, delGames, addGames, updateGames } from "@/api/system/games";
+import { dictItem } from "@/api/system/item";
+import { dictFields } from "@/api/system/fields";
 
 export default {
   name: "Games",
@@ -350,16 +378,52 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      // 项目字典
+      itemDict: [],
+      // 场地字典
+      fieldDict: [],
     };
   },
   created() {
     this.getList();
   },
   methods: {
+    /** 查询项目字典 */
+    getItemDict() {
+      dictItem().then(response => {
+        this.itemDict = response.data;
+      })
+    },
+    /** 项目字典格式化 */
+    itemFormatter(row, column) {
+      // console.log(row, column);
+      for (const item of this.itemDict) {
+        if (item.value === row.itemId) {
+          return item.label;
+        }
+      }
+    },
+    /** 查询场地字典 */
+    getFieldDict() {
+      dictFields().then(response => {
+        this.fieldDict = response.data;
+      })
+    },
+    /** 场地字典格式化 */
+    fieldFormatter(row, column) {
+      for (const item of this.fieldDict) {
+        if (item.value === row.fieldId) {
+          return item.label;
+        }
+      }
+    },
+
     /** 查询比赛管理列表 */
     getList() {
       this.loading = true;
+      this.getItemDict();
+      this.getFieldDict();
       listGames(this.queryParams).then(response => {
         this.gamesList = response.rows;
         this.total = response.total;

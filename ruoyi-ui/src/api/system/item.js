@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 查询项目字典
+export function dictItem(query) {
+  return request({
+    url: '/system/item/dict',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询项目管理列表
 export function listItem(query) {
   return request({

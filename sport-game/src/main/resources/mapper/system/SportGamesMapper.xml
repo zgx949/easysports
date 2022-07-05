@@ -58,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where a.id = #{id}
     </select>
 
-    <select id="selectSportGamesDict" resultType="com.ruoyi.system.domain.Dict">
+    <select id="selectSportGamesDict" resultType="com.ruoyi.common.core.domain.Dict">
 
     </select>
 

@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 查询场地字典
+export function dictFields(query) {
+  return request({
+    url: '/system/fields/dict',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询场地管理列表
 export function listFields(query) {
   return request({

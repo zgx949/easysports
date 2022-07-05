@@ -35,6 +35,16 @@ public class SportItemController extends BaseController
     private ISportItemService sportItemService;
 
     /**
+     * 获取比赛管理详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:items:query')")
+    @GetMapping(value = "/dict")
+    public AjaxResult getInfo()
+    {
+        return AjaxResult.success(sportItemService.selectSportItemsDict());
+    }
+
+    /**
      * 查询项目管理列表
      */
     @PreAuthorize("@ss.hasPermi('system:item:list')")

@@ -1,6 +1,8 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.Dict;
 import com.ruoyi.system.domain.SportFields;
 
 /**
@@ -11,6 +13,13 @@ import com.ruoyi.system.domain.SportFields;
  */
 public interface SportFieldsMapper 
 {
+    /**
+     * 获取场地字典
+     *
+     * @return 结果
+     */
+    public List<Dict> selectSportFieldsDict();
+
     /**
      * 查询场地管理
      * 
