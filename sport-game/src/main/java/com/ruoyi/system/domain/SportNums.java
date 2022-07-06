@@ -7,59 +7,59 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 号码段管理对象 sport_nums
- * 
+ *
  * @author ruoyi
- * @date 2022-06-30
+ * @date 2022-07-06
  */
 public class SportNums extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** $column.columnComment */
+    /**  */
     private Long id;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**  */
+    @Excel(name = "")
     private Long idNum;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
-    private Long collegeId;
+    /**  */
+    @Excel(name = "")
+    private Long userId;
 
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setIdNum(Long idNum) 
+    public void setIdNum(Long idNum)
     {
         this.idNum = idNum;
     }
 
-    public Long getIdNum() 
+    public Long getIdNum()
     {
         return idNum;
     }
-    public void setCollegeId(Long collegeId) 
+    public void setUserId(Long userId)
     {
-        this.collegeId = collegeId;
+        this.userId = userId;
     }
 
-    public Long getCollegeId() 
+    public Long getUserId()
     {
-        return collegeId;
+        return userId;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("idNum", getIdNum())
-            .append("collegeId", getCollegeId())
-            .toString();
+                .append("id", getId())
+                .append("idNum", getIdNum())
+                .append("userId", getUserId())
+                .toString();
     }
 }
