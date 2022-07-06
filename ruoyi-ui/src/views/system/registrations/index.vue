@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+<!--      TODO：改为下拉选择比赛-->
       <el-form-item label="比赛" prop="gameId">
         <el-input
           v-model="queryParams.gameId"
@@ -9,6 +10,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+<!--      TODO:改为用户名-->
       <el-form-item label="用户" prop="userId">
         <el-input
           v-model="queryParams.userId"
@@ -18,12 +20,14 @@
         />
       </el-form-item>
       <el-form-item label="场地" prop="fieldId">
-        <el-input
-          v-model="queryParams.fieldId"
-          placeholder="请输入场地"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.fieldId" placeholder="请选择场地" clearable>
+          <el-option
+            v-for="dict in fieldDict"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="审核状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择审核状态" clearable>
@@ -35,14 +39,15 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="比赛成绩" prop="score">
-        <el-input
-          v-model="queryParams.score"
-          placeholder="请输入比赛成绩"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="比赛成绩" prop="score">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.score"-->
+<!--          placeholder="请输入比赛成绩"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      TODO: 改为数字型文本框-->
       <el-form-item label="比赛积分" prop="points">
         <el-input
           v-model="queryParams.points"
@@ -51,10 +56,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="备注信息(是否破纪录等)" prop="comment">
+      <el-form-item label="备注信息" prop="comment">
         <el-input
           v-model="queryParams.comment"
-          placeholder="请输入备注信息(是否破纪录等)"
+          placeholder="请输入备注信息"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -114,14 +119,18 @@
     <el-table v-loading="loading" :data="registrationsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
+<!--      TODO：格式化为比赛名-->
       <el-table-column label="比赛" align="center" prop="gameId" />
+<!--      TODO：格式化为【学院】姓名-号码牌-->
       <el-table-column label="用户" align="center" prop="userId" />
+<!--      TODO：格式化为场地名-->
       <el-table-column label="场地" align="center" prop="fieldId" />
       <el-table-column label="审核状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sport_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
+<!--      TODO：格式化末尾加入成绩单位-->
       <el-table-column label="比赛成绩" align="center" prop="score" />
       <el-table-column label="比赛积分" align="center" prop="points" />
       <el-table-column label="备注信息(是否破纪录等)" align="center" prop="comment" />
@@ -144,7 +153,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -156,12 +165,15 @@
     <!-- 添加或修改报名管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+<!--        TODO：下拉选择-->
         <el-form-item label="比赛" prop="gameId">
           <el-input v-model="form.gameId" placeholder="请输入比赛" />
         </el-form-item>
+<!--        TODO：下拉层级选择：学院 -> 姓名-->
         <el-form-item label="用户" prop="userId">
           <el-input v-model="form.userId" placeholder="请输入用户" />
         </el-form-item>
+<!--        TODO：下拉选择场地-->
         <el-form-item label="场地" prop="fieldId">
           <el-input v-model="form.fieldId" placeholder="请输入场地" />
         </el-form-item>
@@ -175,13 +187,17 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="比赛成绩" prop="score">
-          <el-input v-model="form.score" placeholder="请输入比赛成绩" />
+<!--          TODO：后面加入一个单位，并采用数值文本框-->
+          <el-input v-model="form.score" placeholder="请输入比赛成绩">
+            <template #append>成绩单位</template>
+          </el-input>
         </el-form-item>
+<!--        TODO：采用数值文本框-->
         <el-form-item label="比赛积分" prop="points">
           <el-input v-model="form.points" placeholder="请输入比赛积分" />
         </el-form-item>
         <el-form-item label="备注信息(是否破纪录等)" prop="comment">
-          <el-input v-model="form.comment" placeholder="请输入备注信息(是否破纪录等)" />
+          <el-input v-model="form.comment" type="textarea" placeholder="请输入备注信息(是否破纪录等)" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -194,6 +210,7 @@
 
 <script>
 import { listRegistrations, getRegistrations, delRegistrations, addRegistrations, updateRegistrations } from "@/api/system/registrations";
+import { dictFields } from "@/api/system/fields";
 
 export default {
   name: "Registrations",
@@ -234,16 +251,33 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      // 场地字典
+      fieldDict: [],
     };
   },
   created() {
     this.getList();
   },
   methods: {
+    /** 查询场地字典 */
+    getFieldDict() {
+      dictFields().then(response => {
+        this.fieldDict = response.data;
+      })
+    },
+    /** 场地字典格式化 */
+    fieldFormatter(row, column) {
+      for (const item of this.fieldDict) {
+        if (item.value === row.fieldId) {
+          return item.label;
+        }
+      }
+    },
     /** 查询报名管理列表 */
     getList() {
       this.loading = true;
+      this.getFieldDict();
       listRegistrations(this.queryParams).then(response => {
         this.registrationsList = response.rows;
         this.total = response.total;

@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 报名管理Controller
  *
  * @author leftHand
- * @date 2022-07-05
+ * @date 2022-07-06
  */
 @RestController
 @RequestMapping("/system/registrations")
