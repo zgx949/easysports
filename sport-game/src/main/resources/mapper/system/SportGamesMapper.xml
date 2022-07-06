@@ -3,6 +3,12 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SportGamesMapper">
+<!--    <resultMap type="SportFields" id="SportFieldsResult">-->
+<!--        <id property="id"    column="id"    />-->
+<!--        <result property="name"    column="name"    />-->
+<!--&lt;!&ndash;        <result property="maxPerson"    column="max_person"    />&ndash;&gt;-->
+<!--        <result property="parentId"    column="parent_id"    />-->
+<!--    </resultMap>-->
 
     <resultMap type="SportGames" id="SportGamesResult">
         <result property="id"    column="id"    />
@@ -13,10 +19,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="startTime"    column="start_time"    />
         <result property="endTime"    column="end_time"    />
         <result property="createTime"    column="create_time"    />
-<!--        TODO: 关联三个外键表-->
-        <result property="itemId"    column="item_id"    />
-        <result property="nextGame"    column="next_game"    />
         <result property="fieldId"    column="field_id"    />
+<!--        TODO: 关联三个外键表-->
+<!--        <association property="item"    column="item_id"     />-->
+<!--        <result property="nextGame"    column="next_game"    />-->
+        <association property="field" javaType="SportFields">
+            <id     property="id"   column="fid"></id>
+            <result property="name" column="name"></result>
+            <result property="parentId" column="parent_id"></result>
+            <result property="maxPerson" column="field_max_person"></result>
+        </association>
     </resultMap>
 
     <resultMap id="SportGamesSportItemResult" type="SportGames" extends="SportGamesResult">
@@ -33,7 +45,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSportGamesVo">
-        select id, item_id, game_name, next_game, gender, field_id, max_person, status, start_time, end_time, create_time from sport_games
+        SELECT
+            s.id, s.item_id,
+            s.game_name, s.next_game,
+            s.gender, s.field_id,
+            s.max_person, s.status,
+            s.start_time, s.end_time,
+            s.create_time,
+            f.fid,
+            f.name,
+            f.parent_id,
+            f.max_person field_max_person
+        FROM
+            sport_games s LEFT JOIN sport_fields f ON s.field_id=f.id
+
     </sql>
 
     <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">

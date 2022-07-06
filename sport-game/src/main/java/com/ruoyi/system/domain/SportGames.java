@@ -30,7 +30,7 @@ public class SportGames extends BaseEntity
     private String gameName;
 
     /** 决赛 */
-    @Excel(name = "决赛")
+    @Excel(name = "决赛编码")
     private Long nextGame;
 
     /** 性别 */
@@ -38,7 +38,7 @@ public class SportGames extends BaseEntity
     private Integer gender;
 
     /** 场地 */
-    @Excel(name = "场地")
+    @Excel(name = "场地编码")
     private Long fieldId;
 
     /** 限制人数 */
@@ -61,6 +61,30 @@ public class SportGames extends BaseEntity
 
     /** 项目管理信息 */
     private List<SportItem> sportItemList;
+
+    /** 场地 */
+//    @Excel(name = "")
+    private SportFields field;
+
+    /** 决赛 */
+//    @Excel(name = "决赛")
+    private SportGames game;
+
+    public SportFields getField() {
+        return field;
+    }
+
+    public void setField(SportFields field) {
+        this.field = field;
+    }
+
+    public SportGames getGame() {
+        return game;
+    }
+
+    public void setGame(SportGames game) {
+        this.game = game;
+    }
 
     public void setId(Long id)
     {
