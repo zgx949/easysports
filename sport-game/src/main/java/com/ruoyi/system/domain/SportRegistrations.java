@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain;
 
+import com.ruoyi.common.core.domain.entity.SysUser;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -45,6 +46,38 @@ public class SportRegistrations extends BaseEntity
     /** 备注信息(是否破纪录等) */
     @Excel(name = "备注信息(是否破纪录等)")
     private String comment;
+
+    // TODO: 关联子表信息
+    /** 报名的比赛信息 */
+    private SportGames game;
+    /** 分配的场地 */
+    private SportFields field;
+    /** 用户信息 */
+    private SysUser user;
+
+    public SportGames getGame() {
+        return game;
+    }
+
+    public void setGame(SportGames game) {
+        this.game = game;
+    }
+
+    public SportFields getField() {
+        return field;
+    }
+
+    public void setField(SportFields field) {
+        this.field = field;
+    }
+
+    public SysUser getUser() {
+        return user;
+    }
+
+    public void setUser(SysUser user) {
+        this.user = user;
+    }
 
     public void setId(Long id)
     {
