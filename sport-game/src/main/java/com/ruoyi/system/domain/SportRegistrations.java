@@ -1,10 +1,13 @@
 package com.ruoyi.system.domain;
 
+import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.ruoyi.common.annotation.Excel.Type;
+
 
 /**
  * 报名管理对象 sport_registrations
@@ -47,12 +50,23 @@ public class SportRegistrations extends BaseEntity
     @Excel(name = "备注信息(是否破纪录等)")
     private String comment;
 
-    // TODO: 关联子表信息
     /** 报名的比赛信息 */
     private SportGames game;
-    /** 分配的场地 */
+
+    /**
+     * 分配的场地
+     */
+    @Excels({
+        @Excel(name = "场地编码", targetAttr = "id", type = Type.EXPORT),
+        @Excel(name = "场地名", targetAttr = "name", type = Type.EXPORT)
+    })
     private SportFields field;
+
     /** 用户信息 */
+    @Excels({
+        @Excel(name = "用户名", targetAttr = "nickName", type = Type.EXPORT),
+        @Excel(name = "邮箱", targetAttr = "email", type = Type.EXPORT)
+    })
     private SysUser user;
 
     public SportGames getGame() {
