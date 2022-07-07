@@ -70,6 +70,18 @@ public class SportGames extends BaseEntity
 //    @Excel(name = "决赛")
     private SportGames game;
 
+    /** 项目 */
+//    @Excel(name = "项目")
+    private SportItem item;
+
+    public SportItem getItem() {
+        return item;
+    }
+
+    public void setItem(SportItem item) {
+        this.item = item;
+    }
+
     public SportFields getField() {
         return field;
     }

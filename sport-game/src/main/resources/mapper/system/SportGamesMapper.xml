@@ -1,86 +1,120 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SportGamesMapper">
-<!--    <resultMap type="SportFields" id="SportFieldsResult">-->
-<!--        <id property="id"    column="id"    />-->
-<!--        <result property="name"    column="name"    />-->
-<!--&lt;!&ndash;        <result property="maxPerson"    column="max_person"    />&ndash;&gt;-->
-<!--        <result property="parentId"    column="parent_id"    />-->
-<!--    </resultMap>-->
+    <!--    <resultMap type="SportFields" id="SportFieldsResult">-->
+    <!--        <id property="id"    column="id"    />-->
+    <!--        <result property="name"    column="name"    />-->
+    <!--&lt;!&ndash;        <result property="maxPerson"    column="max_person"    />&ndash;&gt;-->
+    <!--        <result property="parentId"    column="parent_id"    />-->
+    <!--    </resultMap>-->
 
     <resultMap type="SportGames" id="SportGamesResult">
-        <result property="id"    column="id"    />
-        <result property="gameName"    column="game_name"    />
-        <result property="gender"    column="gender"    />
-        <result property="maxPerson"    column="max_person"    />
-        <result property="status"    column="status"    />
-        <result property="startTime"    column="start_time"    />
-        <result property="endTime"    column="end_time"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="fieldId"    column="field_id"    />
-<!--        TODO: 关联三个外键表-->
-<!--        <association property="item"    column="item_id"     />-->
-<!--        <result property="nextGame"    column="next_game"    />-->
+        <result property="id" column="id"/>
+        <result property="gameName" column="game_name"/>
+        <result property="gender" column="gender"/>
+        <result property="maxPerson" column="max_person"/>
+        <result property="status" column="status"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="fieldId" column="field_id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="nextGame" column="next_game"/>
         <association property="field" javaType="SportFields">
-            <id     property="id"   column="fid"></id>
+            <id property="id" column="fid"></id>
             <result property="name" column="name"></result>
             <result property="parentId" column="parent_id"></result>
             <result property="maxPerson" column="field_max_person"></result>
         </association>
+        <association property="item" javaType="SportItem">
+            <id property="id" column="i_id"></id>
+            <result property="itemName" column="item_name"></result>
+            <result property="maxPerson" column="item_max_person"></result>
+            <result property="type" column="item_type"></result>
+            <result property="unit" column="item_unit"></result>
+            <result property="isDesc" column="item_sort"></result>
+        </association>
     </resultMap>
 
     <resultMap id="SportGamesSportItemResult" type="SportGames" extends="SportGamesResult">
-        <collection property="sportItemList" notNullColumn="sub_id" javaType="java.util.List" resultMap="SportItemResult" />
+        <collection property="sportItemList" notNullColumn="sub_id" javaType="java.util.List"
+                    resultMap="SportItemResult"/>
     </resultMap>
 
     <resultMap type="SportItem" id="SportItemResult">
-        <result property="id"    column="sub_id"    />
-        <result property="itemName"    column="sub_item_name"    />
-        <result property="maxPerson"    column="sub_max_person"    />
-        <result property="type"    column="sub_type"    />
-        <result property="unit"    column="sub_unit"    />
-        <result property="isDesc"    column="sub_is_desc"    />
+        <result property="id" column="sub_id"/>
+        <result property="itemName" column="sub_item_name"/>
+        <result property="maxPerson" column="sub_max_person"/>
+        <result property="type" column="sub_type"/>
+        <result property="unit" column="sub_unit"/>
+        <result property="isDesc" column="sub_is_desc"/>
     </resultMap>
 
     <sql id="selectSportGamesVo">
-        SELECT
-            s.id, s.item_id,
-            s.game_name, s.next_game,
-            s.gender, s.field_id,
-            s.max_person, s.status,
-            s.start_time, s.end_time,
-            s.create_time,
-            f.fid,
-            f.name,
-            f.parent_id,
-            f.max_person field_max_person
-        FROM
-            sport_games s LEFT JOIN sport_fields f ON s.field_id=f.id
-
+        SELECT s.id,
+               s.item_id,
+               s.game_name,
+               s.next_game,
+               s.gender,
+               s.field_id,
+               s.max_person,
+               s.status,
+               s.start_time,
+               s.end_time,
+               s.create_time,
+               f.id         fid,
+               f.name,
+               f.parent_id,
+               f.max_person field_max_person,
+               i.id         i_id,
+               i.item_name  item_name,
+               i.max_person item_max_person,
+               i.type       item_type,
+               i.unit       item_unit,
+               i.is_desc    item_sort
+        FROM sport_games s
+                 LEFT JOIN sport_fields f ON s.field_id = f.id
+                 LEFT JOIN sport_item i ON s.item_id = i.id
+                 LEFT JOIN sport_games g ON s.next_game = g.id
     </sql>
 
     <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">
         <include refid="selectSportGamesVo"/>
         <where>
-            <if test="itemId != null "> and item_id = #{itemId}</if>
-            <if test="gameName != null  and gameName != ''"> and game_name like concat('%', #{gameName}, '%')</if>
-            <if test="nextGame != null "> and next_game = #{nextGame}</if>
-            <if test="gender != null "> and gender = #{gender}</if>
-            <if test="fieldId != null "> and field_id = #{fieldId}</if>
-            <if test="maxPerson != null "> and max_person = #{maxPerson}</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="startTime != null "> and start_time = #{startTime}</if>
-            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="itemId != null ">and item_id = #{itemId}</if>
+            <if test="gameName != null  and gameName != ''">and game_name like concat('%', #{gameName}, '%')</if>
+            <if test="nextGame != null ">and next_game = #{nextGame}</if>
+            <if test="gender != null ">and gender = #{gender}</if>
+            <if test="fieldId != null ">and field_id = #{fieldId}</if>
+            <if test="maxPerson != null ">and max_person = #{maxPerson}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="startTime != null ">and start_time = #{startTime}</if>
+            <if test="endTime != null ">and end_time = #{endTime}</if>
         </where>
     </select>
 
     <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesSportItemResult">
-        select a.id, a.item_id, a.game_name, a.next_game, a.gender, a.field_id, a.max_person, a.status, a.start_time, a.end_time, a.create_time,
- b.id as sub_id, b.item_name as sub_item_name, b.max_person as sub_max_person, b.type as sub_type, b.unit as sub_unit, b.is_desc as sub_is_desc
+        select a.id,
+               a.item_id,
+               a.game_name,
+               a.next_game,
+               a.gender,
+               a.field_id,
+               a.max_person,
+               a.status,
+               a.start_time,
+               a.end_time,
+               a.create_time,
+               b.id         as sub_id,
+               b.item_name  as sub_item_name,
+               b.max_person as sub_max_person,
+               b.type       as sub_type,
+               b.unit       as sub_unit,
+               b.is_desc    as sub_is_desc
         from sport_games a
-        left join sport_item b on b.item_name = a.id
+                 left join sport_item b on b.item_name = a.id
         where a.id = #{id}
     </select>
 
@@ -101,7 +135,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
             <if test="createTime != null">create_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="itemId != null">#{itemId},</if>
             <if test="gameName != null">#{gameName},</if>
@@ -113,7 +147,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
             <if test="createTime != null">#{createTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSportGames" parameterType="SportGames">
@@ -134,7 +168,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteSportGamesById" parameterType="Long">
-        delete from sport_games where id = #{id}
+        delete
+        from sport_games
+        where id = #{id}
     </delete>
 
     <delete id="deleteSportGamesByIds" parameterType="String">
@@ -152,12 +188,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSportItemByItemName" parameterType="Long">
-        delete from sport_item where item_name = #{itemName}
+        delete
+        from sport_item
+        where item_name = #{itemName}
     </delete>
 
     <insert id="batchSportItem">
         insert into sport_item( id, item_name, max_person, type, unit, is_desc) values
-		<foreach item="item" index="index" collection="list" separator=",">
+        <foreach item="item" index="index" collection="list" separator=",">
             ( #{item.id}, #{item.itemName}, #{item.maxPerson}, #{item.type}, #{item.unit}, #{item.isDesc})
         </foreach>
     </insert>
