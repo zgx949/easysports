@@ -1,24 +1,25 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-<!--      TODO：改为下拉选择比赛-->
       <el-form-item label="比赛" prop="gameId">
-        <el-input
-          v-model="queryParams.gameId"
-          placeholder="请输入比赛"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.gameId" placeholder="请选择比赛" clearable>
+          <el-option
+            v-for="dict in gameDict"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
-<!--      TODO:改为用户名-->
-      <el-form-item label="用户" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      &lt;!&ndash;      TODO:改为用户名&ndash;&gt;-->
+<!--      <el-form-item label="用户" prop="userId">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.userId"-->
+<!--          placeholder="请输入用户"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="场地" prop="fieldId">
         <el-select v-model="queryParams.fieldId" placeholder="请选择场地" clearable>
           <el-option
@@ -39,17 +40,16 @@
           />
         </el-select>
       </el-form-item>
-<!--      <el-form-item label="比赛成绩" prop="score">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.score"-->
-<!--          placeholder="请输入比赛成绩"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      TODO: 改为数字型文本框-->
+      <!--      <el-form-item label="比赛成绩" prop="score">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.score"-->
+      <!--          placeholder="请输入比赛成绩"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item label="比赛积分" prop="points">
-        <el-input
+        <el-input-number
           v-model="queryParams.points"
           placeholder="请输入比赛积分"
           clearable
@@ -79,7 +79,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:registrations:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -90,7 +91,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:registrations:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -101,7 +103,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:registrations:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -111,29 +114,28 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:registrations:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="registrationsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
-<!--      TODO：格式化为比赛名-->
-      <el-table-column label="比赛" align="center" prop="gameId" />
-<!--      TODO：格式化为【学院】姓名-号码牌-->
-      <el-table-column label="用户" align="center" prop="userId" />
-<!--      TODO：格式化为场地名-->
-      <el-table-column label="场地" align="center" prop="fieldId" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="id" align="center" prop="id"/>
+      <!--      TODO：格式化为比赛名-->
+      <el-table-column label="比赛" align="center" prop="game.gameName"/>
+      <el-table-column label="用户" align="center" prop="user.nickName"/>
+      <el-table-column label="场地" align="center" prop="field.name"/>
       <el-table-column label="审核状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sport_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
-<!--      TODO：格式化末尾加入成绩单位-->
-      <el-table-column label="比赛成绩" align="center" prop="score" />
-      <el-table-column label="比赛积分" align="center" prop="points" />
-      <el-table-column label="备注信息(是否破纪录等)" align="center" prop="comment" />
+      <!--      TODO：格式化末尾加入成绩单位-->
+      <el-table-column label="比赛成绩" align="center" prop="score"/>
+      <el-table-column label="比赛积分" align="center" prop="points"/>
+      <el-table-column label="备注信息(是否破纪录等)" align="center" prop="comment"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -142,14 +144,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:registrations:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:registrations:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -165,39 +169,50 @@
     <!-- 添加或修改报名管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-<!--        TODO：下拉选择-->
         <el-form-item label="比赛" prop="gameId">
-          <el-input v-model="form.gameId" placeholder="请输入比赛" />
+          <el-select v-model="form.gameId" placeholder="请选择比赛" clearable>
+            <el-option
+              v-for="dict in gameDict"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
         </el-form-item>
-<!--        TODO：下拉层级选择：学院 -> 姓名-->
-        <el-form-item label="用户" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户" />
+        <!--        TODO：下拉层级选择：学院 -> 姓名-->
+        <el-form-item label="用户ID" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入用户"/>
         </el-form-item>
-<!--        TODO：下拉选择场地-->
         <el-form-item label="场地" prop="fieldId">
-          <el-input v-model="form.fieldId" placeholder="请输入场地" />
+          <el-select v-model="form.fieldId" placeholder="请输入场地" clearable>
+            <el-option
+              v-for="dict in fieldDict"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="审核状态">
           <el-radio-group v-model="form.status">
             <el-radio
               v-for="dict in dict.type.sport_status"
               :key="dict.value"
-:label="dict.value"
-            >{{dict.label}}</el-radio>
+              :label="dict.value"
+            >{{ dict.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="比赛成绩" prop="score">
-<!--          TODO：后面加入一个单位，并采用数值文本框-->
-          <el-input v-model="form.score" placeholder="请输入比赛成绩">
+          <el-input-number v-model="form.score" placeholder="请输入比赛成绩">
             <template #append>成绩单位</template>
-          </el-input>
+          </el-input-number>
         </el-form-item>
-<!--        TODO：采用数值文本框-->
         <el-form-item label="比赛积分" prop="points">
-          <el-input v-model="form.points" placeholder="请输入比赛积分" />
+          <el-input-number v-model="form.points" placeholder="请输入比赛积分"/>
         </el-form-item>
         <el-form-item label="备注信息(是否破纪录等)" prop="comment">
-          <el-input v-model="form.comment" type="textarea" placeholder="请输入备注信息(是否破纪录等)" />
+          <el-input v-model="form.comment" type="textarea" placeholder="请输入备注信息(是否破纪录等)"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -209,8 +224,15 @@
 </template>
 
 <script>
-import { listRegistrations, getRegistrations, delRegistrations, addRegistrations, updateRegistrations } from "@/api/system/registrations";
+import {
+  listRegistrations,
+  getRegistrations,
+  delRegistrations,
+  addRegistrations,
+  updateRegistrations
+} from "@/api/system/registrations";
 import { dictFields } from "@/api/system/fields";
+import { dictGames } from "@/api/system/games";
 
 export default {
   name: "Registrations",
@@ -250,10 +272,12 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       // 场地字典
       fieldDict: [],
+      // 比赛字典
+      gameDict: [],
+
     };
   },
   created() {
@@ -264,6 +288,12 @@ export default {
     getFieldDict() {
       dictFields().then(response => {
         this.fieldDict = response.data;
+      })
+    },
+    /** 查询比赛字典 */
+    getGameDict() {
+      dictGames().then(response => {
+        this.gameDict = response.data;
       })
     },
     /** 场地字典格式化 */
@@ -278,6 +308,7 @@ export default {
     getList() {
       this.loading = true;
       this.getFieldDict();
+      this.getGameDict();
       listRegistrations(this.queryParams).then(response => {
         this.registrationsList = response.rows;
         this.total = response.total;
@@ -318,7 +349,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -360,12 +391,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除报名管理编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除报名管理编号为"' + ids + '"的数据项？').then(function () {
         return delRegistrations(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 查询场地字典
+export function dictGames(query) {
+  return request({
+    url: '/system/games/dict',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询比赛管理列表
 export function listGames(query) {
   return request({

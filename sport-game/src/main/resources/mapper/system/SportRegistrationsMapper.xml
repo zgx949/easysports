@@ -111,22 +111,22 @@
 
     <select id="selectSportRegistrationsById" parameterType="Long" resultMap="SportRegistrationsResult">
         <include refid="selectSportRegistrationsVo"/>
-        where id = #{id}
+        where sr.id = #{id}
     </select>
 
     <insert id="insertSportRegistrations" parameterType="SportRegistrations">
         insert into sport_registrations
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="gameId != null">game_id,</if>
-            <if test="userId != null">user_id,</if>
-            <if test="fieldId != null">field_id,</if>
-            <if test="status != null">status,</if>
-            <if test="score != null">score,</if>
-            <if test="points != null">points,</if>
-            <if test="comment != null">comment,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
+            <if test="id != null">sr.id,</if>
+            <if test="gameId != null">sr.game_id,</if>
+            <if test="userId != null">sr.user_id,</if>
+            <if test="fieldId != null">sr.field_id,</if>
+            <if test="status != null">sr.status,</if>
+            <if test="score != null">sr.score,</if>
+            <if test="points != null">sr.points,</if>
+            <if test="comment != null">sr.comment,</if>
+            <if test="createTime != null">sr.create_time,</if>
+            <if test="updateTime != null">sr.update_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
