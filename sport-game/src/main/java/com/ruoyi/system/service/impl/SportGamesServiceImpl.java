@@ -87,7 +87,7 @@ public class SportGamesServiceImpl implements ISportGamesService
                     .append(sportGames.getGender().equals(0)? "男": "女")
                     .append("子】")
                     .append(itemName)
-                    .append(sportGames.getNextGame() == null || sportGames.getNextGame().equals(0)? "(决赛)":"(预赛)");
+                    .append(sportGames.getNextGame() == null || sportGames.getNextGame().equals(0L)? "(决赛)":"(预赛)");
 
             // 格式化比赛名字
             sportGames.setGameName(gameName.toString());
