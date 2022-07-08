@@ -42,7 +42,8 @@ public class SportRegistrationsController extends BaseController
     public TableDataInfo list(SportRegistrations sportRegistrations)
     {
         // 如果传递的积分参数为0（前端默认传0，不是null，所以会导致查询数据丢失）
-        if (sportRegistrations.getPoints().equals(0)) {
+        Long points = sportRegistrations.getPoints();
+        if (points == null || points.equals(0L)) {
             sportRegistrations.setPoints(null);
         }
         startPage();
