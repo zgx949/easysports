@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SportNums;
+import org.springframework.stereotype.Repository;
 
 /**
  * 号码段管理Mapper接口
@@ -9,6 +10,7 @@ import com.ruoyi.system.domain.SportNums;
  * @author ruoyi
  * @date 2022-07-01
  */
+@Repository
 public interface SportNumsMapper {
     /**
      * 查询号码段管理

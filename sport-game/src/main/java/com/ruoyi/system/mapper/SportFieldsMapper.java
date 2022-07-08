@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.common.core.domain.Dict;
 import com.ruoyi.system.domain.SportFields;
+import org.springframework.stereotype.Repository;
 
 /**
  * 场地管理Mapper接口
@@ -11,6 +12,7 @@ import com.ruoyi.system.domain.SportFields;
  * @author ruoyi
  * @date 2022-06-30
  */
+@Repository
 public interface SportFieldsMapper 
 {
     /**

@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SportRegistrations;
+import org.springframework.stereotype.Repository;
 
 /**
  * 报名管理Mapper接口
@@ -9,6 +10,7 @@ import com.ruoyi.system.domain.SportRegistrations;
  * @author leftHand
  * @date 2022-07-05
  */
+@Repository
 public interface SportRegistrationsMapper
 {
     /**

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.common.core.domain.Dict;
 import com.ruoyi.system.domain.SportItem;
+import org.springframework.stereotype.Repository;
 
 /**
  * 项目管理Mapper接口
@@ -11,6 +12,7 @@ import com.ruoyi.system.domain.SportItem;
  * @author ruoyi
  * @date 2022-06-30
  */
+@Repository
 public interface SportItemMapper 
 {
     /**
