@@ -96,30 +96,40 @@
     </select>
 
     <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesSportItemResult">
-        select a.id,
-               a.item_id,
-               a.game_name,
-               a.next_game,
-               a.gender,
-               a.field_id,
-               a.max_person,
-               a.status,
-               a.start_time,
-               a.end_time,
-               a.create_time,
-               b.id         as sub_id,
-               b.item_name  as sub_item_name,
-               b.max_person as sub_max_person,
-               b.type       as sub_type,
-               b.unit       as sub_unit,
-               b.is_desc    as sub_is_desc
-        from sport_games a
-                 left join sport_item b on b.item_name = a.id
-        where a.id = #{id}
+        <include refid="selectSportGamesVo"></include>
+        <where>
+            <if test="id != null">
+                AND s.id = #{id}
+            </if>
+        </where>
+#         select a.id,
+#                a.item_id,
+#                a.game_name,
+#                a.next_game,
+#                a.gender,
+#                a.field_id,
+#                a.max_person,
+#                a.status,
+#                a.start_time,
+#                a.end_time,
+#                a.create_time,
+#                b.id         as sub_id,
+#                b.item_name  as sub_item_name,
+#                b.max_person as sub_max_person,
+#                b.type       as sub_type,
+#                b.unit       as sub_unit,
+#                b.is_desc    as sub_is_desc
+#         from sport_games a
+#                  left join sport_item b on b.item_name = a.id
+
     </select>
 
     <select id="selectSportGamesDict" resultType="com.ruoyi.common.core.domain.Dict">
-
+        SELECT
+            g.id value,
+            CONCAT('【', IF(g.gender = 1, '女', '男'), '子】', si.item_name, IF(next_game = 0, '决赛', '预赛')) label
+        FROM
+            sport_games g LEFT JOIN sport_item si on g.item_id = si.id
     </select>
 
     <insert id="insertSportGames" parameterType="SportGames" useGeneratedKeys="true" keyProperty="id">

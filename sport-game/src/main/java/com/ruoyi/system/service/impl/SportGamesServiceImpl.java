@@ -34,7 +34,6 @@ public class SportGamesServiceImpl implements ISportGamesService
      */
     @Override
     public List<Dict> selectSportGamesDict() {
-        // TODO: 查询预决赛字典信息
         return sportGamesMapper.selectSportGamesDict();
     }
 

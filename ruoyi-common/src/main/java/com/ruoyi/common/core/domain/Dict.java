@@ -33,4 +33,12 @@ public class Dict {
     public void setValue(int value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "Dict{" +
+                "label='" + label + '\'' +
+                ", value=" + value +
+                '}';
+    }
 }
