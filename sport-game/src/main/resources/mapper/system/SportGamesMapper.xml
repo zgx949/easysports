@@ -102,7 +102,7 @@
         </where>
     </select>
 
-    <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesSportItemResult">
+    <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesResult">
         <include refid="selectSportGamesVo"></include>
         <where>
             <if test="id != null">
