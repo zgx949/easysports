@@ -3,6 +3,7 @@ package com.ruoyi.system.service.impl;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.system.mapper.SportItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class SportGamesServiceImpl implements ISportGamesService
 
     @Autowired
     private SportGamesMapper sportGamesMapper;
+
+    @Autowired
+    private SportItemMapper sportItemMapper;
 
     /**
      * 查询比赛预决赛字典信息
@@ -71,10 +75,31 @@ public class SportGamesServiceImpl implements ISportGamesService
     @Override
     public int insertSportGames(SportGames sportGames)
     {
-        sportGames.setCreateTime(DateUtils.getNowDate());
-        int rows = sportGamesMapper.insertSportGames(sportGames);
-        insertSportItem(sportGames);
-        return rows;
+        // 项目ID不为空
+        Long itemId = sportGames.getItemId();
+        if (itemId != null) {
+
+            SportItem sportItem = sportItemMapper.selectSportItemById(itemId);
+
+            String itemName = sportItem.getItemName();
+
+            StringBuilder gameName = new StringBuilder("【")
+                    .append(sportGames.getGender().equals(0)? "男": "女")
+                    .append("子】")
+                    .append(itemName)
+                    .append(sportGames.getNextGame() == null || sportGames.getNextGame().equals(0)? "(决赛)":"(预赛)");
+
+            // 格式化比赛名字
+            sportGames.setGameName(gameName.toString());
+            // 设置创建时间
+            sportGames.setCreateTime(DateUtils.getNowDate());
+            int rows = sportGamesMapper.insertSportGames(sportGames);
+            insertSportItem(sportGames);
+            return rows;
+        } else {
+            return 0;
+        }
+
     }
 
     /**
