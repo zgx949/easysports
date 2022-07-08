@@ -90,15 +90,15 @@
     <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">
         <include refid="selectSportGamesVo"/>
         <where>
-            <if test="itemId != null ">and item_id = #{itemId}</if>
-            <if test="gameName != null  and gameName != ''">and game_name like concat('%', #{gameName}, '%')</if>
-            <if test="nextGame != null ">and next_game = #{nextGame}</if>
-            <if test="gender != null ">and gender = #{gender}</if>
-            <if test="fieldId != null ">and field_id = #{fieldId}</if>
-            <if test="maxPerson != null ">and max_person = #{maxPerson}</if>
-            <if test="status != null ">and status = #{status}</if>
-            <if test="startTime != null ">and start_time = #{startTime}</if>
-            <if test="endTime != null ">and end_time = #{endTime}</if>
+            <if test="itemId != null ">and s.item_id = #{itemId}</if>
+            <if test="gameName != null  and gameName != ''">and s.game_name like concat('%', #{gameName}, '%')</if>
+            <if test="nextGame != null ">and s.next_game = #{nextGame}</if>
+            <if test="gender != null ">and s.gender = #{gender}</if>
+            <if test="fieldId != null ">and s.field_id = #{fieldId}</if>
+            <if test="maxPerson != null ">and s.max_person = #{maxPerson}</if>
+            <if test="status != null ">and s.status = #{status}</if>
+            <if test="startTime != null ">and s.start_time = #{startTime}</if>
+            <if test="endTime != null ">and s.end_time = #{endTime}</if>
         </where>
     </select>
 
