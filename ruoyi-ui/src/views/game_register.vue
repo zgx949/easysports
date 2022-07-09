@@ -9,26 +9,26 @@
         <el-input v-model="formData.user_id" placeholder="请输入用户名用户名" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="field105">
-        <el-input v-model="formData.field105" placeholder="请输入密码" clearable show-password
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="formData.password" placeholder="请输入密码" clearable show-password
           :style="{width: '95%'}"></el-input>
       </el-form-item>
-      <el-form-item label="学号" prop="field106">
-        <el-input v-model="formData.field106" placeholder="请选择学号" clearable :style="{width: '95%'}">
+      <el-form-item label="学号" prop="idcard">
+        <el-input v-model="formData.idcard" placeholder="请选择学号" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
       <el-form-item label="姓名" prop="name">
         <el-input v-model="formData.name" placeholder="请输入单行文本姓名" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
-      <el-form-item label="学院" prop="field105">
-        <el-select v-model="formData.field105" placeholder="请选择学院" clearable :style="{width: '95%'}">
+      <el-form-item label="学院" prop="institution">
+        <el-select v-model="formData.institution" placeholder="请选择学院" clearable :style="{width: '95%'}">
           <el-option v-for="(item, index) in field105Options" :key="index" :label="item.label"
             :value="item.value" :disabled="item.disabled"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="比赛项目" prop="game">
-        <el-select v-model="formData.game" placeholder="请选择比赛项目" clearable :style="{width: '95%'}">
+      <el-form-item label="比赛项目" prop="game_id">
+        <el-select v-model="formData.game_id" placeholder="请选择比赛项目" clearable :style="{width: '95%'}">
           <el-option v-for="(item, index) in gameOptions" :key="index" :label="item.label" :value="item.value"
             :disabled="item.disabled"></el-option>
         </el-select>
@@ -48,11 +48,11 @@ export default {
     return {
       formData: {
         user_id: 'admin',
-        field105: 'admin123',
-        field106: undefined,
+        password: 'admin123',
+        idcard: undefined,
         name: undefined,
-        field105: undefined,
-        game: 1,
+        institution: undefined,
+        game_id: 1,
       },
       rules: {
         user_id: [{
@@ -60,12 +60,12 @@ export default {
           message: '请输入用户名用户名',
           trigger: 'blur'
         }],
-        field105: [{
+        password: [{
           required: true,
           message: '请输入密码',
           trigger: 'blur'
         }],
-        field106: [{
+        idcard: [{
           required: true,
           message: '请选择学号',
           trigger: 'blur'
@@ -75,12 +75,12 @@ export default {
           message: '请输入单行文本姓名',
           trigger: 'blur'
         }],
-        field105: [{
+        institution: [{
           required: true,
           message: '请选择学院',
           trigger: 'change'
         }],
-        game: [{
+        game_id: [{
           required: true,
           message: '请选择比赛项目',
           trigger: 'change'
@@ -111,6 +111,8 @@ export default {
       this.$refs['elForm'].validate(valid => {
         if (!valid) return
         // TODO 提交表单
+        alert("提交成功！");
+        console.log(this.formData);
       })
     },
     resetForm() {
