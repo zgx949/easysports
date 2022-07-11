@@ -93,6 +93,11 @@ public class SportGamesServiceImpl implements ISportGamesService
             sportGames.setGameName(gameName.toString());
             // 设置创建时间
             sportGames.setCreateTime(DateUtils.getNowDate());
+
+            // 决赛ID为空, 默认为决赛0
+            if (sportGames.getNextGame() == null) {
+                sportGames.setNextGame(0L);
+            }
             int rows = sportGamesMapper.insertSportGames(sportGames);
             insertSportItem(sportGames);
             return rows;

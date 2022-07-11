@@ -38,21 +38,7 @@
             :value="dict.value"
           />
         </el-select>
-<!--        <el-input-->
-<!--          v-model="queryParams.fieldId"-->
-<!--          placeholder="请选择场地"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
       </el-form-item>
-<!--      <el-form-item label="限制人数" prop="maxPerson">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.maxPerson"-->
-<!--          placeholder="请输入限制人数"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
@@ -136,7 +122,7 @@
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="项目" align="center" prop="itemId" :formatter="itemFormatter" />
       <el-table-column label="比赛名" align="center" prop="gameName" />
-      <el-table-column label="决赛" align="center" prop="nextGame" />
+      <el-table-column label="决赛编码" align="center" prop="nextGame" :formatter="(row)=>{return row.nextGame === 0 || row.nextGame === 0? '无': row.nextGame}"/>
       <el-table-column label="性别" align="center" prop="gender">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.gender"/>
@@ -199,13 +185,21 @@
               :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
-<!--          <el-input v-model="form.itemId" placeholder="请输入项目" />-->
         </el-form-item>
         <el-form-item label="比赛名" prop="gameName">
           <el-input v-model="form.gameName" placeholder="请输入比赛名" />
         </el-form-item>
         <el-form-item label="决赛" prop="nextGame">
-          <el-input v-model="form.nextGame" placeholder="请输入决赛" />
+<!--          TODO: 下拉选择-->
+          <el-select v-model="form.nextGame" placeholder="请选择项目">
+
+          <el-option
+            v-for="dict in gameDict"
+            :key="dict.value"
+            :label="dict.label"
+            :value="parseInt(dict.value)"
+          ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="性别" prop="gender">
           <el-select v-model="form.gender" placeholder="请选择性别">
@@ -244,7 +238,7 @@
           <el-date-picker clearable
                           v-model="form.startTime"
                           type="datetime"
-                          value-format="yyyy-MM-dd h:m:s"
+                          value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="请选择开始时间">
           </el-date-picker>
         </el-form-item>
@@ -252,7 +246,7 @@
           <el-date-picker clearable
                           v-model="form.endTime"
                           type="datetime"
-                          value-format="yyyy-MM-dd h:m:s"
+                          value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="请选择结束时间">
           </el-date-picker>
         </el-form-item>
@@ -316,6 +310,7 @@
 import { listGames, getGames, delGames, addGames, updateGames } from "@/api/system/games";
 import { dictItem } from "@/api/system/item";
 import { dictFields } from "@/api/system/fields";
+import { dictGames } from "@/api/system/games";
 
 export default {
   name: "Games",
@@ -367,10 +362,16 @@ export default {
       itemDict: [],
       // 场地字典
       fieldDict: [],
+      // 比赛字典
+      gameDict: [],
     };
   },
   created() {
     this.getList();
+    /** 查询比赛字典 */
+    dictGames().then(res => {
+      this.gameDict = res.data;
+    })
   },
   methods: {
     /** 查询项目字典 */

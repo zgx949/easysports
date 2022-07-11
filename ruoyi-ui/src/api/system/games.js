@@ -1,11 +1,10 @@
 import request from '@/utils/request'
 
-// 查询场地字典
-export function dictGames(query) {
+// 查询比赛字典
+export function dictGames() {
   return request({
     url: '/system/games/dict',
     method: 'get',
-    params: query
   })
 }
 
