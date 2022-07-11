@@ -85,6 +85,8 @@
                     )                   f ON s.field_id     = f.id
                  LEFT JOIN sport_item   i ON s.item_id      = i.id
                  LEFT JOIN sport_games  g ON s.next_game    = g.id
+        ORDER BY
+            s.start_time
     </sql>
 
     <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">
