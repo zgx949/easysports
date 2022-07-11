@@ -85,8 +85,6 @@
                     )                   f ON s.field_id     = f.id
                  LEFT JOIN sport_item   i ON s.item_id      = i.id
                  LEFT JOIN sport_games  g ON s.next_game    = g.id
-        ORDER BY
-            s.start_time
     </sql>
 
     <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">
@@ -102,6 +100,8 @@
             <if test="startTime != null ">and s.start_time = #{startTime}</if>
             <if test="endTime != null ">and s.end_time = #{endTime}</if>
         </where>
+        ORDER BY
+            s.start_time
     </select>
 
     <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesResult">
@@ -111,26 +111,6 @@
                 AND s.id = #{id}
             </if>
         </where>
-        # select a.id,
-        # a.item_id,
-        # a.game_name,
-        # a.next_game,
-        # a.gender,
-        # a.field_id,
-        # a.max_person,
-        # a.status,
-        # a.start_time,
-        # a.end_time,
-        # a.create_time,
-        # b.id as sub_id,
-        # b.item_name as sub_item_name,
-        # b.max_person as sub_max_person,
-        # b.type as sub_type,
-        # b.unit as sub_unit,
-        # b.is_desc as sub_is_desc
-        # from sport_games a
-        # left join sport_item b on b.item_name = a.id
-
     </select>
 
     <select id="selectSportGamesDict" resultType="com.ruoyi.common.core.domain.Dict">
