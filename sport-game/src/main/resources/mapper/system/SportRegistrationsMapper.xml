@@ -15,7 +15,6 @@
         <result property="comment"    column="comment"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
-<!--        TODO: field name did not show-->
         <association property="game"    javaType="SportGames">
             <id     property="id" column="game_id"/>
             <result property="gameName" column="game_name"/>
@@ -99,13 +98,13 @@
     <select id="selectSportRegistrationsList" parameterType="SportRegistrations" resultMap="SportRegistrationsResult">
         <include refid="selectSportRegistrationsVo"/>
         <where>
-            <if test="gameId != null "> and game_id = #{gameId}</if>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="fieldId != null "> and field_id = #{fieldId}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
-            <if test="score != null "> and score = #{score}</if>
-            <if test="points != null "> and points = #{points}</if>
-            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+            <if test="gameId != null "> and sr.game_id = #{gameId}</if>
+            <if test="userId != null "> and sr.user_id = #{userId}</if>
+            <if test="fieldId != null "> and sr.field_id = #{fieldId}</if>
+            <if test="status != null  and status != ''"> and sr.status = #{status}</if>
+            <if test="score != null "> and sr.score = #{score}</if>
+            <if test="points != null "> and sr.points = #{points}</if>
+            <if test="comment != null  and comment != ''"> and sr.comment = #{comment}</if>
         </where>
     </select>
 
