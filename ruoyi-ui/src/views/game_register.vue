@@ -10,11 +10,11 @@
         </el-input>
       </el-form-item>
       <el-form-item label="密码" prop="field105">
-        <el-input v-model="formData.field105" placeholder="请输入密码" clearable show-password
+        <el-input v-model="formData.password" placeholder="请输入密码" clearable show-password
           :style="{width: '95%'}"></el-input>
       </el-form-item>
       <el-form-item label="学号" prop="field106">
-        <el-input v-model="formData.field106" placeholder="请选择学号" clearable :style="{width: '95%'}">
+        <el-input v-model="formData.idcard" placeholder="请选择学号" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
       <el-form-item label="姓名" prop="name">
@@ -22,8 +22,8 @@
         </el-input>
       </el-form-item>
       <el-form-item label="学院" prop="field105">
-        <el-select v-model="formData.field105" placeholder="请选择学院" clearable :style="{width: '95%'}">
-          <el-option v-for="(item, index) in field105Options" :key="index" :label="item.label"
+        <el-select v-model="formData.institution" placeholder="请选择学院" clearable :style="{width: '95%'}">
+          <el-option v-for="(item, index) in institutionOptions" :key="index" :label="item.label"
             :value="item.value" :disabled="item.disabled"></el-option>
         </el-select>
       </el-form-item>
@@ -48,10 +48,10 @@ export default {
     return {
       formData: {
         user_id: 'admin',
-        field105: 'admin123',
-        field106: undefined,
+        password: 'admin123',
+        idcard: undefined,
         name: undefined,
-        field105: undefined,
+        institution: undefined,
         game: 1,
       },
       rules: {
@@ -60,12 +60,12 @@ export default {
           message: '请输入用户名用户名',
           trigger: 'blur'
         }],
-        field105: [{
+        password: [{
           required: true,
           message: '请输入密码',
           trigger: 'blur'
         }],
-        field106: [{
+        idcard: [{
           required: true,
           message: '请选择学号',
           trigger: 'blur'
@@ -75,7 +75,7 @@ export default {
           message: '请输入单行文本姓名',
           trigger: 'blur'
         }],
-        field105: [{
+        institution: [{
           required: true,
           message: '请选择学院',
           trigger: 'change'
@@ -86,7 +86,7 @@ export default {
           trigger: 'change'
         }],
       },
-      field105Options: [{
+      institutionOptions: [{
         "label": "选项一",
         "value": 1
       }, {
@@ -121,6 +121,7 @@ export default {
 
 </script>
 <style scoped>
+/*TODO: 编译后出现flex不生效问题*/
 .header {
   padding: 1rem;
   display: flex;
