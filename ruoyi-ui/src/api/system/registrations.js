@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+// TODO: 报名接口
 
 // 查询报名管理列表
 export function listRegistrations(query) {

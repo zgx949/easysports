@@ -1,6 +1,8 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,18 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 {
     @Autowired
     private SportRegistrationsMapper sportRegistrationsMapper;
+
+    /**
+     * 用户报名项目
+     *
+     * @param sportRegistrations 报名管理
+     * @return 结果
+     */
+    @Override
+    public int userInsertSportRegistrations(Map<String, String> sportRegistrations) {
+        // TODO:用户报名项目
+        return 0;
+    }
 
     /**
      * 查询报名管理

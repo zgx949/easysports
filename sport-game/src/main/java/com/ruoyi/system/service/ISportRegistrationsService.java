@@ -1,6 +1,8 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.system.domain.SportRegistrations;
 
 /**
@@ -11,6 +13,14 @@ import com.ruoyi.system.domain.SportRegistrations;
  */
 public interface ISportRegistrationsService
 {
+    /**
+     * 用户报名项目
+     *
+     * @param sportRegistrations 报名管理
+     * @return 结果
+     */
+    public int userInsertSportRegistrations(Map<String, String> sportRegistrations);
+
     /**
      * 查询报名管理
      *

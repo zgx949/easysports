@@ -1,6 +1,7 @@
 package com.ruoyi.system.controller;
 
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,16 @@ public class SportRegistrationsController extends BaseController
 {
     @Autowired
     private ISportRegistrationsService sportRegistrationsService;
+
+    /**
+     * 新增报名管理
+     */
+    @Log(title = "用户报名", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult register(@RequestBody Map<String, String> sportRegistrations)
+    {
+        return toAjax(sportRegistrationsService.userInsertSportRegistrations(sportRegistrations));
+    }
 
     /**
      * 查询报名管理列表

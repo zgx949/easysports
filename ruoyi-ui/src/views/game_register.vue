@@ -21,8 +21,8 @@
         <el-input v-model="formData.name" placeholder="请输入单行文本姓名" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
-      <el-form-item label="比赛" prop="game">
-        <el-select v-model="formData.game" placeholder="请选择比赛项目" clearable :style="{width: '95%'}">
+      <el-form-item label="比赛" prop="gameId">
+        <el-select v-model="formData.gameId" placeholder="请选择比赛项目" clearable :style="{width: '95%'}">
           <el-option v-for="(item, index) in gameOptions" :key="index" :label="item.label" :value="item.value"
             :disabled="item.disabled"></el-option>
         </el-select>
@@ -48,7 +48,7 @@ export default {
         password: undefined,
         idcard: undefined,
         name: undefined,
-        game: undefined,
+        gameId: undefined,
       },
       rules: {
         user_id: [{
@@ -71,7 +71,7 @@ export default {
           message: '请输入单行文本姓名',
           trigger: 'blur'
         }],
-        game: [{
+        gameId: [{
           required: true,
           message: '请选择比赛项目',
           trigger: 'change'
@@ -98,6 +98,8 @@ export default {
       this.$refs['elForm'].validate(valid => {
         if (!valid) return
         // TODO 提交表单
+        console.log(this.formData);
+
       })
     },
     resetForm() {
