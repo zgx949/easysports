@@ -1,5 +1,13 @@
 import request from '@/utils/request'
-// TODO: 报名接口
+
+// 用户报名接口
+export function userRegistrations(data) {
+  return request({
+    url: '/system/registrations',
+    method: 'post',
+    data: data
+  })
+}
 
 // 查询报名管理列表
 export function listRegistrations(query) {

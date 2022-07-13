@@ -37,6 +37,7 @@
 <script>
 import { dictGamesRegister } from "@/api/system/games";
 import { getUserProfile } from "@/api/system/user";
+import { userRegistrations } from "@/api/system/registrations";
 
 export default {
   components: {},
@@ -98,7 +99,9 @@ export default {
       this.$refs['elForm'].validate(valid => {
         if (!valid) return
         // TODO 提交表单
-        console.log(this.formData);
+        userRegistrations(this.formData).then(res => {
+
+        })
 
       })
     },
