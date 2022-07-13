@@ -34,7 +34,15 @@ public class SportGamesController extends BaseController
     @Autowired
     private ISportGamesService sportGamesService;
 
-
+    /**
+     * 获取报名比赛的必要信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:query')")
+    @GetMapping(value = "/register")
+    public AjaxResult getRegisterInfo()
+    {
+        return AjaxResult.success(sportGamesService.selectSportGamesDict());
+    }
 
     /**
      * 获取比赛字典信息

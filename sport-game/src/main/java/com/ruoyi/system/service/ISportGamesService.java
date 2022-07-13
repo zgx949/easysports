@@ -14,6 +14,13 @@ import com.ruoyi.system.domain.SportGames;
 public interface ISportGamesService
 {
     /**
+     * 查询比赛预决赛字典信息
+     *
+     * @return 比赛管理
+     */
+    public List<Dict> selectSportGamesRegisterDict();
+
+    /**
      * 查询比赛管理
      *
      * @param id 比赛管理主键

@@ -32,6 +32,16 @@ public class SportGamesServiceImpl implements ISportGamesService
     private SportItemMapper sportItemMapper;
 
     /**
+     * 获取报名比赛的必要信息
+     *
+     * @return 比赛管理
+     */
+    @Override
+    public List<Dict> selectSportGamesRegisterDict() {
+        return sportGamesMapper.selectSportGamesRegisterDict();
+    }
+
+    /**
      * 查询比赛预决赛字典信息
      *
      * @return 比赛管理

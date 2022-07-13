@@ -17,6 +17,12 @@ import org.springframework.stereotype.Repository;
 public interface SportGamesMapper
 {
     /**
+     * 获取报名比赛的必要信息
+     *
+     * @return 结果
+     */
+    public List<Dict> selectSportGamesRegisterDict();
+    /**
      * 查询比赛管理
      *
      * @param id 比赛管理主键

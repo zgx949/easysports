@@ -100,6 +100,20 @@
         on g.item_id = si.id
     </select>
 
+    <!--  查询预赛信息  -->
+    <select id="selectSportGamesRegisterDict" resultType="com.ruoyi.common.core.domain.Dict">
+        SELECT g.id value,
+               CONCAT('【', IF(g.gender = 1, '女', '男'), '子】', si.item_name, IF(next_game = 0, '决赛', '预赛')) label
+        FROM
+            sport_games g LEFT JOIN sport_item si
+                                    on g.item_id = si.id
+#         where
+#               g.next_game != 0 AND
+#               g.next_game IS NOT NULL
+        ORDER BY
+              label DESC
+    </select>
+
     <insert id="insertSportGames" parameterType="SportGames" useGeneratedKeys="true" keyProperty="id">
         insert into sport_games
         <trim prefix="(" suffix=")" suffixOverrides=",">

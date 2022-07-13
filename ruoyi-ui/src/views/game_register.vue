@@ -9,11 +9,11 @@
         <el-input v-model="formData.user_id" placeholder="请输入用户名用户名" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="field105">
+      <el-form-item label="密码" prop="password">
         <el-input v-model="formData.password" placeholder="请输入密码" clearable show-password
           :style="{width: '95%'}"></el-input>
       </el-form-item>
-      <el-form-item label="学号" prop="field106">
+      <el-form-item label="学号" prop="idcard">
         <el-input v-model="formData.idcard" placeholder="请选择学号" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
@@ -21,12 +21,12 @@
         <el-input v-model="formData.name" placeholder="请输入单行文本姓名" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
-      <el-form-item label="学院" prop="field105">
-        <el-select v-model="formData.institution" placeholder="请选择学院" clearable :style="{width: '95%'}">
-          <el-option v-for="(item, index) in institutionOptions" :key="index" :label="item.label"
-            :value="item.value" :disabled="item.disabled"></el-option>
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="学院" prop="field105">-->
+<!--        <el-select v-model="formData.institution" placeholder="请选择学院" clearable :style="{width: '95%'}">-->
+<!--          <el-option v-for="(item, index) in institutionOptions" :key="index" :label="item.label"-->
+<!--            :value="item.value" :disabled="item.disabled"></el-option>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item label="比赛项目" prop="game">
         <el-select v-model="formData.game" placeholder="请选择比赛项目" clearable :style="{width: '95%'}">
           <el-option v-for="(item, index) in gameOptions" :key="index" :label="item.label" :value="item.value"
@@ -41,6 +41,7 @@
   </div>
 </template>
 <script>
+import {dictGames} from "@/api/system/games";
 export default {
   components: {},
   props: [],
@@ -51,7 +52,7 @@ export default {
         password: 'admin123',
         idcard: undefined,
         name: undefined,
-        institution: undefined,
+        // institution: undefined,
         game: 1,
       },
       rules: {
@@ -75,11 +76,11 @@ export default {
           message: '请输入单行文本姓名',
           trigger: 'blur'
         }],
-        institution: [{
-          required: true,
-          message: '请选择学院',
-          trigger: 'change'
-        }],
+        // institution: [{
+        //   required: true,
+        //   message: '请选择学院',
+        //   trigger: 'change'
+        // }],
         game: [{
           required: true,
           message: '请选择比赛项目',
@@ -105,7 +106,11 @@ export default {
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    dictGames().then(res => {
+      this.gameOptions = res.data;
+    })
+  },
   methods: {
     submitForm() {
       this.$refs['elForm'].validate(valid => {
