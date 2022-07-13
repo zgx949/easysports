@@ -3,13 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SportGamesMapper">
-    <!--    <resultMap type="SportFields" id="SportFieldsResult">-->
-    <!--        <id property="id"    column="id"    />-->
-    <!--        <result property="name"    column="name"    />-->
-    <!--&lt;!&ndash;        <result property="maxPerson"    column="max_person"    />&ndash;&gt;-->
-    <!--        <result property="parentId"    column="parent_id"    />-->
-    <!--    </resultMap>-->
-
     <resultMap type="SportGames" id="SportGamesResult">
         <result property="id" column="id"/>
         <result property="gameName" column="game_name"/>
@@ -36,20 +29,6 @@
             <result property="unit" column="item_unit"></result>
             <result property="isDesc" column="item_sort"></result>
         </association>
-    </resultMap>
-
-    <resultMap id="SportGamesSportItemResult" type="SportGames" extends="SportGamesResult">
-        <collection property="sportItemList" notNullColumn="sub_id" javaType="java.util.List"
-                    resultMap="SportItemResult"/>
-    </resultMap>
-
-    <resultMap type="SportItem" id="SportItemResult">
-        <result property="id" column="sub_id"/>
-        <result property="itemName" column="sub_item_name"/>
-        <result property="maxPerson" column="sub_max_person"/>
-        <result property="type" column="sub_type"/>
-        <result property="unit" column="sub_unit"/>
-        <result property="isDesc" column="sub_is_desc"/>
     </resultMap>
 
     <sql id="selectSportGamesVo">
