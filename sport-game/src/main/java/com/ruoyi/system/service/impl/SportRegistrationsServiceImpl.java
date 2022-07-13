@@ -31,6 +31,15 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     @Override
     public int userInsertSportRegistrations(Map<String, String> sportRegistrations) {
         // TODO:用户报名项目
+        // 学号
+        Long idcard = Long.valueOf(sportRegistrations.get("idcard"));
+        // 姓名
+        String name = sportRegistrations.get("name");
+        // 比赛ID
+        Long gameId = Long.valueOf(sportRegistrations.get("gameId"));
+        // 密码
+        String passwd = sportRegistrations.get("password");
+
         return 0;
     }
 
