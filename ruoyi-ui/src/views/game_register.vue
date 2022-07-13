@@ -36,17 +36,18 @@
 </template>
 <script>
 import { dictGamesRegister } from "@/api/system/games";
+import { getUserProfile } from "@/api/system/user";
+
 export default {
   components: {},
   props: [],
   data() {
     return {
       formData: {
-        user_id: 'admin',
-        password: 'admin123',
+        user_id: undefined,
+        password: undefined,
         idcard: undefined,
         name: undefined,
-        // institution: undefined,
         game: undefined,
       },
       rules: {
@@ -83,6 +84,11 @@ export default {
   watch: {},
   created() {},
   mounted() {
+    // 获取用户信息
+    getUserProfile().then(res => {
+      this.formData.user_id = res.data.userName;
+    });
+
     dictGamesRegister().then(res => {
       this.gameOptions = res.data;
     })
