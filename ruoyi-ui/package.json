@@ -1,8 +1,8 @@
 {
-  "name": "ruoyi",
+  "name": "easysport",
   "version": "3.8.3",
-  "description": "若依管理系统",
-  "author": "若依",
+  "description": "EasySport管理系统",
+  "author": "左手",
   "license": "MIT",
   "scripts": {
     "dev": "vue-cli-service serve",
