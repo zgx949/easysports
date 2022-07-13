@@ -39,7 +39,7 @@ public class SportRegistrationsController extends BaseController
      * 新增报名管理
      */
     @Log(title = "用户报名", businessType = BusinessType.INSERT)
-    @PostMapping
+    @PostMapping("/register")
     public AjaxResult register(@RequestBody Map<String, String> sportRegistrations)
     {
         return toAjax(sportRegistrationsService.userInsertSportRegistrations(sportRegistrations));
