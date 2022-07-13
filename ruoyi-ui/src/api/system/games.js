@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// 查询可报名比赛字典
+export function dictGamesRegister() {
+  return request({
+    url: '/system/games/register',
+    method: 'get',
+  })
+}
+
 // 查询比赛字典
 export function dictGames() {
   return request({

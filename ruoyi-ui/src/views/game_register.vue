@@ -21,13 +21,7 @@
         <el-input v-model="formData.name" placeholder="请输入单行文本姓名" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
-<!--      <el-form-item label="学院" prop="field105">-->
-<!--        <el-select v-model="formData.institution" placeholder="请选择学院" clearable :style="{width: '95%'}">-->
-<!--          <el-option v-for="(item, index) in institutionOptions" :key="index" :label="item.label"-->
-<!--            :value="item.value" :disabled="item.disabled"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-      <el-form-item label="比赛项目" prop="game">
+      <el-form-item label="比赛" prop="game">
         <el-select v-model="formData.game" placeholder="请选择比赛项目" clearable :style="{width: '95%'}">
           <el-option v-for="(item, index) in gameOptions" :key="index" :label="item.label" :value="item.value"
             :disabled="item.disabled"></el-option>
@@ -41,7 +35,7 @@
   </div>
 </template>
 <script>
-import {dictGames} from "@/api/system/games";
+import { dictGamesRegister } from "@/api/system/games";
 export default {
   components: {},
   props: [],
@@ -53,7 +47,7 @@ export default {
         idcard: undefined,
         name: undefined,
         // institution: undefined,
-        game: 1,
+        game: undefined,
       },
       rules: {
         user_id: [{
@@ -76,38 +70,20 @@ export default {
           message: '请输入单行文本姓名',
           trigger: 'blur'
         }],
-        // institution: [{
-        //   required: true,
-        //   message: '请选择学院',
-        //   trigger: 'change'
-        // }],
         game: [{
           required: true,
           message: '请选择比赛项目',
           trigger: 'change'
         }],
       },
-      institutionOptions: [{
-        "label": "选项一",
-        "value": 1
-      }, {
-        "label": "选项二",
-        "value": 2
-      }],
-      gameOptions: [{
-        "label": "选项一",
-        "value": 1
-      }, {
-        "label": "选项二",
-        "value": 2
-      }],
+      gameOptions: [],
     }
   },
   computed: {},
   watch: {},
   created() {},
   mounted() {
-    dictGames().then(res => {
+    dictGamesRegister().then(res => {
       this.gameOptions = res.data;
     })
   },

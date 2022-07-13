@@ -41,7 +41,7 @@ public class SportGamesController extends BaseController
     @GetMapping(value = "/register")
     public AjaxResult getRegisterInfo()
     {
-        return AjaxResult.success(sportGamesService.selectSportGamesDict());
+        return AjaxResult.success(sportGamesService.selectSportGamesRegisterDict());
     }
 
     /**
