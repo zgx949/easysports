@@ -2,6 +2,7 @@
 # 选择构建用基础镜像。如需更换，请到[dockerhub官方仓库](https://hub.docker.com/_/java?tab=tags)自行选择后替换。
 FROM maven:3.6.3-jdk-8-slim as build
 
+
 # 指定构建过程中的工作目录
 WORKDIR /app
 
@@ -15,6 +16,7 @@ COPY settings.xml pom.xml /app/
 # 自定义settings.xml, 选用国内镜像源以提高下载速度
 RUN mvn -s /app/settings.xml -f /app/pom.xml clean package -Dmaven.test.skip=true
 #RUN mvn clean package -Dmaven.test.skip=true
+
 # 选择运行时基础镜像
 FROM alpine:3.13
 
@@ -36,6 +38,7 @@ WORKDIR /app
 # 将构建产物jar包拷贝到运行时目录中
 COPY --from=build /app/ruoyi-admin/target/ruoyi-admin.jar .
 
+
 # 暴露端口
 # 此处端口必须与「服务设置」-「流水线」以及「手动上传代码包」部署时填写的端口一致，否则会部署失败。
 EXPOSE 80
@@ -44,3 +47,4 @@ EXPOSE 80
 # 写多行独立的CMD命令是错误写法！只有最后一行CMD命令会被执行，之前的都会被忽略，导致业务报错。
 # 请参考[Docker官方文档之CMD命令](https://docs.docker.com/engine/reference/builder/#cmd)
 CMD ["java", "-jar", "/app/ruoyi-admin.jar"]
+
