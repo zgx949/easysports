@@ -3,10 +3,6 @@ name: pipeline-20220714
 displayName: 打包
 triggers:
   trigger: auto
-  push:
-    branches:
-      prefix:
-        - pack
 stages:
   - name: stage-98cacc8c
     displayName: 打包maven
