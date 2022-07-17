@@ -38,6 +38,7 @@ logging:
   level:
     com.ruoyi: debug
     org.springframework: warn
+  config: classpath:logback/logback-${spring.profiles.active}.xml
 
 # Spring配置
 spring:
@@ -100,3 +101,4 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
