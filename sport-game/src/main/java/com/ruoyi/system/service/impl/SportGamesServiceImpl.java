@@ -127,8 +127,8 @@ public class SportGamesServiceImpl implements ISportGamesService
     @Override
     public int updateSportGames(SportGames sportGames)
     {
-        sportGamesMapper.deleteSportItemByItemName(sportGames.getId());
-        insertSportItem(sportGames);
+//        sportGamesMapper.deleteSportItemByItemName(sportGames.getId());
+//        insertSportItem(sportGames);
         return sportGamesMapper.updateSportGames(sportGames);
     }
 
