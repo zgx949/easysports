@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FitnessTestGradeMapper">
+    
+    <resultMap type="FitnessTestGrade" id="FitnessTestGradeResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="ftaId"    column="fta_id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="score"    column="score"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectFitnessTestGradeVo">
+        select id, user_id, fta_id, item_id, score, remark, create_time from fitness_test_grade
+    </sql>
+
+    <select id="selectFitnessTestGradeList" parameterType="FitnessTestGrade" resultMap="FitnessTestGradeResult">
+        <include refid="selectFitnessTestGradeVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="ftaId != null "> and fta_id = #{ftaId}</if>
+            <if test="itemId != null "> and item_id = #{itemId}</if>
+            <if test="score != null "> and score = #{score}</if>
+        </where>
+    </select>
+    
+    <select id="selectFitnessTestGradeById" parameterType="Long" resultMap="FitnessTestGradeResult">
+        <include refid="selectFitnessTestGradeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFitnessTestGrade" parameterType="FitnessTestGrade">
+        insert into fitness_test_grade
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="ftaId != null">fta_id,</if>
+            <if test="itemId != null">item_id,</if>
+            <if test="score != null">score,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="ftaId != null">#{ftaId},</if>
+            <if test="itemId != null">#{itemId},</if>
+            <if test="score != null">#{score},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFitnessTestGrade" parameterType="FitnessTestGrade">
+        update fitness_test_grade
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="ftaId != null">fta_id = #{ftaId},</if>
+            <if test="itemId != null">item_id = #{itemId},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFitnessTestGradeById" parameterType="Long">
+        delete from fitness_test_grade where id = #{id}
+    </delete>
+
+    <delete id="deleteFitnessTestGradeByIds" parameterType="String">
+        delete from fitness_test_grade where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
