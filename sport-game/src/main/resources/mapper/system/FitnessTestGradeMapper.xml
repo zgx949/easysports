@@ -11,11 +11,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="itemId"    column="item_id"    />
         <result property="score"    column="score"    />
         <result property="remark"    column="remark"    />
+        <result property="createUid"    column="create_uid"    />
         <result property="createTime"    column="create_time"    />
+        <result property="updateUid"    column="update_uid"    />
+        <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectFitnessTestGradeVo">
-        select id, user_id, fta_id, item_id, score, remark, create_time from fitness_test_grade
+        select id, user_id, fta_id, item_id, score, remark, create_uid, create_time, update_uid, update_time from fitness_test_grade
     </sql>
 
     <select id="selectFitnessTestGradeList" parameterType="FitnessTestGrade" resultMap="FitnessTestGradeResult">
@@ -25,6 +28,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="ftaId != null "> and fta_id = #{ftaId}</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
             <if test="score != null "> and score = #{score}</if>
+            <if test="createUid != null "> and create_uid = #{createUid}</if>
+            <if test="updateUid != null "> and update_uid = #{updateUid}</if>
         </where>
     </select>
     
@@ -42,7 +47,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="itemId != null">item_id,</if>
             <if test="score != null">score,</if>
             <if test="remark != null">remark,</if>
+            <if test="createUid != null">create_uid,</if>
             <if test="createTime != null">create_time,</if>
+            <if test="updateUid != null">update_uid,</if>
+            <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -51,7 +59,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="itemId != null">#{itemId},</if>
             <if test="score != null">#{score},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="createUid != null">#{createUid},</if>
             <if test="createTime != null">#{createTime},</if>
+            <if test="updateUid != null">#{updateUid},</if>
+            <if test="updateTime != null">#{updateTime},</if>
          </trim>
     </insert>
 
@@ -63,7 +74,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="itemId != null">item_id = #{itemId},</if>
             <if test="score != null">score = #{score},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="createUid != null">create_uid = #{createUid},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUid != null">update_uid = #{updateUid},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where id = #{id}
     </update>

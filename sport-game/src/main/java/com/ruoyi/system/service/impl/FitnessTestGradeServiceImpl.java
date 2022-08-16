@@ -66,6 +66,7 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
     @Override
     public int updateFitnessTestGrade(FitnessTestGrade fitnessTestGrade)
     {
+        fitnessTestGrade.setUpdateTime(DateUtils.getNowDate());
         return fitnessTestGradeMapper.updateFitnessTestGrade(fitnessTestGrade);
     }
 

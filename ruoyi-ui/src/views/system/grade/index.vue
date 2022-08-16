@@ -9,18 +9,20 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="体测活动" prop="ftaId">
+<!--      TODO: 下拉选择-->
+      <el-form-item label="体测活动id" prop="ftaId">
         <el-input
           v-model="queryParams.ftaId"
-          placeholder="请输入体测活动"
+          placeholder="请输入体测活动id"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="项目" prop="itemId">
+<!--      TODO: 下拉选择-->
+      <el-form-item label="项目id" prop="itemId">
         <el-input
           v-model="queryParams.itemId"
-          placeholder="请输入项目"
+          placeholder="请输入项目id"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -29,6 +31,22 @@
         <el-input
           v-model="queryParams.score"
           placeholder="请输入成绩"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="创建人ID" prop="createUid">
+        <el-input
+          v-model="queryParams.createUid"
+          placeholder="请输入创建人"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="修改人ID" prop="updateUid">
+        <el-input
+          v-model="queryParams.updateUid"
+          placeholder="请输入最后修改的人"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -88,11 +106,13 @@
     <el-table v-loading="loading" :data="gradeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="用户" align="center" prop="userId" />
-      <el-table-column label="体测活动" align="center" prop="ftaId" />
-      <el-table-column label="项目" align="center" prop="itemId" />
+      <el-table-column label="用户ID" align="center" prop="userId" />
+      <el-table-column label="活动" align="center" prop="ftaId" />
+      <el-table-column label="项目id" align="center" prop="itemId" />
       <el-table-column label="成绩" align="center" prop="score" />
       <el-table-column label="备注信息" align="center" prop="remark" />
+      <el-table-column label="创建人" align="center" prop="createUid" />
+      <el-table-column label="最后修改的人" align="center" prop="updateUid" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -127,17 +147,23 @@
         <el-form-item label="用户id" prop="userId">
           <el-input v-model="form.userId" placeholder="请输入用户id" />
         </el-form-item>
-        <el-form-item label="体测活动" prop="ftaId">
-          <el-input v-model="form.ftaId" placeholder="请输入体测活动" />
+        <el-form-item label="体测活动id" prop="ftaId">
+          <el-input v-model="form.ftaId" placeholder="请输入体测活动id" />
         </el-form-item>
-        <el-form-item label="项目" prop="itemId">
-          <el-input v-model="form.itemId" placeholder="请输入项目" />
+        <el-form-item label="项目id" prop="itemId">
+          <el-input v-model="form.itemId" placeholder="请输入项目id" />
         </el-form-item>
         <el-form-item label="成绩" prop="score">
           <el-input v-model="form.score" placeholder="请输入成绩" />
         </el-form-item>
         <el-form-item label="备注信息" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注信息" />
+        </el-form-item>
+        <el-form-item label="创建人" prop="createUid">
+          <el-input v-model="form.createUid" placeholder="请输入创建人" />
+        </el-form-item>
+        <el-form-item label="最后修改的人" prop="updateUid">
+          <el-input v-model="form.updateUid" placeholder="请输入最后修改的人" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -181,6 +207,8 @@ export default {
         ftaId: null,
         itemId: null,
         score: null,
+        createUid: null,
+        updateUid: null,
       },
       // 表单参数
       form: {},
@@ -216,7 +244,10 @@ export default {
         itemId: null,
         score: null,
         remark: null,
-        createTime: null
+        createUid: null,
+        createTime: null,
+        updateUid: null,
+        updateTime: null
       };
       this.resetForm("form");
     },

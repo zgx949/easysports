@@ -34,6 +34,14 @@ public class FitnessTestGrade extends BaseEntity
     @Excel(name = "成绩")
     private Long score;
 
+    /** 创建人 */
+    @Excel(name = "创建人")
+    private Long createUid;
+
+    /** 最后修改的人 */
+    @Excel(name = "最后修改的人")
+    private Long updateUid;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -79,6 +87,24 @@ public class FitnessTestGrade extends BaseEntity
     {
         return score;
     }
+    public void setCreateUid(Long createUid) 
+    {
+        this.createUid = createUid;
+    }
+
+    public Long getCreateUid() 
+    {
+        return createUid;
+    }
+    public void setUpdateUid(Long updateUid) 
+    {
+        this.updateUid = updateUid;
+    }
+
+    public Long getUpdateUid() 
+    {
+        return updateUid;
+    }
 
     @Override
     public String toString() {
@@ -89,7 +115,10 @@ public class FitnessTestGrade extends BaseEntity
             .append("itemId", getItemId())
             .append("score", getScore())
             .append("remark", getRemark())
+            .append("createUid", getCreateUid())
             .append("createTime", getCreateTime())
+            .append("updateUid", getUpdateUid())
+            .append("updateTime", getUpdateTime())
             .toString();
     }
 }
