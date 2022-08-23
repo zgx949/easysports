@@ -47,5 +47,5 @@ EXPOSE 8080
 # 写多行独立的CMD命令是错误写法！只有最后一行CMD命令会被执行，之前的都会被忽略，导致业务报错。
 # 请参考[Docker官方文档之CMD命令](https://docs.docker.com/engine/reference/builder/#cmd)
 #CMD ["java", "-jar", "/app/ruoyi-admin.jar --spring.profiles.active=prod"]
-CMD ["java", "-jar", "./ruoyi-admin.jar --spring.profiles.active=prod"]
+CMD ["java", "-jar", "/app/ruoyi-admin/target/ruoyi-admin.jar --spring.profiles.active=prod"]
 
