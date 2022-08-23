@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.FitnessTestActivityMapper">
-    
+
     <resultMap type="FitnessTestActivity" id="FitnessTestActivityResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
@@ -20,19 +20,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFitnessTestActivityList" parameterType="FitnessTestActivity" resultMap="FitnessTestActivityResult">
         <include refid="selectFitnessTestActivityVo"/>
-        <where>  
+        <where>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="startTime != null "> and start_time = #{startTime}</if>
             <if test="endTime != null "> and end_time = #{endTime}</if>
             <if test="status != null "> and status = #{status}</if>
         </where>
     </select>
-    
+
     <select id="selectFitnessTestActivityById" parameterType="Long" resultMap="FitnessTestActivityResult">
         <include refid="selectFitnessTestActivityVo"/>
         where id = #{id}
     </select>
-        
+    <select id="selectTestActivityDict" resultType="com.ruoyi.common.core.domain.Dict">
+        SELECT
+            id   value,
+            name label
+        FROM
+            fitness_test_activity
+    </select>
+
     <insert id="insertFitnessTestActivity" parameterType="FitnessTestActivity">
         insert into fitness_test_activity
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -73,7 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteFitnessTestActivityByIds" parameterType="String">
-        delete from fitness_test_activity where id in 
+        delete from fitness_test_activity where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

@@ -1,41 +1,56 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户id" prop="userId">
+      <el-form-item label="用户名" prop="userId">
         <el-input
           v-model="queryParams.userId"
-          placeholder="请输入用户id"
+          placeholder="请输入用户名"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      TODO: 下拉选择-->
-      <el-form-item label="体测活动id" prop="ftaId">
-        <el-input
-          v-model="queryParams.ftaId"
-          placeholder="请输入体测活动id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="体测活动" prop="ftaId">
+        <el-select v-model="queryParams.ftaId" placeholder="请输入体测活动" clearable>
+          <el-option
+            v-for="dict in dictAct"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+<!--        <el-input-->
+<!--          v-model="queryParams.ftaId"-->
+<!--          placeholder="请输入体测活动"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
       </el-form-item>
-<!--      TODO: 下拉选择-->
       <el-form-item label="项目id" prop="itemId">
-        <el-input
-          v-model="queryParams.itemId"
-          placeholder="请输入项目id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.itemId" placeholder="请选择项目" clearable>
+          <el-option
+            v-for="dict in dictItem"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+<!--        <el-input-->
+<!--          v-model="queryParams.itemId"-->
+<!--          placeholder="请输入项目id"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
       </el-form-item>
-      <el-form-item label="成绩" prop="score">
-        <el-input
-          v-model="queryParams.score"
-          placeholder="请输入成绩"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="创建人ID" prop="createUid">
+<!--      <el-form-item label="成绩" prop="score">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.score"-->
+<!--          placeholder="请输入成绩"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+
+      <el-form-item label="创建人" prop="createUid">
         <el-input
           v-model="queryParams.createUid"
           placeholder="请输入创建人"
@@ -43,13 +58,29 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="修改人ID" prop="updateUid">
+      <el-form-item label="修改人" prop="updateUid">
         <el-input
           v-model="queryParams.updateUid"
           placeholder="请输入最后修改的人"
           clearable
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="创建时间" prop="createTime">
+        <el-date-picker clearable
+                        v-model="queryParams.createTime"
+                        type="datetime"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择创建时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="更新时间" prop="updateTime">
+        <el-date-picker clearable
+                        v-model="queryParams.updateTime"
+                        type="datetime"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择最后更新时间">
+        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -105,14 +136,28 @@
 
     <el-table v-loading="loading" :data="gradeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="用户ID" align="center" prop="userId" />
-      <el-table-column label="活动" align="center" prop="ftaId" />
-      <el-table-column label="项目id" align="center" prop="itemId" />
-      <el-table-column label="成绩" align="center" prop="score" />
+      <el-table-column label="成绩编码" align="center" prop="id" />
+      <el-table-column label="用户名" align="center" prop="userId" />
+      <el-table-column label="体测活动" align="center" prop="fta.name" />
+      <el-table-column label="项目id" align="center" prop="item.itemName" />
+      <el-table-column label="成绩" align="center" prop="score">
+        <template slot-scope="scope">
+          <span>{{ scope.row.score }}{{ scope.row.item.unit }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="备注信息" align="center" prop="remark" />
       <el-table-column label="创建人" align="center" prop="createUid" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="最后修改的人" align="center" prop="updateUid" />
+      <el-table-column label="最后更新时间" align="center" prop="updateTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -144,26 +189,36 @@
     <!-- 添加或修改体测成绩对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户id" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户id" />
+        <el-form-item label="用户名" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入用户名" />
         </el-form-item>
-        <el-form-item label="体测活动id" prop="ftaId">
-          <el-input v-model="form.ftaId" placeholder="请输入体测活动id" />
+        <el-form-item label="体测活动" prop="ftaId">
+          <el-select v-model="form.ftaId" placeholder="请选择项目" clearable>
+            <el-option
+              v-for="dict in dictAct"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+<!--          <el-input v-model="form.ftaId" placeholder="请输入体测活动" />-->
         </el-form-item>
         <el-form-item label="项目id" prop="itemId">
-          <el-input v-model="form.itemId" placeholder="请输入项目id" />
+          <el-select v-model="form.itemId" placeholder="请选择项目" clearable>
+            <el-option
+              v-for="dict in dictItem"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+<!--          <el-input v-model="form.itemId" placeholder="请输入项目id" />-->
         </el-form-item>
         <el-form-item label="成绩" prop="score">
-          <el-input v-model="form.score" placeholder="请输入成绩" />
+          <el-input-number v-model="form.score" placeholder="请输入成绩" />
         </el-form-item>
         <el-form-item label="备注信息" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注信息" />
-        </el-form-item>
-        <el-form-item label="创建人" prop="createUid">
-          <el-input v-model="form.createUid" placeholder="请输入创建人" />
-        </el-form-item>
-        <el-form-item label="最后修改的人" prop="updateUid">
-          <el-input v-model="form.updateUid" placeholder="请输入最后修改的人" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -176,11 +231,16 @@
 
 <script>
 import { listGrade, getGrade, delGrade, addGrade, updateGrade } from "@/api/system/grade";
-
+import { activityDict } from "@/api/system/activity";
+import { dictItem } from "@/api/system/item";
 export default {
   name: "Grade",
   data() {
     return {
+      // 项目字典
+      dictItem: [],
+      // 活动字典
+      dictAct: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -208,17 +268,40 @@ export default {
         itemId: null,
         score: null,
         createUid: null,
+        createTime: null,
         updateUid: null,
+        updateTime: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        userId: [
+          { required: true, message: "用户名不能为空", trigger: "blur" }
+        ],
+        ftaId: [
+          { required: true, message: "体测活动不能为空", trigger: "blur" }
+        ],
+        itemId: [
+          { required: true, message: "项目id不能为空", trigger: "blur" }
+        ],
+        score: [
+          { required: true, message: "成绩不能为空", trigger: "blur" }
+        ],
       }
     };
   },
   created() {
     this.getList();
+    // 获取活动字典
+    activityDict().then(res => {
+      this.dictAct = res.data;
+    })
+    // 获取项目字典
+    dictItem().then(res => {
+      this.dictItem = res.data;
+    })
+
   },
   methods: {
     /** 查询体测成绩列表 */

@@ -12,7 +12,7 @@ import com.ruoyi.system.service.IFitnessTestGradeService;
  * 体测成绩Service业务层处理
  * 
  * @author leftHand
- * @date 2022-08-15
+ * @date 2022-08-23
  */
 @Service
 public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService 

@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// 查询体测字典
+export function activityDict() {
+  return request({
+    url: '/system/activity/dict',
+    method: 'get'
+  })
+}
+
 // 查询体测列表
 export function listActivity(query) {
   return request({

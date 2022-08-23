@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.FitnessTestGradeMapper">
-    
+
     <resultMap type="FitnessTestGrade" id="FitnessTestGradeResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
@@ -15,29 +15,86 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateUid"    column="update_uid"    />
         <result property="updateTime"    column="update_time"    />
+        <association property="user" javaType="com.ruoyi.common.core.domain.entity.SysUser">
+            <id property="userId" column="su_user_id"></id>
+            <result property="userName" column="user_id"></result>
+            <result property="deptId" column="su_dept_id"></result>
+        </association>
+        <association property="fta" javaType="FitnessTestActivity">
+            <id property="id" column="fta_id"></id>
+            <result property="name" column="fta_name"></result>
+        </association>
+        <association property="item" javaType="SportItem">
+            <id property="id" column="id"></id>
+            <result property="itemName" column="si_item_name"></result>
+            <result property="type" column="si_type"></result>
+            <result property="unit" column="si_unit"></result>
+            <result property="isDesc" column="si_is_desc"></result>
+            <result property="maxPerson" column="si_max_person"></result>
+        </association>
+<!--        <association property="createUser" javaType="com.ruoyi.common.core.domain.entity.SysUser">-->
+<!--            <result property=""-->
+<!--            <result property="maxPerson" column="si_max_person"></result>-->
+<!--            <result property="maxPerson" column="si_max_person"></result>-->
+<!--        </association>-->
+<!--        <association property="updateUser" javaType="com.ruoyi.common.core.domain.entity.SysUser">-->
+<!--            <id property="id" column="fid"></id>-->
+<!--        </association>-->
     </resultMap>
 
     <sql id="selectFitnessTestGradeVo">
-        select id, user_id, fta_id, item_id, score, remark, create_uid, create_time, update_uid, update_time from fitness_test_grade
+        select
+            ftg.id              id,
+            ftg.user_id         user_id,
+                su.user_id      su_user_id,
+                su.dept_id      su_dept_id,
+            ftg.fta_id          fta_id,
+                fta.name        fta_name,
+            ftg.item_id         item_id,
+                si.item_name    si_item_name,
+                si.type         si_type,
+                si.unit         si_unit,
+                si.is_desc      si_is_desc,
+                si.max_person   si_max_person,
+            ftg.score,
+            ftg.remark,
+            ftg.create_uid,
+            ftg.create_time,
+            ftg.update_uid,
+            ftg.update_time
+        from
+            fitness_test_grade      ftg,
+            sys_user                su,
+            fitness_test_activity   fta,
+            sport_item              si
     </sql>
 
     <select id="selectFitnessTestGradeList" parameterType="FitnessTestGrade" resultMap="FitnessTestGradeResult">
         <include refid="selectFitnessTestGradeVo"/>
-        <where>  
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="ftaId != null "> and fta_id = #{ftaId}</if>
-            <if test="itemId != null "> and item_id = #{itemId}</if>
-            <if test="score != null "> and score = #{score}</if>
-            <if test="createUid != null "> and create_uid = #{createUid}</if>
-            <if test="updateUid != null "> and update_uid = #{updateUid}</if>
+        <where>
+            ftg.user_id=su.user_name AND
+            ftg.fta_id=fta.id AND
+            ftg.item_id=si.id
+            <if test="userId != null "> and ftg.user_id = #{userId}</if>
+            <if test="ftaId != null "> and ftg.fta_id = #{ftaId}</if>
+            <if test="itemId != null "> and ftg.item_id = #{itemId}</if>
+            <if test="score != null "> and ftg.score = #{score}</if>
+            <if test="createUid != null "> and ftg.create_uid = #{createUid}</if>
+            <if test="createTime != null "> and ftg.create_time = #{createTime}</if>
+            <if test="updateUid != null "> and ftg.update_uid = #{updateUid}</if>
+            <if test="updateTime != null "> and ftg.update_time = #{updateTime}</if>
+
         </where>
     </select>
-    
+
     <select id="selectFitnessTestGradeById" parameterType="Long" resultMap="FitnessTestGradeResult">
         <include refid="selectFitnessTestGradeVo"/>
-        where id = #{id}
+        where ftg.id = #{id} AND
+        ftg.user_id=su.user_name AND
+        ftg.fta_id=fta.id AND
+        ftg.item_id=si.id
     </select>
-        
+
     <insert id="insertFitnessTestGrade" parameterType="FitnessTestGrade">
         insert into fitness_test_grade
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -87,7 +144,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteFitnessTestGradeByIds" parameterType="String">
-        delete from fitness_test_grade where id in 
+        delete from fitness_test_grade where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

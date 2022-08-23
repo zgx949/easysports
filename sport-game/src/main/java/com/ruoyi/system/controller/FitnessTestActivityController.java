@@ -23,7 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 体测Controller
- * 
+ *
  * @author leftHand
  * @date 2022-08-15
  */
@@ -100,5 +100,12 @@ public class FitnessTestActivityController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(fitnessTestActivityService.deleteFitnessTestActivityByIds(ids));
+    }
+
+    @PreAuthorize("@ss.hasPermi('system:activity:query')")
+    @GetMapping(value = "/dict")
+    public AjaxResult getInfo()
+    {
+        return AjaxResult.success(fitnessTestActivityService.selectTestActivityDict());
     }
 }

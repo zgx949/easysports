@@ -7,7 +7,7 @@ import com.ruoyi.system.domain.FitnessTestGrade;
  * 体测成绩Mapper接口
  * 
  * @author leftHand
- * @date 2022-08-15
+ * @date 2022-08-23
  */
 public interface FitnessTestGradeMapper 
 {

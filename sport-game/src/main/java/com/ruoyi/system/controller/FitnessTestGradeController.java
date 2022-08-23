@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 体测成绩Controller
  * 
  * @author leftHand
- * @date 2022-08-15
+ * @date 2022-08-23
  */
 @RestController
 @RequestMapping("/system/grade")
