@@ -2,6 +2,9 @@ package com.ruoyi.system.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -107,5 +110,14 @@ public class FitnessTestActivityController extends BaseController
     public AjaxResult getInfo()
     {
         return AjaxResult.success(fitnessTestActivityService.selectTestActivityDict());
+    }
+    @RequestMapping(value = "/signed")
+    public AjaxResult querySignedAct() {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        if (user != null) {
+            return AjaxResult.success(fitnessTestActivityService.querySigned(user));
+        } else {
+            return AjaxResult.error("非法用户");
+        }
     }
 }

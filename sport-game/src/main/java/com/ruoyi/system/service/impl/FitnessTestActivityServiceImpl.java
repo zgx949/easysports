@@ -1,8 +1,10 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,5 +100,25 @@ public class FitnessTestActivityServiceImpl implements IFitnessTestActivityServi
     public int deleteFitnessTestActivityById(Long id)
     {
         return fitnessTestActivityMapper.deleteFitnessTestActivityById(id);
+    }
+
+    /**
+     * @Description: 查询已经报名活动
+     * @Param:
+     * @return:
+     * @Author: leftHand
+     * @Date: 2022-08-25
+     */
+    @Override
+    public List<Long> querySigned(SysUser user) {
+        // TODO: 暂时无需报名，业务作废
+        FitnessTestActivity condition = new FitnessTestActivity();
+        condition.setId(user.getUserId());
+        List<Long> res = new ArrayList<>();
+        List<FitnessTestActivity> list = selectFitnessTestActivityList(condition);
+        for (FitnessTestActivity item : list) {
+            res.add(item.getId());
+        }
+        return res;
     }
 }

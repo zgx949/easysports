@@ -3,6 +3,7 @@ package com.ruoyi.system.service;
 import java.util.List;
 
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.FitnessTestActivity;
 
 /**
@@ -64,4 +65,13 @@ public interface IFitnessTestActivityService
      * @return 结果
      */
     public int deleteFitnessTestActivityById(Long id);
+
+    /**
+    * @Description: 查询已经报名活动
+    * @Param:
+    * @return:
+    * @Author: leftHand
+    * @Date: 2022-08-25
+    */
+    List<Long> querySigned(SysUser user);
 }
