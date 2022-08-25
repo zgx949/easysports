@@ -2,6 +2,9 @@ package com.ruoyi.system.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +26,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 体测成绩Controller
- * 
+ *
  * @author leftHand
  * @date 2022-08-23
  */
@@ -100,5 +103,20 @@ public class FitnessTestGradeController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(fitnessTestGradeService.deleteFitnessTestGradeByIds(ids));
+    }
+
+
+    /**
+    * 查询个人成绩
+    * */
+    @PreAuthorize("@ss.hasPermi('system:grade:list')")
+    @RequestMapping("/record")
+    public AjaxResult queryMyTest() {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        if (user != null) {
+            return AjaxResult.success(fitnessTestGradeService.queryMyRecord(user));
+        } else {
+            return AjaxResult.error("非法用户");
+        }
     }
 }
