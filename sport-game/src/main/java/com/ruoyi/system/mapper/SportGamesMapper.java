@@ -3,6 +3,7 @@ package com.ruoyi.system.mapper;
 import java.util.List;
 
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.system.domain.GameResultVo;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
 import org.springframework.stereotype.Repository;
@@ -101,4 +102,6 @@ public interface SportGamesMapper
      * @return 结果
      */
     public List<Dict> selectSportGamesDict();
+
+    public List<GameResultVo> selectSportResultByGameId(Long gameId);
 }

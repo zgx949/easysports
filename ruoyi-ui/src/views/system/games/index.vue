@@ -154,6 +154,7 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:games:edit']"
           >修改</el-button>
+
           <el-button
             size="mini"
             type="text"
@@ -161,6 +162,15 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:games:remove']"
           >删除</el-button>
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-search"
+            @click="getGameResult(scope.row.id,scope.row.gameName)"
+            v-hasPermi="['system:games:list']"
+            v-if="scope.row.status == 3"
+          >查询</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -303,6 +313,20 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+<!--  比赛项目成绩  -->
+    <el-dialog :title=this.gName :visible.sync="dialogTableVisible" width="60%">
+      <el-table :data="gameData">
+        <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <el-table-column property="deptName" label="学院"></el-table-column>
+        <el-table-column property="nickName" label="姓名"></el-table-column>
+        <el-table-column property="order" label="名次"></el-table-column>
+        <el-table-column property="score" label="成绩"></el-table-column>
+        <el-table-column property="points" label="积分"></el-table-column>
+        <el-table-column property="startTime" label="日期" width="150"></el-table-column>
+      </el-table>
+      <el-button type="primary" style="margin-top: 10px;right: 0px" size="mini">打印</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -310,13 +334,20 @@
 import { listGames, getGames, delGames, addGames, updateGames } from "@/api/system/games";
 import { dictItem } from "@/api/system/item";
 import { dictFields } from "@/api/system/fields";
-import { dictGames } from "@/api/system/games";
+import { dictGames, getGameWinList } from "@/api/system/games";
+import moment from 'moment'
 
 export default {
   name: "Games",
   dicts: ['sport_game_status', 'sys_user_sex', 'sport_item_type', 'sport_sort_type'],
   data() {
     return {
+      // 比赛成绩弹窗判断
+      dialogTableVisible : false,
+      // 被查询比赛名称
+      gName:"",
+      // 比赛成绩数据
+      gameData:[],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -374,6 +405,18 @@ export default {
     })
   },
   methods: {
+    /** 获取比赛获奖数据 */
+    getGameResult(id,name){
+      getGameWinList(id).then(response => {
+        this.gName = name
+        this.dialogTableVisible = true;
+        const {data} = response
+        this.gameData = data
+        var currentdate = new Date()
+        console.log(moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'))
+        console.log('2022-08-13 10:00:00'>data[0].startTime)
+      })
+    },
     /** 查询项目字典 */
     getItemDict() {
       dictItem().then(response => {
@@ -403,14 +446,46 @@ export default {
         }
       }
     },
+    /** 处理比赛状态 */
+    handleGameStatus(res){
+      let currentTime = moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss')
+      let statusResult = [];
 
+      for (let i = 0; i < res.length; i++) {
+        let item = res[i]
+        if(currentTime<item.startTime){
+          res[i].status = 0;
+          if(this.queryParams.status && this.queryParams.status == 0){
+            statusResult.push(res[i]);
+          }
+        }
+        else if(currentTime>item.endTime){
+          res[i].status = 3;
+          if(this.queryParams.status && this.queryParams.status == 3){
+            statusResult.push(res[i]);
+          }
+        }
+        else {
+          res[i].status = 2;
+          if(this.queryParams.status && this.queryParams.status == 2){
+            statusResult.push(res[i]);
+          }
+        }
+      }
+      if (this.queryParams.status){
+        return statusResult;
+      }
+      return res
+    },
     /** 查询比赛管理列表 */
     getList() {
       this.loading = true;
       this.getItemDict();
       this.getFieldDict();
       listGames(this.queryParams).then(response => {
-        this.gamesList = response.rows;
+        console.log(response)
+        this.gamesList = this.handleGameStatus(response.rows);
+        console.log(this.gamesList)
         this.total = response.total;
         this.loading = false;
       });

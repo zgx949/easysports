@@ -1,7 +1,11 @@
 package com.ruoyi.system.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.domain.GameResultVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +33,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/system/games")
-public class SportGamesController extends BaseController
-{
+public class SportGamesController extends BaseController {
     @Autowired
     private ISportGamesService sportGamesService;
 
@@ -39,8 +42,7 @@ public class SportGamesController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:games:query')")
     @GetMapping(value = "/register")
-    public AjaxResult getRegisterInfo()
-    {
+    public AjaxResult getRegisterInfo() {
         return AjaxResult.success(sportGamesService.selectSportGamesRegisterDict());
     }
 
@@ -49,8 +51,7 @@ public class SportGamesController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:games:query')")
     @GetMapping(value = "/dict")
-    public AjaxResult getInfo()
-    {
+    public AjaxResult getInfo() {
         return AjaxResult.success(sportGamesService.selectSportGamesDict());
     }
 
@@ -59,11 +60,24 @@ public class SportGamesController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:games:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SportGames sportGames)
-    {
+    public TableDataInfo list(SportGames sportGames) {
         startPage();
         List<SportGames> list = sportGamesService.selectSportGamesList(sportGames);
         return getDataTable(list);
+    }
+
+    /**
+     * 根据比赛ID查询具体比赛结果
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @GetMapping("/single/{id}")
+    public AjaxResult SelectGameResultByGameId(@PathVariable Long id) {
+        if (null == id) {
+            return AjaxResult.error("请传入比赛Id");
+        }
+
+        List<GameResultVo> gameResultVos = sportGamesService.selectGameResultByGameId(id);
+        return AjaxResult.success(gameResultVos);
     }
 
     /**
@@ -72,8 +86,7 @@ public class SportGamesController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:games:export')")
     @Log(title = "比赛管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SportGames sportGames)
-    {
+    public void export(HttpServletResponse response, SportGames sportGames) {
         List<SportGames> list = sportGamesService.selectSportGamesList(sportGames);
         ExcelUtil<SportGames> util = new ExcelUtil<SportGames>(SportGames.class);
         util.exportExcel(response, list, "比赛管理数据");
@@ -85,8 +98,7 @@ public class SportGamesController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:games:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getDict(@PathVariable("id") Long id)
-    {
+    public AjaxResult getDict(@PathVariable("id") Long id) {
         return AjaxResult.success(sportGamesService.selectSportGamesById(id));
     }
 
@@ -96,8 +108,7 @@ public class SportGamesController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:games:add')")
     @Log(title = "比赛管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SportGames sportGames)
-    {
+    public AjaxResult add(@RequestBody SportGames sportGames) {
         return toAjax(sportGamesService.insertSportGames(sportGames));
     }
 
@@ -107,8 +118,7 @@ public class SportGamesController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:games:edit')")
     @Log(title = "比赛管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SportGames sportGames)
-    {
+    public AjaxResult edit(@RequestBody SportGames sportGames) {
         return toAjax(sportGamesService.updateSportGames(sportGames));
     }
 
@@ -117,9 +127,8 @@ public class SportGamesController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:games:remove')")
     @Log(title = "比赛管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(sportGamesService.deleteSportGamesByIds(ids));
     }
 }

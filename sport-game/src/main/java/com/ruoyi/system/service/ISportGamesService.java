@@ -3,6 +3,7 @@ package com.ruoyi.system.service;
 import java.util.List;
 
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.system.domain.GameResultVo;
 import com.ruoyi.system.domain.SportGames;
 
 /**
@@ -74,4 +75,9 @@ public interface ISportGamesService
      * @return 结果
      */
     public int deleteSportGamesById(Long id);
+
+    /**
+     * 根据比赛id查询比赛结果
+     */
+    List<GameResultVo> selectGameResultByGameId(Long gameId);
 }

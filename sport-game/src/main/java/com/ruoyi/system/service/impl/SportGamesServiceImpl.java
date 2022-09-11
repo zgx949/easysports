@@ -1,8 +1,11 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.system.domain.GameResultVo;
 import com.ruoyi.system.mapper.SportItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import com.ruoyi.system.domain.SportItem;
 import com.ruoyi.system.mapper.SportGamesMapper;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.service.ISportGamesService;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 比赛管理Service业务层处理
@@ -72,6 +76,9 @@ public class SportGamesServiceImpl implements ISportGamesService
     @Override
     public List<SportGames> selectSportGamesList(SportGames sportGames)
     {
+        if(sportGames.getStatus() != null){
+            sportGames.setStatus(null);
+        }
         return sportGamesMapper.selectSportGamesList(sportGames);
     }
 
@@ -158,6 +165,18 @@ public class SportGamesServiceImpl implements ISportGamesService
     {
         sportGamesMapper.deleteSportItemByItemName(id);
         return sportGamesMapper.deleteSportGamesById(id);
+    }
+
+    @Override
+    public List<GameResultVo> selectGameResultByGameId(Long gameId) {
+        List<GameResultVo> gameResultVos = sportGamesMapper.selectSportResultByGameId(gameId);
+        if (CollectionUtils.isEmpty(gameResultVos)){
+            throw new ServiceException("比赛还未结束或成绩暂未录入，请稍等");
+        }
+        for (int i = 0; i < gameResultVos.size(); i++) {
+            gameResultVos.get(i).setOrder(i+1);
+        }
+        return gameResultVos;
     }
 
     /**
