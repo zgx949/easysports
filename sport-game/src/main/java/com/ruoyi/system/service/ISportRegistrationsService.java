@@ -68,4 +68,22 @@ public interface ISportRegistrationsService
      * @return 结果
      */
     public int deleteSportRegistrationsById(Long id);
+
+    public List<SportRegistrations> userRegisterationslist(SportRegistrations sportRegistrations);
+
+
+    /**
+     * 根据用户id和比赛id取消报名
+     * @param userId
+     * @param gameId
+     * @return
+     */
+    public int deleteUserRegistrations(Long userId,Long gameId);
+
+    /**
+     * 用户报名
+     * @param sportRegistrations
+     * @return
+     */
+    public int insertUserRegistrations(SportRegistrations sportRegistrations);
 }

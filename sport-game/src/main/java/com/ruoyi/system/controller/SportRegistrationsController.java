@@ -3,6 +3,13 @@ package com.ruoyi.system.controller;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.SportFields;
+import com.ruoyi.system.domain.SportGames;
+import com.ruoyi.system.service.ISportFieldsService;
+import com.ruoyi.system.service.ISportGamesService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +41,12 @@ public class SportRegistrationsController extends BaseController
 {
     @Autowired
     private ISportRegistrationsService sportRegistrationsService;
+
+    @Autowired
+    private ISportGamesService sportGamesService;
+
+    @Autowired
+    private ISportFieldsService sportFieldsService;
 
     /**
      * 新增报名管理
@@ -117,4 +130,59 @@ public class SportRegistrationsController extends BaseController
     {
         return toAjax(sportRegistrationsService.deleteSportRegistrationsByIds(ids));
     }
+
+    /**
+     * 根据用户id查询报名比赛
+     */
+    @PreAuthorize("@ss.hasPermi('system:registrations:list')")
+    @GetMapping("/user/list")
+    public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations)
+    {
+        sportRegistrations.setUserId(SecurityUtils.getUserId());
+        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.userRegisterationslist(sportRegistrations);
+        startPage();
+        return getDataTable(sportRegistrationsList);
+    }
+
+    /**
+     * 根据比赛id和用户id查询成绩
+     */
+    @PreAuthorize("@ss.hasPermi('system:registrations:query')")
+    @GetMapping("/user/{gameId}")
+    public AjaxResult userScore(@PathVariable("gameId") Long gameId)
+    {
+        SportRegistrations sportRegistrations=new SportRegistrations();
+        sportRegistrations.setGameId(gameId);
+        sportRegistrations.setUserId(SecurityUtils.getUserId());
+        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+        if(sportRegistrationsList.size()!=1){
+            return AjaxResult.error();
+        }
+        return AjaxResult.success(sportRegistrationsList.get(0));
+    }
+
+    /**
+     * 用户报名比赛
+     */
+    @PreAuthorize("@ss.hasPermi('system:registrations:add')")
+    @PostMapping("/user/{gameId}")
+    public AjaxResult insertUserRegistrations(SportRegistrations sportRegistrations)
+    {
+        sportRegistrations.setUserId(SecurityUtils.getUserId());
+        sportRegistrations.setUpdateTime(DateUtils.getNowDate());
+        sportRegistrations.setCreateTime(DateUtils.getNowDate());
+
+        return toAjax(sportRegistrationsService.insertUserRegistrations(sportRegistrations));
+    }
+
+    /**
+     * 用户取消报名
+     */
+    @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
+    @DeleteMapping("/user/{gameId}")
+    public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId)
+    {
+        return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(),gameId));
+    }
+
 }
