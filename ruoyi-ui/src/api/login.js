@@ -30,6 +30,14 @@ export function register(data) {
   })
 }
 
+// 获取学院下拉框
+export function getCollege() {
+  return request({
+    url: '/system/dept/college',
+    method: 'get'
+  })
+}
+
 // 获取用户详细信息
 export function getInfo() {
   return request({
