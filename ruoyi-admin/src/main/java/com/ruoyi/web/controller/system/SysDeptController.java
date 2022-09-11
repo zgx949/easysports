@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.system;
 
 import java.util.Iterator;
 import java.util.List;
+
+import com.ruoyi.system.domain.vo.CollegeVo;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,6 +46,7 @@ public class SysDeptController extends BaseController
     {
         List<SysDept> depts = deptService.selectDeptList(dept);
         return AjaxResult.success(depts);
+
     }
 
     /**
@@ -65,6 +68,18 @@ public class SysDeptController extends BaseController
             }
         }
         return AjaxResult.success(depts);
+    }
+
+
+    /**
+     * 获取学院列表
+     */
+ //   @PreAuthorize("@ss.hasPermi('system:dept:college')")
+    @GetMapping("/college")
+    public AjaxResult getCollege(SysDept dept)
+    {
+        List<CollegeVo> collegeVos = deptService.selectCollegeList(dept);
+        return AjaxResult.success(collegeVos);
     }
 
     /**

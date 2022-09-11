@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysDeptMapper">
 
-	<resultMap type="SysDept" id="SysDeptResult">
+	<resultMap type="sysDept" id="SysDeptResult">
 		<id     property="deptId"     column="dept_id"     />
 		<result property="parentId"   column="parent_id"   />
 		<result property="ancestors"  column="ancestors"   />
@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sys_dept d
     </sql>
     
-	<select id="selectDeptList" parameterType="SysDept" resultMap="SysDeptResult">
+	<select id="selectDeptList" parameterType="sysDept" resultMap="SysDeptResult">
         <include refid="selectDeptVo"/>
         where d.del_flag = '0'
 		<if test="deptId != null and deptId != 0">
@@ -85,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where dept_name=#{deptName} and parent_id = #{parentId} limit 1
 	</select>
     
-    <insert id="insertDept" parameterType="SysDept">
+    <insert id="insertDept" parameterType="sysDept">
  		insert into sys_dept(
  			<if test="deptId != null and deptId != 0">dept_id,</if>
  			<if test="parentId != null and parentId != 0">parent_id,</if>
@@ -113,7 +113,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  		)
 	</insert>
 	
-	<update id="updateDept" parameterType="SysDept">
+	<update id="updateDept" parameterType="sysDept">
  		update sys_dept
  		<set>
  			<if test="parentId != null and parentId != 0">parent_id = #{parentId},</if>
