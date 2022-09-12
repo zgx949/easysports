@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.core.domain.Dict;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import com.ruoyi.common.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,9 @@ public class SportGamesServiceImpl implements ISportGamesService
 
     @Autowired
     private SportItemMapper sportItemMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 获取报名比赛的必要信息
@@ -226,12 +231,28 @@ public class SportGamesServiceImpl implements ISportGamesService
      */
     @Override
     public List<GameResultVo> selectGameResultByGameId(Long gameId) {
+        //根据id设置缓存key
+        String redisKey = "sport:game:result:" + gameId;
+        //若命中缓存，则取缓存返回
+        if(!CollectionUtils.isEmpty(redisCache.getCacheList(redisKey))){
+            return redisCache.getCacheList(redisKey);
+        }
         List<GameResultVo> gameResultVos = sportGamesMapper.selectSportResultByGameId(gameId);
         if (CollectionUtils.isEmpty(gameResultVos)){
             throw new ServiceException("比赛还未结束或成绩暂未录入，请稍等");
         }
+        //设置排名字段
         for (int i = 0; i < gameResultVos.size(); i++) {
             gameResultVos.get(i).setOrder(i+1);
+        }
+        //写缓存
+        //如果写缓存失败则记录日志
+        if(redisCache.setCacheList(redisKey, gameResultVos) == 0L){
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor("system","err","记录缓存失败"));
+        }
+        //如果设置缓存时间失败则删除缓存，防止脏数据
+        if(!redisCache.expire(redisKey, 24 * 60, TimeUnit.HOURS)){
+            redisCache.deleteObject(redisKey);
         }
         return gameResultVos;
     }
