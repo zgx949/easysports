@@ -116,4 +116,35 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     {
         return sportRegistrationsMapper.deleteSportRegistrationsById(id);
     }
+
+    /**
+     * 根据用户id和比赛id取消报名
+     * @param userId
+     * @param gameId
+     * @return
+     */
+    @Override
+    public int deleteUserRegistrations(Long userId, Long gameId) {
+        return sportRegistrationsMapper.deleteUserSportRegistrations(userId,gameId);
+    }
+
+    /**
+     * 根据用户id查询比赛信息并排序
+     * @param sportRegistrations
+     * @return
+     */
+    @Override
+    public List<SportRegistrations> userRegisterationslist(SportRegistrations sportRegistrations) {
+        return sportRegistrationsMapper.userRegisterationslist(sportRegistrations);
+    }
+
+    /**
+     * 用户报名
+     * @param sportRegistrations
+     * @return
+     */
+    @Override
+    public int insertUserRegistrations(SportRegistrations sportRegistrations) {
+        return sportRegistrationsMapper.insertUserRegistrations(sportRegistrations);
+    }
 }

@@ -2,7 +2,9 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SportRegistrations;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * 报名管理Mapper接口
@@ -60,4 +62,26 @@ public interface SportRegistrationsMapper
      * @return 结果
      */
     public int deleteSportRegistrationsByIds(Long[] ids);
+
+    /**
+     * 根据用户id查询比赛信息并排序
+     * @param sportRegistrations
+     * @return
+     */
+    public List<SportRegistrations>  userRegisterationslist(SportRegistrations sportRegistrations);
+
+    /**
+     * 根据用户id和比赛id取消报名
+     * @param userId
+     * @param gameId
+     * @return
+     */
+    public int deleteUserSportRegistrations(@Param("userId") Long userId,@Param("gameId") Long gameId);
+
+    /**
+     * 用户报名
+     * @param sportRegistrations
+     * @return
+     */
+    public int insertUserRegistrations(SportRegistrations sportRegistrations);
 }

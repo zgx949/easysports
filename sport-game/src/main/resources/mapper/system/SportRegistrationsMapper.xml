@@ -112,6 +112,19 @@
         <include refid="selectSportRegistrationsVo"/>
         where sr.id = #{id}
     </select>
+    <select id="userRegisterationslist"  parameterType="SportRegistrations" resultMap="SportRegistrationsResult">
+        <include refid="selectSportRegistrationsVo"/>
+        <where>
+            <if test="gameId != null "> and sr.game_id = #{gameId}</if>
+            <if test="userId != null "> and sr.user_id = #{userId}</if>
+            <if test="fieldId != null "> and sr.field_id = #{fieldId}</if>
+            <if test="status != null  and status != ''"> and sr.status = #{status}</if>
+            <if test="score != null "> and sr.score = #{score}</if>
+            <if test="points != null "> and sr.points = #{points}</if>
+            <if test="comment != null  and comment != ''"> and sr.comment = #{comment}</if>
+        </where>
+        order by create_time desc
+    </select>
 
     <insert id="insertSportRegistrations" parameterType="SportRegistrations">
         insert into sport_registrations
@@ -126,6 +139,34 @@
             <if test="comment != null">sr.comment,</if>
             <if test="createTime != null">sr.create_time,</if>
             <if test="updateTime != null">sr.update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="gameId != null">#{gameId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="fieldId != null">#{fieldId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="score != null">#{score},</if>
+            <if test="points != null">#{points},</if>
+            <if test="comment != null">#{comment},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="insertUserRegistrations" parameterType="SportRegistrations">
+        insert into sport_registrations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="gameId != null">game_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="fieldId != null">field_id,</if>
+            <if test="status != null">status,</if>
+            <if test="score != null">score,</if>
+            <if test="points != null">points,</if>
+            <if test="comment != null">comment,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -166,5 +207,9 @@
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="deleteUserSportRegistrations">
+        delete from  sport_registrations where user_id =#{userId} and game_id=#{gameId}
     </delete>
 </mapper>
