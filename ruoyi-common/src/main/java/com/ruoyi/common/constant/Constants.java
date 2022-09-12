@@ -55,6 +55,11 @@ public class Constants
     public static final String REGISTER = "Register";
 
     /**
+     * 注册失败
+     */
+    public static final String REGISTER_FAIL = "Register_fail";
+
+    /**
      * 登录失败
      */
     public static final String LOGIN_FAIL = "Error";

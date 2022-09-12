@@ -3,6 +3,7 @@ package com.ruoyi.system.service;
 import java.util.List;
 import com.ruoyi.common.core.domain.TreeSelect;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.system.domain.vo.CollegeVo;
 
 /**
  * 部门管理 服务层
@@ -18,6 +19,8 @@ public interface ISysDeptService
      * @return 部门信息集合
      */
     public List<SysDept> selectDeptList(SysDept dept);
+
+    public List<CollegeVo> selectCollegeList(SysDept dept);
 
     /**
      * 构建前端所需要树结构

@@ -1,5 +1,8 @@
 package com.ruoyi.framework.web.service;
 
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.system.domain.SysUserRole;
+import com.ruoyi.system.service.ISysUserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.constant.CacheConstants;
@@ -17,6 +20,9 @@ import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * 注册校验方法
@@ -35,12 +41,19 @@ public class SysRegisterService
     @Autowired
     private RedisCache redisCache;
 
+    @Resource
+    private ISysUserRoleService userRoleService;
+
     /**
      * 注册
      */
+    @Transactional(rollbackFor = {Exception.class})
     public String register(RegisterBody registerBody)
     {
         String msg = "", username = registerBody.getUsername(), password = registerBody.getPassword();
+        String email = registerBody.getEmail();
+        String phonenumber = registerBody.getPhonenumber();
+        Long deptId = registerBody.getDeptId();
 
         boolean captchaOnOff = configService.selectCaptchaOnOff();
         // 验证码开关
@@ -71,16 +84,34 @@ public class SysRegisterService
         {
             msg = "保存用户'" + username + "'失败，注册账号已存在";
         }
+        else if (null == deptId){
+            msg = "学院是必填项";
+        }
+        else if (StringUtils.isEmpty(phonenumber) || phonenumber.length() != 11){
+            msg = "手机号码是必填项，手机号码长度需为11";
+        }
         else
         {
+            //封装实体类
             SysUser sysUser = new SysUser();
             sysUser.setUserName(username);
             sysUser.setNickName(username);
+            sysUser.setDeptId(deptId);
+            sysUser.setEmail(email);
+            sysUser.setPhonenumber(phonenumber);
             sysUser.setPassword(SecurityUtils.encryptPassword(registerBody.getPassword()));
-            boolean regFlag = userService.registerUser(sysUser);
-            if (!regFlag)
+            //插入用户信息
+            boolean regUserFlag = userService.registerUser(sysUser);
+            //插入默认权限
+            Long userId = userService.selectUserByUserName(username).getUserId();
+            boolean regUserRoleFlag = userRoleService.save(new SysUserRole(userId,UserConstants.DEFAULT_USER_ROLE));
+            //录入用户信息或者录入权限失败
+            if (!(regUserFlag && regUserRoleFlag))
             {
                 msg = "注册失败,请联系系统管理人员";
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.REGISTER_FAIL,
+                        MessageUtils.message("user.register.error")));
+                throw new ServiceException(msg);
             }
             else
             {

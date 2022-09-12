@@ -32,38 +32,35 @@
     </resultMap>
 
     <sql id="selectSportGamesVo">
-        SELECT s.id             id,
-               s.item_id        item_id,
-               s.game_name      game_name,
-               s.next_game      next_game,
-               s.gender         gender,
-               s.field_id       field_id,
-               s.max_person     max_person,
-               s.status         status,
-               s.start_time     start_time,
-               s.end_time       end_time,
-               s.create_time    create_time,
-               f.id             fid,
-               f.name           name,
-               f.parent_id      parent_id,
-               i.id             i_id,
-               i.item_name      item_name,
-               i.max_person     item_max_person,
-               i.type           item_type,
-               i.unit           item_unit,
-               i.is_desc        item_sort
-        FROM
-             sport_games s
-                 LEFT JOIN (
-                        SELECT b.id                             `id`,
-                               CONCAT(a.`name`, '--', b.`name`) `name`,
-                               a.id                             `parent_id`
-                        FROM sport_fields a,
-                             sport_fields b
-                        WHERE a.id = b.parent_id
-                    )                   f ON s.field_id     = f.id
-                 LEFT JOIN sport_item   i ON s.item_id      = i.id
-                 LEFT JOIN sport_games  g ON s.next_game    = g.id
+        SELECT s.id          id,
+               s.item_id     item_id,
+               s.game_name   game_name,
+               s.next_game   next_game,
+               s.gender      gender,
+               s.field_id    field_id,
+               s.max_person  max_person,
+               s.status      status,
+               s.start_time  start_time,
+               s.end_time    end_time,
+               s.create_time create_time,
+               f.id          fid,
+               f.name        name,
+               f.parent_id   parent_id,
+               i.id          i_id,
+               i.item_name   item_name,
+               i.max_person  item_max_person,
+               i.type        item_type,
+               i.unit        item_unit,
+               i.is_desc     item_sort
+        FROM sport_games s
+                 LEFT JOIN (SELECT b.id                             `id`,
+                                   CONCAT(a.`name`, '--', b.`name`) `name`,
+                                   a.id                             `parent_id`
+                            FROM sport_fields a,
+                                 sport_fields b
+                            WHERE a.id = b.parent_id) f ON s.field_id = f.id
+                 LEFT JOIN sport_item i ON s.item_id = i.id
+                 LEFT JOIN sport_games g ON s.next_game = g.id
     </sql>
 
     <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">
@@ -80,7 +77,7 @@
             <if test="endTime != null ">and s.end_time = #{endTime}</if>
         </where>
         ORDER BY
-            s.start_time
+        s.start_time
     </select>
 
     <select id="selectSportGamesById" parameterType="Long" resultMap="SportGamesResult">
@@ -102,36 +99,40 @@
 
     <!--  查询预赛信息  -->
     <select id="selectSportGamesRegisterDict" resultType="com.ruoyi.common.core.domain.Dict">
-        SELECT
-            a.id `value`,
-            a.game_name `label`
-        FROM
-            sport_games	a
-        WHERE
-            (a.next_game IS NULL OR a.next_game = 0) AND
-            NOT EXISTS (
-                    SELECT
-                        *
-                    FROM
-                        sport_games b
-                    WHERE
-                        b.next_game IS NOT NULL AND
-                        b.next_game != 0 AND
+        SELECT a.id        `value`,
+               a.game_name `label`
+        FROM sport_games a
+        WHERE (a.next_game IS NULL OR a.next_game = 0)
+          AND NOT EXISTS(
+                SELECT *
+                FROM sport_games b
+                WHERE b.next_game IS NOT NULL
+                  AND b.next_game != 0 AND
                         a.item_id=b.item_id AND
                         a.gender=b.gender
                 )
         UNION
-        SELECT
-            c.id,
-            c.game_name
-        FROM
-            sport_games c
-        WHERE
-            c.next_game !=0 AND
+        SELECT c.id,
+               c.game_name
+        FROM sport_games c
+        WHERE c.next_game !=0 AND
             c.next_game IS NOT NULL
         ORDER BY
             `label` ASC
     </select>
+
+
+    <select id="selectSportResultByGameId" parameterType="Long" resultType="com.ruoyi.system.domain.GameResultVo">
+        SELECT su.user_name, su.nick_name, sd.dept_name, sr.score, sr.points, sg.start_time
+        FROM sport_registrations sr
+                 LEFT JOIN sys_user su ON sr.user_id = su.user_id
+                 LEFT JOIN sport_games sg ON sr.game_id = sg.id
+                 LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+        WHERE sr.game_id = #{gameId}
+          AND sr.score IS NOT NULL
+        ORDER BY sr.score DESC
+    </select>
+
 
     <insert id="insertSportGames" parameterType="SportGames" useGeneratedKeys="true" keyProperty="id">
         insert into sport_games

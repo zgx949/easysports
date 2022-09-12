@@ -58,3 +58,11 @@ export function delGames(id) {
     method: 'delete'
   })
 }
+
+//查询比赛获奖结果
+export function getGameWinList(id) {
+  return request({
+    url: '/system/games/single/' + parseInt(id),
+    method: 'get'
+  })
+}
