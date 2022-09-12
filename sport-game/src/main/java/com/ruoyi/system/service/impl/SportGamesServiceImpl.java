@@ -1,15 +1,22 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.framework.manager.AsyncManager;
+import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.domain.GameResultVo;
 import com.ruoyi.system.mapper.SportItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.TimerTask;
+
 import com.ruoyi.common.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.system.domain.SportItem;
@@ -68,18 +75,59 @@ public class SportGamesServiceImpl implements ISportGamesService
     }
 
     /**
-     * 查询比赛管理列表
-     *
-     * @param sportGames 比赛管理
-     * @return 比赛管理
+     * @Description 查询所有比赛管理列表
+     * @Param sportGames
+     * @Return {@link List< SportGames>}
+     * @Author coder_jlt
+     * @Date 2022/9/12 08:43
      */
     @Override
     public List<SportGames> selectSportGamesList(SportGames sportGames)
     {
-        if(sportGames.getStatus() != null){
-            sportGames.setStatus(null);
+        List<SportGames> sportGamess = sportGamesMapper.selectSportGamesList(sportGames);
+        updateStatus(sportGamess);
+        return sportGamess;
+    }
+
+    /**
+     * @Description 异步更新数据库中的status
+     * @Param sportGamess
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/12 08:54
+     */
+    private void updateStatus(List<SportGames> sportGamess) {
+        Date now = new Date();
+        for (SportGames games : sportGamess) {
+            if(games.getStartTime().after(now)){
+                games.setStatus(0L);
+            }
+            else if (games.getEndTime().before(now)){
+                games.setStatus(3L);
+            }else {
+                games.setStatus(2L);
+            }
         }
-        return sportGamesMapper.selectSportGamesList(sportGames);
+        //异步更新
+        AsyncManager.me().execute(anyscUpdateStatus(sportGamess));
+    }
+
+    /**
+     * @Description 异步刷新status
+     * @Param sportGamess
+     * @Return {@link TimerTask}
+     * @Author coder_jlt
+     * @Date 2022/9/12 09:16
+     */
+    private TimerTask anyscUpdateStatus(List<SportGames> sportGamess){
+        return new TimerTask() {
+            @Override
+            public void run() {
+                for (SportGames games : sportGamess) {
+                    sportGamesMapper.updateSportGames(games);
+                }
+            }
+        };
     }
 
     /**
@@ -167,6 +215,15 @@ public class SportGamesServiceImpl implements ISportGamesService
         return sportGamesMapper.deleteSportGamesById(id);
     }
 
+
+    /**
+     * @Description 根据gameId查询比赛结果
+     *
+     * @Param gameId
+     * @Return {@link List< GameResultVo>}
+     * @Author coder_jlt
+     * @Date 2022/9/12 08:38
+     */
     @Override
     public List<GameResultVo> selectGameResultByGameId(Long gameId) {
         List<GameResultVo> gameResultVos = sportGamesMapper.selectSportResultByGameId(gameId);

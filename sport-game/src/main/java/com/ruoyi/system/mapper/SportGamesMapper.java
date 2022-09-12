@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.common.core.domain.Dict;
 import com.ruoyi.system.domain.GameResultVo;
 import com.ruoyi.system.domain.SportGames;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Repository;
  * @date 2022-07-05
  */
 @Repository
-public interface SportGamesMapper
+public interface SportGamesMapper extends BaseMapper<SportGames>
 {
     /**
      * 获取报名比赛的必要信息
