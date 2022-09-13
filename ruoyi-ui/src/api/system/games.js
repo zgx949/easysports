@@ -59,10 +59,19 @@ export function delGames(id) {
   })
 }
 
-//查询比赛获奖结果
+// 查询比赛获奖结果
 export function getGameWinList(id) {
   return request({
     url: '/system/games/single/' + parseInt(id),
     method: 'get'
   })
 }
+
+// 根据比赛id查询待记录分数人员
+export function getPlayerByGameId(id) {
+  return request({
+    url: '/system/games/insert/' + parseInt(id),
+    method: 'get'
+  })
+}
+

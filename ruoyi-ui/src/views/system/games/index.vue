@@ -483,9 +483,7 @@ export default {
       this.getItemDict();
       this.getFieldDict();
       listGames(this.queryParams).then(response => {
-        console.log(response)
-        this.gamesList = this.handleGameStatus(response.rows);
-        console.log(this.gamesList)
+        this.gamesList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
