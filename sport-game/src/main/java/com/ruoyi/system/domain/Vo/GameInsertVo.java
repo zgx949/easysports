@@ -12,6 +12,10 @@ public class GameInsertVo {
 
     private String username;
 
+    private Integer userId;
+
+    private Integer gameId;
+
     private Integer points;
 
 //    private int order;
@@ -28,6 +32,7 @@ public class GameInsertVo {
 
     private String unit;
 
+    private String comment;
     /** 开始时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")

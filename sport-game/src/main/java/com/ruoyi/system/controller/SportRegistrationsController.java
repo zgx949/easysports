@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.SportFields;
 import com.ruoyi.system.domain.SportGames;
+import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 import com.ruoyi.system.service.ISportFieldsService;
 import com.ruoyi.system.service.ISportGamesService;
 import io.swagger.annotations.Api;
@@ -189,4 +191,18 @@ public class SportRegistrationsController extends BaseController
         return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(),gameId));
     }
 
+
+    @PreAuthorize("@ss.hasPermi('system:registrations:edit')")
+    @ApiOperation("管理员录入成绩")
+    @PutMapping("update/score")
+    public AjaxResult updateGamesScore(@RequestBody UpdateGamesScoreDto updateGamesScoreDto)
+    {
+        if ( ! SecurityUtils.getLoginUser().getUser().isAdmin()){
+            throw new ServiceException("无此权限");
+        }
+        if (sportRegistrationsService.handleUpdateScore(updateGamesScoreDto)){
+            return AjaxResult.success();
+        }
+        return AjaxResult.error("录入成绩失败");
+    }
 }

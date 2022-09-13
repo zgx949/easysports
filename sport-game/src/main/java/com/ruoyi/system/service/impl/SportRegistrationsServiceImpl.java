@@ -1,9 +1,19 @@
 package com.ruoyi.system.service.impl;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.system.domain.SportFields;
+import java.util.Date;
+import com.ruoyi.system.domain.SportGames;
+import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SportRegistrationsMapper;
@@ -21,6 +31,9 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 {
     @Autowired
     private SportRegistrationsMapper sportRegistrationsMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 用户报名项目
@@ -146,5 +159,44 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     @Override
     public int insertUserRegistrations(SportRegistrations sportRegistrations) {
         return sportRegistrationsMapper.insertUserRegistrations(sportRegistrations);
+    }
+
+    /**
+     * @Description 处理更新成绩请求(删除对应成绩排名表缓存)
+     * @Param updateGamesScoreDto
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/13 13:18
+     */
+    @Override
+    public boolean handleUpdateScore(UpdateGamesScoreDto updateGamesScoreDto) {
+
+        if (!ObjectUtils.allNotNull(updateGamesScoreDto,updateGamesScoreDto.getScore(),updateGamesScoreDto.getGameId()
+                ,updateGamesScoreDto.getPoints(),updateGamesScoreDto.getUserId())){
+            throw new ServiceException("请输入完整数据");
+        }
+
+        if (StringUtils.isNoneBlank(updateGamesScoreDto.getComment()) && updateGamesScoreDto.getComment().length() > 255){
+            throw new ServiceException("备注信息过长");
+        }
+
+        if(updateGamesScoreDto.getScore() < 0 || updateGamesScoreDto.getPoints() < 0){
+            throw new ServiceException("成绩积分不能为负数");
+        }
+
+
+        //TODO 审核信息安全
+
+        SportRegistrations sportRegistrations = new SportRegistrations();
+        sportRegistrations.setGameId(updateGamesScoreDto.getGameId());
+        sportRegistrations.setUserId(updateGamesScoreDto.getUserId());
+        sportRegistrations.setScore(updateGamesScoreDto.getScore());
+        sportRegistrations.setPoints(updateGamesScoreDto.getPoints());
+        sportRegistrations.setComment(updateGamesScoreDto.getComment());
+        sportRegistrations.setUpdateTime(new Date());
+
+        // 删除gameId对应比赛的排名表缓存
+        redisCache.deleteObject("sport:game:result:" + updateGamesScoreDto.getGameId());
+        return sportRegistrationsMapper.updateSportScoreData(sportRegistrations);
     }
 }

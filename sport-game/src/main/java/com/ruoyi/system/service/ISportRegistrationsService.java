@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 
 /**
  * 报名管理Service接口
@@ -86,4 +87,13 @@ public interface ISportRegistrationsService
      * @return
      */
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
+
+    /**
+     * @Description 处理更新成绩请求
+     * @Param updateGamesScoreDto
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/13 13:17
+     */
+    boolean handleUpdateScore(UpdateGamesScoreDto updateGamesScoreDto);
 }
