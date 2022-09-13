@@ -2,8 +2,18 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.SportGames;
+import com.ruoyi.system.domain.SportItem;
+import com.ruoyi.system.domain.Vo.UserSportGradeVo;
+import com.ruoyi.system.service.ISportGamesService;
+import com.ruoyi.system.service.ISportItemService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SportRegistrationsMapper;
@@ -21,6 +31,18 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 {
     @Autowired
     private SportRegistrationsMapper sportRegistrationsMapper;
+
+    @Autowired
+    private RedisCache redisCache;
+
+    @Autowired
+    private ISportRegistrationsService sportRegistrationsService;
+
+    @Autowired
+    private ISportGamesService sportGamesService;
+
+    @Autowired
+    private ISportItemService sportItemService;
 
     /**
      * 用户报名项目
@@ -133,10 +155,6 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @param sportRegistrations
      * @return
      */
-    @Override
-    public List<SportRegistrations> userRegisterationslist(SportRegistrations sportRegistrations) {
-        return sportRegistrationsMapper.userRegisterationslist(sportRegistrations);
-    }
 
     /**
      * 用户报名
@@ -146,5 +164,59 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     @Override
     public int insertUserRegistrations(SportRegistrations sportRegistrations) {
         return sportRegistrationsMapper.insertUserRegistrations(sportRegistrations);
+    }
+
+    @Override
+    public UserSportGradeVo selectUserSportGrade(Long gameId) {
+        String redisKey = "userSportGrade:" + SecurityUtils.getUserId()+":"+gameId;
+        UserSportGradeVo cacheObject = (UserSportGradeVo)redisCache.getCacheObject(redisKey);
+        if(!ObjectUtils.isEmpty(cacheObject)){
+            return cacheObject;
+        }
+        SportRegistrations sportRegistrations=new SportRegistrations();
+        sportRegistrations.setGameId(gameId);
+        //查询参加该比赛的所有报名集合
+        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+
+        SportRegistrations userSportRegistrations=new SportRegistrations();//用于从集合中获得用户的报名信息
+        //遍历集合从中获取当前用户成绩
+        for(SportRegistrations temp:sportRegistrationsList){
+            if(SecurityUtils.getUserId()==temp.getUserId()){
+                userSportRegistrations=temp;
+            }
+        }
+
+        UserSportGradeVo userSportGradeVo=new UserSportGradeVo();
+
+        //根据比赛id查出比赛的item_id
+        SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
+        Long itemId = sportGames.getItemId();
+        //根据item_id查出降序还是升序
+        SportItem sportItem = sportItemService.selectSportItemById(itemId);
+        Long isDesc = sportItem.getIsDesc();
+
+        sportGames.setItem(sportItem);
+        userSportRegistrations.setGame(sportGames);
+        userSportGradeVo.setSportRegistrations(userSportRegistrations);
+
+        //根据升序降序对用户进行排名
+        Long userOrder=1L;
+        for(SportRegistrations temp:sportRegistrationsList){
+            if(temp.getScore()!=null){
+                if(isDesc==1){//降序
+                    if(temp.getScore()!=null&&userSportRegistrations.getScore()<temp.getScore()){
+                        userOrder++;
+                    }
+                }else {//升序
+                    if(temp.getScore()!=null&&userSportRegistrations.getScore()>temp.getScore()){
+                        userOrder++;
+                    }
+                }
+            }
+        }
+        userSportGradeVo.setUserOrder(userOrder);
+        //将用户当前成绩缓存，缓存时长设置为1h
+        redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
+        return userSportGradeVo;
     }
 }

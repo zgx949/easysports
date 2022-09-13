@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.domain.Vo.UserSportGradeVo;
 
 /**
  * 报名管理Service接口
@@ -69,9 +70,6 @@ public interface ISportRegistrationsService
      */
     public int deleteSportRegistrationsById(Long id);
 
-    public List<SportRegistrations> userRegisterationslist(SportRegistrations sportRegistrations);
-
-
     /**
      * 根据用户id和比赛id取消报名
      * @param userId
@@ -86,4 +84,11 @@ public interface ISportRegistrationsService
      * @return
      */
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
+
+    /**
+     * 根据用户id和比赛id获取用户成绩
+     * @param gameId
+     * @return
+     */
+    public UserSportGradeVo selectUserSportGrade(Long gameId);
 }

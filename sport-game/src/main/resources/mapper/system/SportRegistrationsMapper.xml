@@ -112,19 +112,6 @@
         <include refid="selectSportRegistrationsVo"/>
         where sr.id = #{id}
     </select>
-    <select id="userRegisterationslist"  parameterType="SportRegistrations" resultMap="SportRegistrationsResult">
-        <include refid="selectSportRegistrationsVo"/>
-        <where>
-            <if test="gameId != null "> and sr.game_id = #{gameId}</if>
-            <if test="userId != null "> and sr.user_id = #{userId}</if>
-            <if test="fieldId != null "> and sr.field_id = #{fieldId}</if>
-            <if test="status != null  and status != ''"> and sr.status = #{status}</if>
-            <if test="score != null "> and sr.score = #{score}</if>
-            <if test="points != null "> and sr.points = #{points}</if>
-            <if test="comment != null  and comment != ''"> and sr.comment = #{comment}</if>
-        </where>
-        order by create_time desc
-    </select>
 
     <insert id="insertSportRegistrations" parameterType="SportRegistrations">
         insert into sport_registrations

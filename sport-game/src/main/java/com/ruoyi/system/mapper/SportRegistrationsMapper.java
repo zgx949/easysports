@@ -68,7 +68,6 @@ public interface SportRegistrationsMapper
      * @param sportRegistrations
      * @return
      */
-    public List<SportRegistrations>  userRegisterationslist(SportRegistrations sportRegistrations);
 
     /**
      * 根据用户id和比赛id取消报名
