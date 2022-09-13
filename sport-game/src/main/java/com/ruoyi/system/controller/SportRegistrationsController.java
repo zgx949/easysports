@@ -152,8 +152,8 @@ public class SportRegistrationsController extends BaseController
     public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations)
     {
         sportRegistrations.setUserId(SecurityUtils.getUserId());
-        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.userRegisterationslist(sportRegistrations);
         startPage();
+        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.userRegisterationslist(sportRegistrations);
         return getDataTable(sportRegistrationsList);
     }
 
