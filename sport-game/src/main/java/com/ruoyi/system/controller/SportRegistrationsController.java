@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.SportFields;
 import com.ruoyi.system.domain.SportGames;
+import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 import com.ruoyi.system.service.ISportFieldsService;
 import com.ruoyi.system.service.ISportGamesService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +40,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2022-07-06
  */
 @RestController
+@Api
 @RequestMapping("/system/registrations")
 public class SportRegistrationsController extends BaseController
 {
@@ -135,6 +140,7 @@ public class SportRegistrationsController extends BaseController
      * 根据用户id查询报名比赛
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:list')")
+    @ApiOperation("根据用户id查询报名比赛")
     @GetMapping("/user/list")
     public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations)
     {
@@ -185,4 +191,18 @@ public class SportRegistrationsController extends BaseController
         return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(),gameId));
     }
 
+
+    @PreAuthorize("@ss.hasPermi('system:registrations:edit')")
+    @ApiOperation("管理员录入成绩")
+    @PutMapping("update/score")
+    public AjaxResult updateGamesScore(@RequestBody UpdateGamesScoreDto updateGamesScoreDto)
+    {
+        if ( ! SecurityUtils.getLoginUser().getUser().isAdmin()){
+            throw new ServiceException("无此权限");
+        }
+        if (sportRegistrationsService.handleUpdateScore(updateGamesScoreDto)){
+            return AjaxResult.success();
+        }
+        return AjaxResult.error("录入成绩失败");
+    }
 }

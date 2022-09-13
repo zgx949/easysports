@@ -4,7 +4,6 @@ import java.util.List;
 import com.ruoyi.system.domain.SportRegistrations;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * 报名管理Mapper接口
@@ -84,4 +83,6 @@ public interface SportRegistrationsMapper
      * @return
      */
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
+
+    boolean updateSportScoreData(SportRegistrations sportRegistrations);
 }

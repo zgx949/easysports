@@ -3,18 +3,18 @@ package com.ruoyi.system.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.core.domain.Dict;
-import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
-import com.ruoyi.system.domain.GameResultVo;
+import com.ruoyi.system.domain.Vo.GameInsertVo;
+import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.mapper.SportItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -34,8 +34,7 @@ import org.springframework.util.CollectionUtils;
  * @date 2022-07-05
  */
 @Service
-public class SportGamesServiceImpl implements ISportGamesService
-{
+public class SportGamesServiceImpl implements ISportGamesService {
 
 
     @Autowired
@@ -74,8 +73,7 @@ public class SportGamesServiceImpl implements ISportGamesService
      * @return 比赛管理
      */
     @Override
-    public SportGames selectSportGamesById(Long id)
-    {
+    public SportGames selectSportGamesById(Long id) {
         return sportGamesMapper.selectSportGamesById(id);
     }
 
@@ -87,8 +85,7 @@ public class SportGamesServiceImpl implements ISportGamesService
      * @Date 2022/9/12 08:43
      */
     @Override
-    public List<SportGames> selectSportGamesList(SportGames sportGames)
-    {
+    public List<SportGames> selectSportGamesList(SportGames sportGames) {
         List<SportGames> sportGamess = sportGamesMapper.selectSportGamesList(sportGames);
         updateStatus(sportGamess);
         return sportGamess;
@@ -103,18 +100,31 @@ public class SportGamesServiceImpl implements ISportGamesService
      */
     private void updateStatus(List<SportGames> sportGamess) {
         Date now = new Date();
+        boolean isUpdate = false;
         for (SportGames games : sportGamess) {
-            if(games.getStartTime().after(now)){
-                games.setStatus(0L);
-            }
-            else if (games.getEndTime().before(now)){
-                games.setStatus(3L);
-            }else {
-                games.setStatus(2L);
+            //根据时间设置比赛状态
+            //若需要修改，则标记isUpdate为true 异步更新数据库
+            if (games.getStartTime().after(now)) {
+                if (games.getStatus() != 0L) {
+                    games.setStatus(0L);
+                    isUpdate = true;
+                }
+            } else if (games.getEndTime().before(now)) {
+                if (games.getStatus() != 3L) {
+                    games.setStatus(3L);
+                    isUpdate = true;
+                }
+            } else {
+                if (games.getStatus() != 2L){
+                    games.setStatus(2L);
+                    isUpdate = true;
+                }
             }
         }
         //异步更新
-        AsyncManager.me().execute(anyscUpdateStatus(sportGamess));
+        if (isUpdate) {
+            AsyncManager.me().execute(anyscUpdateStatus(sportGamess));
+        }
     }
 
     /**
@@ -124,7 +134,7 @@ public class SportGamesServiceImpl implements ISportGamesService
      * @Author coder_jlt
      * @Date 2022/9/12 09:16
      */
-    private TimerTask anyscUpdateStatus(List<SportGames> sportGamess){
+    private TimerTask anyscUpdateStatus(List<SportGames> sportGamess) {
         return new TimerTask() {
             @Override
             public void run() {
@@ -143,8 +153,7 @@ public class SportGamesServiceImpl implements ISportGamesService
      */
     @Transactional
     @Override
-    public int insertSportGames(SportGames sportGames)
-    {
+    public int insertSportGames(SportGames sportGames) {
         // 项目ID不为空
         Long itemId = sportGames.getItemId();
         if (itemId != null) {
@@ -154,10 +163,10 @@ public class SportGamesServiceImpl implements ISportGamesService
             String itemName = sportItem.getItemName();
 
             StringBuilder gameName = new StringBuilder("【")
-                    .append(sportGames.getGender().equals(0)? "男": "女")
+                    .append(sportGames.getGender().equals(0) ? "男" : "女")
                     .append("子】")
                     .append(itemName)
-                    .append(sportGames.getNextGame() == null || sportGames.getNextGame().equals(0L)? "(决赛)":"(预赛)");
+                    .append(sportGames.getNextGame() == null || sportGames.getNextGame().equals(0L) ? "(决赛)" : "(预赛)");
 
             // 格式化比赛名字
             sportGames.setGameName(gameName.toString());
@@ -185,8 +194,7 @@ public class SportGamesServiceImpl implements ISportGamesService
      */
     @Transactional
     @Override
-    public int updateSportGames(SportGames sportGames)
-    {
+    public int updateSportGames(SportGames sportGames) {
 //        sportGamesMapper.deleteSportItemByItemName(sportGames.getId());
 //        insertSportItem(sportGames);
         return sportGamesMapper.updateSportGames(sportGames);
@@ -200,8 +208,7 @@ public class SportGamesServiceImpl implements ISportGamesService
      */
     @Transactional
     @Override
-    public int deleteSportGamesByIds(Long[] ids)
-    {
+    public int deleteSportGamesByIds(Long[] ids) {
         sportGamesMapper.deleteSportItemByItemNames(ids);
         return sportGamesMapper.deleteSportGamesByIds(ids);
     }
@@ -214,8 +221,7 @@ public class SportGamesServiceImpl implements ISportGamesService
      */
     @Transactional
     @Override
-    public int deleteSportGamesById(Long id)
-    {
+    public int deleteSportGamesById(Long id) {
         sportGamesMapper.deleteSportItemByItemName(id);
         return sportGamesMapper.deleteSportGamesById(id);
     }
@@ -223,7 +229,6 @@ public class SportGamesServiceImpl implements ISportGamesService
 
     /**
      * @Description 根据gameId查询比赛结果
-     *
      * @Param gameId
      * @Return {@link List< GameResultVo>}
      * @Author coder_jlt
@@ -234,27 +239,49 @@ public class SportGamesServiceImpl implements ISportGamesService
         //根据id设置缓存key
         String redisKey = "sport:game:result:" + gameId;
         //若命中缓存，则取缓存返回
-        if(!CollectionUtils.isEmpty(redisCache.getCacheList(redisKey))){
+        if (!CollectionUtils.isEmpty(redisCache.getCacheList(redisKey))) {
             return redisCache.getCacheList(redisKey);
         }
         List<GameResultVo> gameResultVos = sportGamesMapper.selectSportResultByGameId(gameId);
-        if (CollectionUtils.isEmpty(gameResultVos)){
+        if (CollectionUtils.isEmpty(gameResultVos)) {
             throw new ServiceException("比赛还未结束或成绩暂未录入，请稍等");
         }
         //设置排名字段
         for (int i = 0; i < gameResultVos.size(); i++) {
-            gameResultVos.get(i).setOrder(i+1);
+            gameResultVos.get(i).setOrder(i + 1);
         }
         //写缓存
         //如果写缓存失败则记录日志
-        if(redisCache.setCacheList(redisKey, gameResultVos) == 0L){
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor("system","err","记录缓存失败"));
+        if (redisCache.setCacheList(redisKey, gameResultVos) == 0L) {
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor("system", "err", "记录缓存失败"));
         }
         //如果设置缓存时间失败则删除缓存，防止脏数据
-        if(!redisCache.expire(redisKey, 24 * 60, TimeUnit.HOURS)){
+        if (!redisCache.expire(redisKey, 2 * 60, TimeUnit.HOURS)) {
             redisCache.deleteObject(redisKey);
         }
         return gameResultVos;
+    }
+
+    /**
+     * @Description 根据比赛id查询待记录分数人员
+     * @Param id
+     * @Return {@link List< GameInsertVo>}
+     * @Author coder_jlt
+     * @Date 2022/9/13 08:55
+     */
+    @Override
+    public List<GameInsertVo> SelectGameInsertVoByGameId(Long gameId) {
+        //
+        if (gameId == null){
+            throw  new ServiceException("请选择比赛！！！");
+        }
+
+        List<GameInsertVo> gameInsertVos = sportGamesMapper.SelectGameInsertVoByGameId(gameId);
+
+        if(CollectionUtils.isEmpty(gameInsertVos)){
+            throw new ServiceException("未查询到参加此比赛的运动员");
+        }
+        return gameInsertVos;
     }
 
     /**
@@ -262,20 +289,16 @@ public class SportGamesServiceImpl implements ISportGamesService
      *
      * @param sportGames 比赛管理对象
      */
-    public void insertSportItem(SportGames sportGames)
-    {
+    public void insertSportItem(SportGames sportGames) {
         List<SportItem> sportItemList = sportGames.getSportItemList();
         Long id = sportGames.getId();
-        if (StringUtils.isNotNull(sportItemList))
-        {
+        if (StringUtils.isNotNull(sportItemList)) {
             List<SportItem> list = new ArrayList<SportItem>();
-            for (SportItem sportItem : sportItemList)
-            {
+            for (SportItem sportItem : sportItemList) {
                 sportItem.setItemName(String.valueOf(id));
                 list.add(sportItem);
             }
-            if (list.size() > 0)
-            {
+            if (list.size() > 0) {
                 sportGamesMapper.batchSportItem(list);
             }
         }
