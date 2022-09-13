@@ -10,6 +10,8 @@ import com.ruoyi.system.domain.SportFields;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.service.ISportFieldsService;
 import com.ruoyi.system.service.ISportGamesService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +38,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2022-07-06
  */
 @RestController
+@Api
 @RequestMapping("/system/registrations")
 public class SportRegistrationsController extends BaseController
 {
@@ -135,6 +138,7 @@ public class SportRegistrationsController extends BaseController
      * 根据用户id查询报名比赛
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:list')")
+    @ApiOperation("根据用户id查询报名比赛")
     @GetMapping("/user/list")
     public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations)
     {

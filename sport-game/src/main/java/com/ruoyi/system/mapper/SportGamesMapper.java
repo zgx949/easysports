@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.common.core.domain.Dict;
-import com.ruoyi.system.domain.GameResultVo;
+import com.ruoyi.system.domain.Vo.GameInsertVo;
+import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
 import org.springframework.stereotype.Repository;
@@ -105,4 +106,7 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     public List<Dict> selectSportGamesDict();
 
     public List<GameResultVo> selectSportResultByGameId(Long gameId);
+
+
+    List<GameInsertVo> SelectGameInsertVoByGameId(Long gameId);
 }

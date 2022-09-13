@@ -4,7 +4,8 @@ package com.ruoyi.system.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ruoyi.system.domain.GameResultVo;
+import com.ruoyi.system.domain.Vo.GameInsertVo;
+import com.ruoyi.system.domain.Vo.GameResultVo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -83,6 +84,21 @@ public class SportGamesController extends BaseController {
         List<GameResultVo> gameResultVos = sportGamesService.selectGameResultByGameId(id);
         return AjaxResult.success(gameResultVos);
     }
+
+    /**
+     * 根据比赛id查询待记录分数人员
+     */
+    @ApiOperation("根据比赛id查询待记录分数人员")
+    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @GetMapping("/insert/{gameId}")
+    public AjaxResult SelectGameInsertVoByGameId(@PathVariable Long gameId) {
+        if (null == gameId) {
+            return AjaxResult.error("请传入比赛Id");
+        }
+        List<GameInsertVo> gameInsertVos = sportGamesService.SelectGameInsertVoByGameId(gameId);
+        return AjaxResult.success(gameInsertVos);
+    }
+
 
     /**
      * 导出比赛管理列表
