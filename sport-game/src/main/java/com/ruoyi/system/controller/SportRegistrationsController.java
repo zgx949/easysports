@@ -223,6 +223,15 @@ public class SportRegistrationsController extends BaseController
     {
         SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
 
+        //判断用户是否已经报名
+        SportRegistrations sportRegistrations=new SportRegistrations();
+        sportRegistrations.setGameId(gameId);
+        sportRegistrations.setUserId(SecurityUtils.getUserId());
+        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+        if(sportRegistrationsList.size()==0){
+            return AjaxResult.error("用户未报名该比赛");
+        }
+
         //判断取消报名时是否在报名时间段内
         if(sportGames.getStatus()!=0){
             return AjaxResult.error("未在报名时间段内");
