@@ -1,11 +1,14 @@
 package com.ruoyi.system.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ruoyi.system.domain.GameResultVo;
+import com.ruoyi.system.domain.Vo.GameInsertVo;
+import com.ruoyi.system.domain.Vo.GameResultVo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +34,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author ruoyi
  * @date 2022-07-05
  */
+@Api("运动会信息管理")
 @RestController
 @RequestMapping("/system/games")
 public class SportGamesController extends BaseController {
@@ -69,6 +73,7 @@ public class SportGamesController extends BaseController {
     /**
      * 根据比赛ID查询具体比赛结果
      */
+    @ApiOperation("根据比赛id查询比赛结果")
     @PreAuthorize("@ss.hasPermi('system:games:list')")
     @GetMapping("/single/{id}")
     public AjaxResult SelectGameResultByGameId(@PathVariable Long id) {
@@ -79,6 +84,21 @@ public class SportGamesController extends BaseController {
         List<GameResultVo> gameResultVos = sportGamesService.selectGameResultByGameId(id);
         return AjaxResult.success(gameResultVos);
     }
+
+    /**
+     * 根据比赛id查询待记录分数人员
+     */
+    @ApiOperation("根据比赛id查询待记录分数人员")
+    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @GetMapping("/insert/{gameId}")
+    public AjaxResult SelectGameInsertVoByGameId(@PathVariable Long gameId) {
+        if (null == gameId) {
+            return AjaxResult.error("请传入比赛Id");
+        }
+        List<GameInsertVo> gameInsertVos = sportGamesService.SelectGameInsertVoByGameId(gameId);
+        return AjaxResult.success(gameInsertVos);
+    }
+
 
     /**
      * 导出比赛管理列表

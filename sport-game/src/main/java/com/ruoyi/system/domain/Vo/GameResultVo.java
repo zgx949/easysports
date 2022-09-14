@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain;
+package com.ruoyi.system.domain.Vo;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -18,30 +18,6 @@ public class GameResultVo {
     private String deptName;
 
     private String nickName;
-
-    public int getOrder() {
-        return order;
-    }
-
-    public String getDeptName() {
-        return deptName;
-    }
-
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
 
     private int score;
 
@@ -80,5 +56,29 @@ public class GameResultVo {
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }

@@ -52,7 +52,7 @@ public class SportRegistrationsController extends BaseController
 
     @Autowired
     private ISportItemService sportItemService;
-    
+
     @Autowired
     private ISportGamesService sportGamesService;
 
@@ -182,7 +182,7 @@ public class SportRegistrationsController extends BaseController
     /**
      * 用户报名比赛
      */
-    @PreAuthorize("@ss.hasPermi('system:registrations:add')")
+//    @PreAuthorize("@ss.hasPermi('system:registrations:add')")
     @PostMapping("/user/{gameId}")
     public AjaxResult insertUserRegistrations(SportRegistrations sportRegistrations)
     {
@@ -217,7 +217,7 @@ public class SportRegistrationsController extends BaseController
     /**
      * 用户取消报名
      */
-    @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
+//    @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
     @DeleteMapping("/user/{gameId}")
     public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId)
     {
