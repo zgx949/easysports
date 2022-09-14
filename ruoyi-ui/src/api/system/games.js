@@ -75,3 +75,12 @@ export function getPlayerByGameId(id) {
   })
 }
 
+// 录入比赛成绩
+export function registerScore(data) {
+  return request({
+    url: '/system/registrations/update/score',
+    method: 'put',
+    data: data
+  })
+}
+
