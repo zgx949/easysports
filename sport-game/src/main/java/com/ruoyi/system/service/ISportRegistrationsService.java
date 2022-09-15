@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
 import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 
 /**
@@ -96,4 +97,14 @@ public interface ISportRegistrationsService
      * @Date 2022/9/13 13:17
      */
     boolean handleUpdateScore(UpdateGamesScoreDto updateGamesScoreDto);
+
+    /**
+     * @return
+     * @Description 获取生成秩序册所需必要信息
+     * @Param
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/15 12:00
+     */
+    List<GameSequenceBookVO> exportGameSequenceBookVo();
 }
