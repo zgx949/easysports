@@ -132,7 +132,7 @@ export const dynamicRoutes = [
     permissions: ['system:dict:list'],
     children: [
       {
-        path: 'index/:dictId(\\d+)',
+        path: 'index.vue/:dictId(\\d+)',
         component: () => import('@/views/system/dict/data'),
         name: 'Data',
         meta: { title: '字典数据', activeMenu: '/system/dict' }
@@ -160,7 +160,7 @@ export const dynamicRoutes = [
     permissions: ['tool:gen:edit'],
     children: [
       {
-        path: 'index/:tableId(\\d+)',
+        path: 'index.vue/:tableId(\\d+)',
         component: () => import('@/views/tool/gen/editTable'),
         name: 'GenEdit',
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }

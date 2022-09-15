@@ -25,12 +25,12 @@
         <el-table-column
           prop="username"
           label="学号"
-          width="150">
+          width="130">
         </el-table-column>
         <el-table-column
           prop="nickName"
           label="姓名"
-          width="120">
+          width="100">
         </el-table-column>
         <el-table-column
           prop="gameName"
@@ -40,6 +40,11 @@
         <el-table-column
           prop="type"
           label="比赛类型">
+          <template slot-scope="scope">
+            <span v-if="scope.row.type === 1">田赛</span>
+            <span v-if="scope.row.type === 2">径赛</span>
+            <span v-if="scope.row.type === 3">团体赛</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="startTime"
@@ -52,8 +57,9 @@
         </el-table-column>
         <el-table-column
           prop="score,unit"
-          label="成绩">
-          <template slot-scope="scope" v-if="scope.row.score?true:false">
+          label="成绩"
+        width="150">
+          <template slot-scope="scope" v-if="scope.row.score ? true:false">
             {{scope.row.score}} {{scope.row.unit}}
           </template>
         </el-table-column>
