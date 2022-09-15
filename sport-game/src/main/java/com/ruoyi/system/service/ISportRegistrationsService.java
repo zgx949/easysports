@@ -3,6 +3,7 @@ package com.ruoyi.system.service;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.SportRegistrations;
 
 /**
@@ -86,4 +87,11 @@ public interface ISportRegistrationsService
      * @return
      */
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
+
+    /**
+     * 生成秩序册
+     * @param user
+     * @return
+     */
+    public String wordGeneration(SysUser user);
 }

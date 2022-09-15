@@ -2,6 +2,7 @@ package com.ruoyi.sport.game.service.impl;
 
 import com.ruoyi.system.domain.SportRegistrations;
 import com.ruoyi.system.mapper.SportRegistrationsMapper;
+import com.ruoyi.system.service.impl.SportRegistrationsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,6 +20,8 @@ public class SportRegistrationsTest {
 
     @Resource
     private SportRegistrationsMapper sportRegistrationsMapper;
+    @Resource
+    private SportRegistrationsServiceImpl sportRegistrationsService;
 
     @Test
     public void selectSportRegistrationsList() {
@@ -26,6 +29,13 @@ public class SportRegistrationsTest {
         for (SportRegistrations sportRegistration : sportRegistrations) {
             System.out.println(sportRegistration);
         }
+    }
+
+    @Test
+    public void word() {
+//        String xml = sportRegistrationsService.getDeptRegister(210);
+        String xml = sportRegistrationsService.wordGeneration(null);
+        System.out.println(xml);
     }
 
 
