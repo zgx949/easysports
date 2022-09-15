@@ -87,7 +87,7 @@ public class SportGamesServiceImpl implements ISportGamesService {
     @Override
     public List<SportGames> selectSportGamesList(SportGames sportGames) {
         List<SportGames> sportGamess = sportGamesMapper.selectSportGamesList(sportGames);
-        updateStatus(sportGamess);
+        //updateStatus(sportGamess);
         return sportGamess;
     }
 
@@ -98,9 +98,11 @@ public class SportGamesServiceImpl implements ISportGamesService {
      * @Author coder_jlt
      * @Date 2022/9/12 08:54
      */
+    @Deprecated
     private void updateStatus(List<SportGames> sportGamess) {
         Date now = new Date();
         boolean isUpdate = false;
+        // TODO 此处可能NPE异常
         for (SportGames games : sportGamess) {
             //根据时间设置比赛状态
             //若需要修改，则标记isUpdate为true 异步更新数据库

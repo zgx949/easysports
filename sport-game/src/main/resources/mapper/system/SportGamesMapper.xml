@@ -141,7 +141,7 @@
                  LEFT JOIN sport_games sg ON sr.game_id = sg.id
                  LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
                  LEFT JOIN sport_item si on si.id = sg.item_id
-        WHERE sr.game_id = #{gameId} AND sg.`status` = 3
+        WHERE sr.game_id = #{gameId} AND sg.`status` = 3 AND sr.status = 1
         ORDER BY sr.score ASC
     </select>
 

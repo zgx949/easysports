@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.SportFields;
 import com.ruoyi.system.domain.SportGames;
+import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
 import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 import com.ruoyi.system.service.ISportFieldsService;
 import com.ruoyi.system.service.ISportGamesService;
@@ -204,5 +205,18 @@ public class SportRegistrationsController extends BaseController
             return AjaxResult.success();
         }
         return AjaxResult.error("录入成绩失败");
+    }
+
+
+    /**
+     * 获取生成秩序册所需必要信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:registrations:query')")
+    @GetMapping()
+    @ApiOperation("获取生成秩序册所需必要信息")
+    public AjaxResult getInf()
+    {
+        List<GameSequenceBookVO> gameSequenceBookVOS = sportRegistrationsService.exportGameSequenceBookVo();
+        return AjaxResult.success(gameSequenceBookVOS);
     }
 }

@@ -1,16 +1,15 @@
 package com.ruoyi.system.service.impl;
-import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.system.domain.SportFields;
+
+import java.util.ArrayList;
 import java.util.Date;
-import com.ruoyi.system.domain.SportGames;
-import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
 import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -184,7 +183,6 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
             throw new ServiceException("成绩积分不能为负数");
         }
 
-
         //TODO 审核信息安全
 
         SportRegistrations sportRegistrations = new SportRegistrations();
@@ -197,6 +195,21 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
         // 删除gameId对应比赛的排名表缓存
         redisCache.deleteObject("sport:game:result:" + updateGamesScoreDto.getGameId());
+
         return sportRegistrationsMapper.updateSportScoreData(sportRegistrations);
+    }
+
+    /**
+     * @return
+     * @Description 获取生成秩序册所需必要信息
+     * @Param
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/15 12:01
+     */
+    @Override
+    public List<GameSequenceBookVO> exportGameSequenceBookVo() {
+        //TODO
+        return new ArrayList<GameSequenceBookVO>();
     }
 }
