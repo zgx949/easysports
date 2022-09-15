@@ -11,6 +11,8 @@ import java.util.List;
  */
 @Data
 public class GameSequenceItemVO {
+    private Long userId;
+
     private String username;
 
     private String postName;
@@ -20,8 +22,6 @@ public class GameSequenceItemVO {
     private String nickName;
 
     private Integer sex;
-
-    private String itemName;
 
     //该用户加入的比赛
     private List<String> joinGames;

@@ -214,9 +214,11 @@ public class SportRegistrationsController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:registrations:query')")
     @GetMapping()
     @ApiOperation("获取生成秩序册所需必要信息")
-    public AjaxResult GameSequenceBookVO()
+    public AjaxResult getGameSequenceBookVO()
     {
         List<GameSequenceBookVO> gameSequenceBookVOS = sportRegistrationsService.exportGameSequenceBookVo();
+
+
         return AjaxResult.success(gameSequenceBookVOS);
     }
 }

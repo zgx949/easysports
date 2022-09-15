@@ -1,7 +1,9 @@
 package com.ruoyi.system.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.domain.Vo.GameSequenceItemVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -85,4 +87,8 @@ public interface SportRegistrationsMapper
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
 
     boolean updateSportScoreData(SportRegistrations sportRegistrations);
+
+    ArrayList<GameSequenceItemVO> selectGameSequenceItemVOsByDeptID(Long deptId);
+
+    ArrayList<String> getGameSequenceItemGamesName(Long userId);
 }
