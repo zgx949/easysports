@@ -1,8 +1,11 @@
 package com.ruoyi.system.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.domain.Vo.GameSequenceItemVO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -84,5 +87,19 @@ public interface SportRegistrationsMapper
      */
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
 
+    /**
+    * @Description: 查询报名数量
+    * @Param:
+    * @return:
+    * @Author: leftHand
+    * @Date: 2022-09-16
+    */
+    @Select("SELECT count(*) FROM sport_registrations WHERE game_id=#{gameId} AND status=1")
+    public int count(Long gameId);
+
     boolean updateSportScoreData(SportRegistrations sportRegistrations);
+
+    ArrayList<GameSequenceItemVO> selectGameSequenceItemVOsByDeptID(Long deptId);
+
+    ArrayList<String> getGameSequenceItemGamesName(Long userId);
 }

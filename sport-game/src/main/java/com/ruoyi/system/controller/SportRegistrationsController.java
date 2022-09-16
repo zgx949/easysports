@@ -1,37 +1,37 @@
 package com.ruoyi.system.controller;
 
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-
-import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.system.domain.SportFields;
-import com.ruoyi.system.domain.SportGames;
-import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
-import com.ruoyi.system.service.ISportFieldsService;
-import com.ruoyi.system.service.ISportGamesService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.system.domain.SportRegistrations;
-import com.ruoyi.system.service.ISportRegistrationsService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.SportGames;
+import com.ruoyi.system.domain.SportItem;
+import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
+import com.ruoyi.system.domain.Vo.UserSportGradeVo;
+import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
+import com.ruoyi.system.service.ISportGamesService;
+import com.ruoyi.system.service.ISportItemService;
+import com.ruoyi.system.service.ISportRegistrationsService;
+import com.ruoyi.system.service.ISysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 报名管理Controller
@@ -48,10 +48,16 @@ public class SportRegistrationsController extends BaseController
     private ISportRegistrationsService sportRegistrationsService;
 
     @Autowired
+    private ISportItemService sportItemService;
+
+    @Autowired
     private ISportGamesService sportGamesService;
 
     @Autowired
-    private ISportFieldsService sportFieldsService;
+    private ISysUserService sysUserService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 新增报名管理
@@ -157,23 +163,84 @@ public class SportRegistrationsController extends BaseController
     @GetMapping("/user/{gameId}")
     public AjaxResult userScore(@PathVariable("gameId") Long gameId)
     {
+        String redisKey = "userSportGrade:" + SecurityUtils.getUserId()+":"+gameId;
+        UserSportGradeVo cacheObject = (UserSportGradeVo)redisCache.getCacheObject(redisKey);
+        if(!ObjectUtils.isEmpty(cacheObject)){
+            return AjaxResult.success(cacheObject);
+        }
         SportRegistrations sportRegistrations=new SportRegistrations();
         sportRegistrations.setGameId(gameId);
-        sportRegistrations.setUserId(SecurityUtils.getUserId());
-        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
-        if(sportRegistrationsList.size()!=1){
-            return AjaxResult.error();
+        //查询参加该比赛的所有报名集合
+        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+
+        SportRegistrations userSportRegistrations=new SportRegistrations();//用于从集合中获得用户的报名信息
+        //遍历集合从中获取当前用户成绩
+        for(SportRegistrations temp:sportRegistrationsList){
+            if(SecurityUtils.getUserId().equals(temp.getUserId())){
+                userSportRegistrations=temp;
+            }
         }
-        return AjaxResult.success(sportRegistrationsList.get(0));
+        if(userSportRegistrations.getScore()==null){
+            return AjaxResult.error("未查询到用户成绩");
+        }
+        UserSportGradeVo userSportGradeVo=new UserSportGradeVo();
+
+        //根据比赛id查出比赛的item_id
+        SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
+        Long itemId = sportGames.getItemId();
+        //根据item_id查出降序还是升序
+        SportItem sportItem = sportItemService.selectSportItemById(itemId);
+        Long isDesc = sportItem.getIsDesc();
+
+        sportGames.setItem(sportItem);
+        userSportRegistrations.setGame(sportGames);
+        userSportGradeVo.setSportRegistrations(userSportRegistrations);
+
+        //根据升序降序对用户进行排名
+        Long userOrder=1L;
+        for(SportRegistrations temp:sportRegistrationsList){
+           if(temp.getScore()!=null){
+               if(isDesc==1){//降序
+                   if(temp.getScore()!=null&&userSportRegistrations.getScore()<temp.getScore()){
+                       userOrder++;
+                   }
+               }else {//升序
+                   if(temp.getScore()!=null&&userSportRegistrations.getScore()>temp.getScore()){
+                       userOrder++;
+                   }
+               }
+           }
+        }
+        userSportGradeVo.setUserOrder(userOrder);
+        //将用户当前成绩缓存，缓存时长设置为1h
+        redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
+
+        return AjaxResult.success(userSportGradeVo);
     }
 
     /**
      * 用户报名比赛
      */
-    @PreAuthorize("@ss.hasPermi('system:registrations:add')")
+//    @PreAuthorize("@ss.hasPermi('system:registrations:add')")
     @PostMapping("/user/{gameId}")
     public AjaxResult insertUserRegistrations(SportRegistrations sportRegistrations)
     {
+        Long userId = SecurityUtils.getUserId();
+        //检验用户是否已经报名该比赛
+        sportRegistrations.setUserId(userId);
+        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+        if(sportRegistrationsList.size()!=0){
+            return AjaxResult.error("用户已报名该比赛");
+        }
+
+        //检验用户报名性别是否合法
+        SysUser sysUser = sysUserService.selectUserById(userId);
+        String userSex = sysUser.getSex();
+        SportGames sportGames = sportGamesService.selectSportGamesById(sportRegistrations.getGameId());
+        if(Integer.parseInt(userSex)!=sportGames.getGender()){
+            return AjaxResult.error("用户性别错误");
+        }
+
         sportRegistrations.setUserId(SecurityUtils.getUserId());
         sportRegistrations.setUpdateTime(DateUtils.getNowDate());
         sportRegistrations.setCreateTime(DateUtils.getNowDate());
@@ -184,7 +251,7 @@ public class SportRegistrationsController extends BaseController
     /**
      * 用户取消报名
      */
-    @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
+//    @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
     @DeleteMapping("/user/{gameId}")
     public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId)
     {
@@ -204,5 +271,20 @@ public class SportRegistrationsController extends BaseController
             return AjaxResult.success();
         }
         return AjaxResult.error("录入成绩失败");
+    }
+
+
+    /**
+     * 获取生成秩序册所需必要信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:registrations:query')")
+    @GetMapping()
+    @ApiOperation("获取生成秩序册所需必要信息")
+    public AjaxResult getGameSequenceBookVO()
+    {
+        List<GameSequenceBookVO> gameSequenceBookVOS = sportRegistrationsService.exportGameSequenceBookVo();
+
+
+        return AjaxResult.success(gameSequenceBookVOS);
     }
 }

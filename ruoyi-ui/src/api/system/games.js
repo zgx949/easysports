@@ -84,3 +84,11 @@ export function registerScore(data) {
   })
 }
 
+// 获取秩序册信息数据
+export function getRosterInfo() {
+  return request({
+    url: '/system/registrations' ,
+    method: 'get'
+  })
+}
+

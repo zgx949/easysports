@@ -2,12 +2,14 @@ package com.ruoyi.system.controller;
 
 
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.system.domain.Vo.GameInsertVo;
 import com.ruoyi.system.domain.Vo.GameResultVo;
 
+import com.ruoyi.system.mapper.SportGamesMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,6 +43,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 public class SportGamesController extends BaseController {
     @Autowired
     private ISportGamesService sportGamesService;
+
+    @Autowired
+    private SportGamesMapper sportGamesMapper;
 
     /**
      * 获取报名比赛的必要信息
@@ -151,5 +156,28 @@ public class SportGamesController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(sportGamesService.deleteSportGamesByIds(ids));
+    }
+
+
+    /**
+     * 查询比赛分类后的列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @GetMapping("/game-order")
+    public TableDataInfo listView(Map<String, Integer> mp) {
+        Integer type = mp.get("type");
+        List<SportGames> list = null;
+        // 田赛
+        if (type.equals(1)) {
+            list = sportGamesMapper.selectFieldGames();
+        // 径赛
+        } else if (type.equals(2)){
+            list = sportGamesMapper.selectTrackGames();
+        // 团体赛
+        } else if (type.equals(3)) {
+            list = sportGamesMapper.selectGroupGames();
+        }
+
+        return getDataTable(list);
     }
 }

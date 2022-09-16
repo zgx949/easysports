@@ -7,7 +7,7 @@ export default {
     bind(el) {
         const dragDom = el.querySelector('.el-dialog');
         const lineEl = document.createElement('div');
-        lineEl.style = 'width: 6px; background: inherit; height: 10px; position: absolute; right: 0; bottom: 0; margin: auto; z-index: 1; cursor: nwse-resize;';
+        lineEl.style = 'width: 6px; background: inherit; height: 10px; position: absolute; right: 0; bottom: 0; margin: auto; z-index.vue: 1; cursor: nwse-resize;';
         lineEl.addEventListener('mousedown',
             function(e) {
                 // 鼠标按下，计算当前元素距离可视区的距离
