@@ -104,6 +104,7 @@ public class SportGamesServiceImpl implements ISportGamesService {
         for (SportGames games : sportGamess) {
             //根据时间设置比赛状态
             //若需要修改，则标记isUpdate为true 异步更新数据库
+            if (games.getStartTime() == null) continue;
             if (games.getStartTime().after(now)) {
                 if (games.getStatus() != 0L) {
                     games.setStatus(0L);
