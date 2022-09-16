@@ -58,8 +58,6 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     @Autowired
     private RedisCache redisCache;
 
-    @Resource
-    private ISysDeptService sysDeptService;
     /**
      * 用户报名项目
      *
