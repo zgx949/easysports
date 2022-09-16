@@ -82,21 +82,21 @@
                     <w:sz w:val="18" />
                     <w:lang w:val="EN-US" />
                 </w:rPr>
-                <w:t>${game._index + 1}</w:t>
+                <w:t>${'\t\t'}${game.index}</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:hint="fareast" />
                     <w:sz w:val="18" />
                 </w:rPr>
-                <w:t>、${game.gameName}                       ${game.groupCount}组        ${game.totalPerson}</w:t>
+                <w:t>、${game.gameName}${'\t'}${'\t'}${'\t'}${game.groupCount}组${'\t'}${'\t'}${'\t'}${game.totalPerson}</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:hint="fareast" />
                     <w:sz w:val="18" />
                 </w:rPr>
-                <w:t>人          ${game.startTime}     </w:t>
+                <w:t>人${'\t'}${'\t'}${'\t'}${game.startTime?substring(10, 16)}</w:t>
             </w:r>
         </w:p>
     </w:tc>

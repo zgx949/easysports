@@ -7,10 +7,19 @@ package com.ruoyi.system.domain.Vo;
  * @create: 2022-09-16 12:29
  **/
 public class GameDescVo {
+    private int index;
     public String gameName;
     public String groupCount;
     public String totalPerson;
-    public String strtTime;
+    public String startTime;
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     public String getGameName() {
         return gameName;
@@ -36,11 +45,11 @@ public class GameDescVo {
         this.totalPerson = totalPerson;
     }
 
-    public String getStrtTime() {
-        return strtTime;
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setStrtTime(String strtTime) {
-        this.strtTime = strtTime;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 }

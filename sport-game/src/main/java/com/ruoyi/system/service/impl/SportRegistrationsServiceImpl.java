@@ -2,6 +2,7 @@ package com.ruoyi.system.service.impl;
 
 import java.util.*;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
@@ -10,7 +11,6 @@ import com.ruoyi.system.domain.SportItem;
 import com.ruoyi.system.domain.Vo.GameDescVo;
 import com.ruoyi.system.domain.Vo.RegisterReportVo;
 import com.ruoyi.system.mapper.SportGamesMapper;
-import com.ruoyi.system.mapper.SportItemMapper;
 import com.ruoyi.system.utls.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -197,7 +197,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         if (nickName.length() == 2) {
             nickName += "  ";
         }
-        registerReportVo.setName(user.getNickName());
+        registerReportVo.setName(nickName);
         // TODO: 需要加一个查询岗位信息，判断是学生还是教工
         registerReportVo.setUserType("学生");
         registerReportVo.setGender(user.getSex().equals("0") ? "男": "女");
@@ -206,7 +206,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         StringBuilder rowText = new StringBuilder();
         rowText
                 .append(registerReportVo.getNum())
-                .append("\t")
+                .append("  ")
                 .append(registerReportVo.getName())
                 .append("\t")
                 .append(registerReportVo.getUserType())
@@ -275,11 +275,17 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
             int totalPerson = sportRegistrationsMapper.count(sportGames.getId());
             // 单组人数限制
             Long groupLimit = sportGames.getMaxPerson();
-            int groupCount = (int) (totalPerson / groupLimit + (totalPerson % groupLimit > 0 ? 1 : 0));
+            // 不允许报名的决赛
+            int groupCount = 1;
+            if (totalPerson == 0 && sportGamesMapper.selectCount(new QueryWrapper<SportGames>().eq("next_game", sportGames.getId())) > 0) {
+                totalPerson = Math.toIntExact(groupLimit);
+            } else {
+                groupCount = (int) (totalPerson / groupLimit + (totalPerson % groupLimit > 0 ? 1 : 0));
+            }
 
             gd.setGameName(gameName);
             gd.setGroupCount(String.valueOf(groupCount));
-            gd.setStrtTime(st);
+            gd.setStartTime(st);
             gd.setTotalPerson(String.valueOf(totalPerson));
             gamesDescList.add(gd);
         }
@@ -306,7 +312,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
         Calendar sd = Calendar.getInstance();
         sd.setTime(DateUtils.parseDate(sportGamesMapper.startDate()));
-        sd.set(Calendar.HOUR, 0);
+        sd.set(Calendar.HOUR_OF_DAY, 0);
         sd.set(Calendar.MINUTE, 0);
         sd.set(Calendar.SECOND, 0);
 
@@ -314,34 +320,48 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
         Calendar ed = Calendar.getInstance();
         ed.setTime(DateUtils.parseDate(sportGamesMapper.endDate()));
-        ed.set(Calendar.HOUR, 23);
+        ed.set(Calendar.HOUR_OF_DAY, 23);
         ed.set(Calendar.MINUTE, 59);
         ed.set(Calendar.SECOND, 59);
 
-
-
-
+        StringBuilder res = new StringBuilder();
         // 开始时间小于结束时间
-        while(sd.before(ed)) {
+        while(curr.before(ed)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(gameSlot(startDate, endDate,1L));
+            sb.append(gameSlot(startDate, endDate,2L));
+            sb.append(gameSlot(startDate, endDate,3L));
+
+            // 时间段标记
+            String dateTag = new StringBuilder()
+                    .append(curr.get(Calendar.MONTH))
+                    .append("月")
+                    .append(curr.get(Calendar.DAY_OF_MONTH))
+                    .append("日")
+                    .append(curr.get(Calendar.AM_PM) == Calendar.AM ? "上午" : "下午")
+                    .toString();
+
+            // 当前时间片段的比赛情况
+            String slotGames = WordUtils.gameOrder(dateTag, sb.toString());
+            // 组合到总日程中
+            res.append(slotGames);
 
             // 如果已分片到下午
-            if (sd.get(Calendar.HOUR) == 12) {
+            if (curr.get(Calendar.HOUR_OF_DAY) == 12) {
                 // 跳转到第二天早上
-                sd.add(Calendar.DATE, 1);
-                sd.set(Calendar.HOUR, 0);
-                sd.set(Calendar.MINUTE, 0);
-                sd.set(Calendar.SECOND, 0);
+                curr.add(Calendar.DATE, 1);
+                curr.set(Calendar.HOUR, 0);
+                curr.set(Calendar.MINUTE, 0);
+                curr.set(Calendar.SECOND, 0);
             } else {
                 // 跳转到当天中午
-                sd.set(Calendar.HOUR, 12);
-                sd.set(Calendar.MINUTE, 0);
-                sd.set(Calendar.SECOND, 0);
+                curr.set(Calendar.HOUR_OF_DAY, 12);
+                curr.set(Calendar.MINUTE, 0);
+                curr.set(Calendar.SECOND, 0);
             }
         }
 
-
-        String res = gameSlot(startDate, endDate,1L);
-        return res;
+        return res.toString();
 
 //        WordUtils.
     }

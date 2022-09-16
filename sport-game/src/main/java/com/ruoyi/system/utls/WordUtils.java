@@ -3,10 +3,7 @@ import com.ruoyi.system.domain.Vo.GameDescVo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +69,28 @@ public class WordUtils {
     public static String gameList(List<GameDescVo> gamesVo, String itemType) {
         HashMap<String, Object> mp = new HashMap<>();
         mp.put("itemType", itemType);
+        int i = 0;
+        for (GameDescVo gameDescVo : gamesVo) {
+            gameDescVo.setIndex(++i);
+        }
         mp.put("games", gamesVo);
 
         return WordUtils.process(mp, "/vm/sportMeeting/gameGroup.ftl").toString();
+    }
+
+    /**
+     * @Description: 获取按时间编排的比赛
+     * @Param:
+     * @return:
+     * @Author: leftHand
+     * @Date: 2022-09-16
+     */
+    public static String gameOrder(String datetime, String typeGroup) {
+        HashMap<String, Object> mp = new HashMap<>();
+        mp.put("dateTime", datetime);
+        mp.put("typeGroup", typeGroup);
+
+        return WordUtils.process(mp, "/vm/sportMeeting/gamesOrderDate.ftl").toString();
     }
 
     /**
@@ -93,6 +109,17 @@ public class WordUtils {
         return WordUtils.process(mp, "/vm/sportMeeting/registerRow.ftl").toString();
     }
 
+    /**
+     * 方法 1：使用 FileWriter 写文件
+     * @param filepath 文件目录
+     * @param content  待写入内容
+     * @throws IOException
+     */
+    public static void fileWriterMethod(String filepath, String content) throws IOException {
+        try (FileWriter fileWriter = new FileWriter(filepath)) {
+            fileWriter.append(content);
+        }
+    }
 
 
 }
