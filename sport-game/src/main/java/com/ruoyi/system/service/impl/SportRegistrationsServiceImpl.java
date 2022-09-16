@@ -1,4 +1,10 @@
 package com.ruoyi.system.service.impl;
+import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.exception.ServiceException;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 import java.util.*;
 
@@ -12,11 +18,22 @@ import com.ruoyi.system.domain.Vo.GameDescVo;
 import com.ruoyi.system.domain.Vo.RegisterReportVo;
 import com.ruoyi.system.mapper.SportGamesMapper;
 import com.ruoyi.system.utls.WordUtils;
+import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
+import com.ruoyi.system.domain.Vo.GameSequenceItemVO;
+import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
+import com.ruoyi.system.domain.vo.CollegeVo;
+import com.ruoyi.system.mapper.SysDeptMapper;
+import com.ruoyi.system.service.ISysDeptService;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SportRegistrationsMapper;
 import com.ruoyi.system.domain.SportRegistrations;
 import com.ruoyi.system.service.ISportRegistrationsService;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
 
 /**
  * 报名管理Service业务层处理
@@ -38,6 +55,11 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     @Autowired
     private SportGamesMapper sportGamesMapper;
 
+    @Autowired
+    private RedisCache redisCache;
+
+    @Resource
+    private ISysDeptService sysDeptService;
     /**
      * 用户报名项目
      *
@@ -414,4 +436,110 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
         return WordUtils.process(mp, "/vm/sportMeeting/template.ftl").toString();
     }
+
+    /**
+     * @Description 处理更新成绩请求(删除对应成绩排名表缓存)
+     * @Param updateGamesScoreDto
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/13 13:18
+     */
+    @Override
+    public boolean handleUpdateScore(UpdateGamesScoreDto updateGamesScoreDto) {
+
+        if (!ObjectUtils.allNotNull(updateGamesScoreDto,updateGamesScoreDto.getScore(),updateGamesScoreDto.getGameId()
+                ,updateGamesScoreDto.getPoints(),updateGamesScoreDto.getUserId())){
+            throw new ServiceException("请输入完整数据");
+        }
+
+        if (StringUtils.isNoneBlank(updateGamesScoreDto.getComment()) && updateGamesScoreDto.getComment().length() > 255){
+            throw new ServiceException("备注信息过长");
+        }
+
+        if(updateGamesScoreDto.getScore() < 0 || updateGamesScoreDto.getPoints() < 0){
+            throw new ServiceException("成绩积分不能为负数");
+        }
+
+        //TODO 审核信息安全
+
+        SportRegistrations sportRegistrations = new SportRegistrations();
+        sportRegistrations.setGameId(updateGamesScoreDto.getGameId());
+        sportRegistrations.setUserId(updateGamesScoreDto.getUserId());
+        sportRegistrations.setScore(updateGamesScoreDto.getScore());
+        sportRegistrations.setPoints(updateGamesScoreDto.getPoints());
+        sportRegistrations.setComment(updateGamesScoreDto.getComment());
+        sportRegistrations.setUpdateTime(new Date());
+
+        // 删除gameId对应比赛的排名表缓存
+        redisCache.deleteObject("sport:game:result:" + updateGamesScoreDto.getGameId());
+
+        return sportRegistrationsMapper.updateSportScoreData(sportRegistrations);
+    }
+
+    /**
+     * @return
+     * @Description 获取生成秩序册所需必要信息
+     * @Param
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/15 12:01
+     */
+    @Override
+    public List<GameSequenceBookVO> exportGameSequenceBookVo() {
+        //TODO
+        //定义结果集
+        ArrayList<GameSequenceBookVO> gameSequenceBookVOS = new ArrayList<>();
+
+        List<CollegeVo> collegeVos = sysDeptService.selectCollegeList(new SysDept());
+
+        for (CollegeVo collegeVo :collegeVos) {
+            //mock 假数据
+            GameSequenceBookVO gameSequenceBookVO = new GameSequenceBookVO();
+            gameSequenceBookVO.setCoach("廖家栋");
+            gameSequenceBookVO.setLeader("吕镇坤");
+            gameSequenceBookVO.setPhoneNumber("18507093323");
+            //设置学院
+            gameSequenceBookVO.setDeptName(collegeVo.getDeptName());
+            //根据学院查询秩序册信息
+            ArrayList<GameSequenceItemVO> gameSequenceItemVOs = this.getGameSequenceItemVOsByDeptID(collegeVo.getDeptId());
+            gameSequenceBookVO.setGameSequenceItem(gameSequenceItemVOs);
+            //将数据加入结果集
+            gameSequenceBookVOS.add(gameSequenceBookVO);
+        }
+
+
+
+        return gameSequenceBookVOS;
+    }
+
+    private ArrayList<GameSequenceItemVO> getGameSequenceItemVOsByDeptID(Long deptId) {
+        if (ObjectUtils.isEmpty(deptId)){
+            return null;
+        }
+        //获取学生数据集合
+        ArrayList<GameSequenceItemVO> gameSequenceItemVOs = sportRegistrationsMapper.selectGameSequenceItemVOsByDeptID(deptId);
+        for (GameSequenceItemVO gameSequenceItemVO :gameSequenceItemVOs) {
+            ArrayList<String> gameSequenceItemGamesName = this.getGameSequenceItemGamesVOsByUserId(gameSequenceItemVO.getUserId());
+            //遍历每一条学生数据 给joinGame赋值
+            gameSequenceItemVO.setJoinGames(gameSequenceItemGamesName);
+        }
+
+        return gameSequenceItemVOs;
+    }
+
+    /**
+     * @Description 根据学号查询其参加比赛的数据
+     * @Param userId
+     * @Return {@link ArrayList< String>}
+     * @Author coder_jlt
+     * @Date 2022/9/15 13:38
+     */
+    private ArrayList<String> getGameSequenceItemGamesVOsByUserId(Long userId) {
+        if (ObjectUtils.isEmpty(userId)){
+            return null;
+        }
+        return sportRegistrationsMapper.getGameSequenceItemGamesName(userId);
+    }
+
+
 }

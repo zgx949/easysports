@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -18,6 +19,12 @@ import com.ruoyi.system.domain.Vo.UserSportGradeVo;
 import com.ruoyi.system.service.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.cache.annotation.Cacheable;
+import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
+import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
+import com.ruoyi.system.service.ISportFieldsService;
+import com.ruoyi.system.service.ISportGamesService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +40,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.service.ISportRegistrationsService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
@@ -43,6 +51,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2022-07-06
  */
 @RestController
+@Api
 @RequestMapping("/system/registrations")
 public class SportRegistrationsController extends BaseController
 {
@@ -148,10 +157,12 @@ public class SportRegistrationsController extends BaseController
      * 根据用户id查询报名比赛
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:list')")
+    @ApiOperation("根据用户id查询报名比赛")
     @GetMapping("/user/list")
     public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations)
     {
         sportRegistrations.setUserId(SecurityUtils.getUserId());
+        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.userRegisterationslist(sportRegistrations);
         startPage();
         List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.userRegisterationslist(sportRegistrations);
         return getDataTable(sportRegistrationsList);
@@ -259,4 +270,33 @@ public class SportRegistrationsController extends BaseController
         return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(),gameId));
     }
 
+
+    @PreAuthorize("@ss.hasPermi('system:registrations:edit')")
+    @ApiOperation("管理员录入成绩")
+    @PutMapping("update/score")
+    public AjaxResult updateGamesScore(@RequestBody UpdateGamesScoreDto updateGamesScoreDto)
+    {
+        if ( ! SecurityUtils.getLoginUser().getUser().isAdmin()){
+            throw new ServiceException("无此权限");
+        }
+        if (sportRegistrationsService.handleUpdateScore(updateGamesScoreDto)){
+            return AjaxResult.success();
+        }
+        return AjaxResult.error("录入成绩失败");
+    }
+
+
+    /**
+     * 获取生成秩序册所需必要信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:registrations:query')")
+    @GetMapping()
+    @ApiOperation("获取生成秩序册所需必要信息")
+    public AjaxResult getGameSequenceBookVO()
+    {
+        List<GameSequenceBookVO> gameSequenceBookVOS = sportRegistrationsService.exportGameSequenceBookVo();
+
+
+        return AjaxResult.success(gameSequenceBookVOS);
+    }
 }

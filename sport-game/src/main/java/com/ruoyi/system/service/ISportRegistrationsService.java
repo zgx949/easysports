@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
+import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 
 /**
  * 报名管理Service接口
@@ -87,6 +89,25 @@ public interface ISportRegistrationsService
      * @return
      */
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
+
+    /**
+     * @Description 处理更新成绩请求
+     * @Param updateGamesScoreDto
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/13 13:17
+     */
+    boolean handleUpdateScore(UpdateGamesScoreDto updateGamesScoreDto);
+
+    /**
+     * @return
+     * @Description 获取生成秩序册所需必要信息
+     * @Param
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/15 12:00
+     */
+    List<GameSequenceBookVO> exportGameSequenceBookVo();
 
     /**
      * 生成秩序册

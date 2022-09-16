@@ -87,7 +87,7 @@ public class SportGamesServiceImpl implements ISportGamesService {
     @Override
     public List<SportGames> selectSportGamesList(SportGames sportGames) {
         List<SportGames> sportGamess = sportGamesMapper.selectSportGamesList(sportGames);
-        updateStatus(sportGamess);
+        //updateStatus(sportGamess);
         return sportGamess;
     }
 
@@ -98,19 +98,35 @@ public class SportGamesServiceImpl implements ISportGamesService {
      * @Author coder_jlt
      * @Date 2022/9/12 08:54
      */
+    @Deprecated
     private void updateStatus(List<SportGames> sportGamess) {
         Date now = new Date();
+        boolean isUpdate = false;
+        // TODO 此处可能NPE异常
         for (SportGames games : sportGamess) {
+            //根据时间设置比赛状态
+            //若需要修改，则标记isUpdate为true 异步更新数据库
             if (games.getStartTime().after(now)) {
-                games.setStatus(0L);
+                if (games.getStatus() != 0L) {
+                    games.setStatus(0L);
+                    isUpdate = true;
+                }
             } else if (games.getEndTime().before(now)) {
-                games.setStatus(3L);
+                if (games.getStatus() != 3L) {
+                    games.setStatus(3L);
+                    isUpdate = true;
+                }
             } else {
-                games.setStatus(2L);
+                if (games.getStatus() != 2L){
+                    games.setStatus(2L);
+                    isUpdate = true;
+                }
             }
         }
         //异步更新
-        AsyncManager.me().execute(anyscUpdateStatus(sportGamess));
+        if (isUpdate) {
+            AsyncManager.me().execute(anyscUpdateStatus(sportGamess));
+        }
     }
 
     /**
@@ -242,7 +258,7 @@ public class SportGamesServiceImpl implements ISportGamesService {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor("system", "err", "记录缓存失败"));
         }
         //如果设置缓存时间失败则删除缓存，防止脏数据
-        if (!redisCache.expire(redisKey, 24 * 60, TimeUnit.HOURS)) {
+        if (!redisCache.expire(redisKey, 2 * 60, TimeUnit.HOURS)) {
             redisCache.deleteObject(redisKey);
         }
         return gameResultVos;
@@ -261,6 +277,7 @@ public class SportGamesServiceImpl implements ISportGamesService {
         if (gameId == null){
             throw  new ServiceException("请选择比赛！！！");
         }
+
         List<GameInsertVo> gameInsertVos = sportGamesMapper.SelectGameInsertVoByGameId(gameId);
 
         if(CollectionUtils.isEmpty(gameInsertVos)){
