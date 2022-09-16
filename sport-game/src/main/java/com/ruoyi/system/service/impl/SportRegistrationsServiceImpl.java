@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.SportGames;
@@ -17,13 +16,11 @@ import com.ruoyi.system.domain.SportItem;
 import com.ruoyi.system.domain.Vo.GameDescVo;
 import com.ruoyi.system.domain.Vo.RegisterReportVo;
 import com.ruoyi.system.mapper.SportGamesMapper;
-import com.ruoyi.system.utls.WordUtils;
+import com.ruoyi.system.utils.WordUtils;
 import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
 import com.ruoyi.system.domain.Vo.GameSequenceItemVO;
 import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 import com.ruoyi.system.domain.vo.CollegeVo;
-import com.ruoyi.system.mapper.SysDeptMapper;
-import com.ruoyi.system.service.ISysDeptService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +28,6 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SportRegistrationsMapper;
 import com.ruoyi.system.domain.SportRegistrations;
 import com.ruoyi.system.service.ISportRegistrationsService;
-import org.springframework.util.CollectionUtils;
-
-import javax.annotation.Resource;
 
 /**
  * 报名管理Service业务层处理
@@ -58,8 +52,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     @Autowired
     private RedisCache redisCache;
 
-    @Resource
-    private ISysDeptService sysDeptService;
+
     /**
      * 用户报名项目
      *

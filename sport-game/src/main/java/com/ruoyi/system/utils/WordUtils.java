@@ -1,4 +1,4 @@
-package com.ruoyi.system.utls;
+package com.ruoyi.system.utils;
 import com.ruoyi.system.domain.Vo.GameDescVo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;

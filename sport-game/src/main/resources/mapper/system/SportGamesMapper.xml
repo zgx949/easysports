@@ -208,7 +208,7 @@
             <if test="status != null ">and s.status = #{status}</if>
             <if test="startTime != null ">and s.start_time >= #{startTime}</if>
             <if test="startTime != null ">and s.start_time &lt;= #{endTime}</if>
-            <if test="item.type != null ">and i.type = #{item.type}</if>
+            <if test="item != null and item.type != null">and i.type = #{item.type}</if>
         </where>
         ORDER BY
         s.start_time

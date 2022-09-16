@@ -1,10 +1,9 @@
 package com.ruoyi.sport.game.service.impl;
 
-import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.system.domain.SportRegistrations;
 import com.ruoyi.system.mapper.SportRegistrationsMapper;
 import com.ruoyi.system.service.impl.SportRegistrationsServiceImpl;
-import com.ruoyi.system.utls.WordUtils;
+import com.ruoyi.system.utils.WordUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
