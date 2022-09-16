@@ -90,8 +90,8 @@ public interface ISportRegistrationsService
 
     /**
      * 生成秩序册
-     * @param user
+     * @param
      * @return
      */
-    public String wordGeneration(SysUser user);
+    public String wordGeneration();
 }

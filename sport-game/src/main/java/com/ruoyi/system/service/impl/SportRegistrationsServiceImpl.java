@@ -5,8 +5,11 @@ import java.util.*;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
+import com.ruoyi.system.domain.Vo.GameDescVo;
 import com.ruoyi.system.domain.Vo.RegisterReportVo;
+import com.ruoyi.system.mapper.SportGamesMapper;
 import com.ruoyi.system.mapper.SportItemMapper;
 import com.ruoyi.system.utls.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     private SysUserServiceImpl sysUserService;
     @Autowired
     private SysDeptServiceImpl sysDeptService;
+    @Autowired
+    private SportGamesMapper sportGamesMapper;
 
     /**
      * 用户报名项目
@@ -187,6 +192,11 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         RegisterReportVo registerReportVo = new RegisterReportVo();
         // TODO: 这里的号码临时先用用户名测试
         registerReportVo.setNum(user.getUserName());
+        String nickName = user.getNickName();
+        // 对齐表格，防止错位
+        if (nickName.length() == 2) {
+            nickName += "  ";
+        }
         registerReportVo.setName(user.getNickName());
         // TODO: 需要加一个查询岗位信息，判断是学生还是教工
         registerReportVo.setUserType("学生");
@@ -239,20 +249,112 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         return res;
     }
 
+    /**
+    * @Description: 获取比赛段Word
+    * @Param:
+    * @return:
+    * @Author: leftHand
+    * @Date: 2022-09-16
+    */
+    public String gameSlot(String startTime, String endTime, Long itemType) {
+        SportGames games = new SportGames();
+        games.setStartTime(DateUtils.parseDate(startTime));
+        games.setEndTime(DateUtils.parseDate(endTime));
+        SportItem item = new SportItem();
+        item.setType(itemType);
+        games.setItem(item);
+        // 查询出所有该类别的比赛
+        List<SportGames> gamesList = sportGamesMapper.selectSportGamesList(games);
+        List<GameDescVo> gamesDescList = new LinkedList<>();
+        for (SportGames sportGames : gamesList) {
+            GameDescVo gd = new GameDescVo();
+            String gameName = sportGames.getGameName();
+            String st = DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, sportGames.getStartTime());
+            SportRegistrations registerCondition = new SportRegistrations();
+
+            int totalPerson = sportRegistrationsMapper.count(sportGames.getId());
+            // 单组人数限制
+            Long groupLimit = sportGames.getMaxPerson();
+            int groupCount = (int) (totalPerson / groupLimit + (totalPerson % groupLimit > 0 ? 1 : 0));
+
+            gd.setGameName(gameName);
+            gd.setGroupCount(String.valueOf(groupCount));
+            gd.setStrtTime(st);
+            gd.setTotalPerson(String.valueOf(totalPerson));
+            gamesDescList.add(gd);
+        }
+        String itemTypeName = null;
+        if (itemType == 1) itemTypeName = "田赛";
+        else if (itemType == 2) itemTypeName = "径赛";
+        else  itemTypeName = "集体项目";
+        String res = WordUtils.gameList(gamesDescList, itemTypeName);
+        return res;
+    }
+    /**
+    * @Description: 获取日程表Word
+    * @Param:
+    * @return:
+    * @Author: leftHand
+    * @Date: 2022-09-16
+    */
+    public String getTimeOrder() {
+        String startDate = sportGamesMapper.startDate();
+        String endDate = sportGamesMapper.endDate();
+
+        // 当前起点时间段
+        Calendar curr = Calendar.getInstance();
+
+        Calendar sd = Calendar.getInstance();
+        sd.setTime(DateUtils.parseDate(sportGamesMapper.startDate()));
+        sd.set(Calendar.HOUR, 0);
+        sd.set(Calendar.MINUTE, 0);
+        sd.set(Calendar.SECOND, 0);
+
+        curr.setTime(sd.getTime());
+
+        Calendar ed = Calendar.getInstance();
+        ed.setTime(DateUtils.parseDate(sportGamesMapper.endDate()));
+        ed.set(Calendar.HOUR, 23);
+        ed.set(Calendar.MINUTE, 59);
+        ed.set(Calendar.SECOND, 59);
+
+
+
+
+        // 开始时间小于结束时间
+        while(sd.before(ed)) {
+
+            // 如果已分片到下午
+            if (sd.get(Calendar.HOUR) == 12) {
+                // 跳转到第二天早上
+                sd.add(Calendar.DATE, 1);
+                sd.set(Calendar.HOUR, 0);
+                sd.set(Calendar.MINUTE, 0);
+                sd.set(Calendar.SECOND, 0);
+            } else {
+                // 跳转到当天中午
+                sd.set(Calendar.HOUR, 12);
+                sd.set(Calendar.MINUTE, 0);
+                sd.set(Calendar.SECOND, 0);
+            }
+        }
+
+
+        String res = gameSlot(startDate, endDate,1L);
+        return res;
+
+//        WordUtils.
+    }
+
 
     /**
      * 生成秩序册XMl(WORD)
-     * @param user
+     * @param
      * @return
      */
     @Override
-    public String wordGeneration(SysUser user) {
-        //TODO:把用户参数去掉
+    public String wordGeneration() {
         int[] deptIds = {
-                100,
-                101,
-                102,
-                103,
                 104,
                 105,
                 106,
@@ -280,8 +382,14 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
             rows1.append(getDeptRegister(deptId));
         }
         HashMap<String, String> mp = new HashMap<>();
-
+        //代表队模板
         mp.put("depthReport", rows1.toString());
+        // 竞赛日程模板
+        String timeOrder = getTimeOrder();
+        mp.put("gamesOrders", timeOrder);
+        // 竞赛分组模板
+        mp.put("gamesGroups", "");
+
         // 生成最终模板
 
         return WordUtils.process(mp, "/vm/sportMeeting/template.ftl").toString();

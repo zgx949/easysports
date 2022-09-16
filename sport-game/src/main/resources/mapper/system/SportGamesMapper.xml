@@ -206,8 +206,9 @@
             <if test="fieldId != null ">and s.field_id = #{fieldId}</if>
             <if test="maxPerson != null ">and s.max_person = #{maxPerson}</if>
             <if test="status != null ">and s.status = #{status}</if>
-            <if test="startTime != null ">and s.start_time = #{startTime}</if>
-            <if test="endTime != null ">and s.end_time = #{endTime}</if>
+            <if test="startTime != null ">and s.start_time >= #{startTime}</if>
+            <if test="startTime != null ">and s.start_time &lt;= #{endTime}</if>
+            <if test="item.type != null ">and i.type = #{item.type}</if>
         </where>
         ORDER BY
         s.start_time

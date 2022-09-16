@@ -34,7 +34,8 @@ public class SportRegistrationsTest {
     @Test
     public void word() {
 //        String xml = sportRegistrationsService.getDeptRegister(210);
-        String xml = sportRegistrationsService.wordGeneration(null);
+//        String xml = sportRegistrationsService.wordGeneration();
+        String xml = sportRegistrationsService.getTimeOrder();
         System.out.println(xml);
     }
 

@@ -3,6 +3,7 @@ package com.ruoyi.system.mapper;
 import java.util.List;
 import com.ruoyi.system.domain.SportRegistrations;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -84,4 +85,14 @@ public interface SportRegistrationsMapper
      * @return
      */
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
+
+    /**
+    * @Description: 查询报名数量
+    * @Param:
+    * @return:
+    * @Author: leftHand
+    * @Date: 2022-09-16
+    */
+    @Select("SELECT count(*) FROM sport_registrations WHERE game_id=#{gameId} AND status=1")
+    public int count(Long gameId);
 }

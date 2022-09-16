@@ -1,4 +1,5 @@
 package com.ruoyi.system.utls;
+import com.ruoyi.system.domain.Vo.GameDescVo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
@@ -27,7 +28,6 @@ public class WordUtils {
      * 根据模板生成相应的文件
      * @param root 保存数据的map
      * @param template 模板文件的地址
-     * @param path 生成的word文档输出地址
      * @return
      */
     public static synchronized ByteArrayOutputStream process(Map<?, ?> root, String template) {
@@ -62,6 +62,20 @@ public class WordUtils {
         }
         return outputStream;
     }
+    /**
+    * @Description: 生成多行比赛
+    * @Param:
+    * @return:
+    * @Author: leftHand
+    * @Date: 2022-09-16
+    */
+    public static String gameList(List<GameDescVo> gamesVo, String itemType) {
+        HashMap<String, Object> mp = new HashMap<>();
+        mp.put("itemType", itemType);
+        mp.put("games", gamesVo);
+
+        return WordUtils.process(mp, "/vm/sportMeeting/gameGroup.ftl").toString();
+    }
 
     /**
     * @Description: 生成一行用户的报名信息
@@ -70,10 +84,6 @@ public class WordUtils {
     * @Author: zgx
     * @Date: 2022-09-15
     */
-    public static String userRegisterGeneration() {
-
-        return "";
-    }
     public static String deptTable (String deptName, String leader, String trainer, List<String> ls) {
         HashMap<String, Object> mp = new HashMap<>();
         mp.put("deptName", deptName);
@@ -83,14 +93,6 @@ public class WordUtils {
         return WordUtils.process(mp, "/vm/sportMeeting/registerRow.ftl").toString();
     }
 
-    public static void main(String[] args) {
-        Map<String, Object> dataMap = new HashMap<String, Object>();
-        dataMap.put("depthReport", "部门");
-        dataMap.put("gamesOrders", "比赛");
-        dataMap.put("gamesGroups", "分组");
-        ByteArrayOutputStream outputStream = WordUtils.process(dataMap, "/vm/sportMeeting/template.ftl");
-        System.out.println(outputStream.toString());
-    }
 
 
 }
