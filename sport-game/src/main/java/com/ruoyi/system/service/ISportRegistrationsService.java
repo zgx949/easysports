@@ -91,4 +91,36 @@ public interface ISportRegistrationsService
      * @return
      */
     public UserSportGradeVo selectUserSportGrade(Long gameId);
+
+    /**
+     * 查询当前比赛报名人数
+     * @param gameId
+     * @return
+     */
+    public Long  numOfRegistrationsGames(Long gameId);
+
+    /**
+     * 判断该学院的该项目报名人数是否满额
+     * @param deptId
+     * @param gameId
+     * @param maxNum
+     * @return
+     */
+    public Boolean numOfCollegeRegistrationIsLegal(Long deptId,Long gameId,Long maxNum);
+
+    /**
+     * 判断一个人报名田径比赛的预赛,预决赛是否合法
+     * @param userId
+     * @return
+     */
+    public Boolean TrackFieldGameRegistrationIsLegal(Long userId,Long maxNum);
+
+    /**
+     * 判断所在学院接力赛报名人数是否已满
+     * @param deptId
+     * @param gameId
+     * @param maxNum
+     * @return
+     */
+    public Boolean RelayGameRegistrationIsLegal(Long deptId,Long gameId,Long maxNum);
 }

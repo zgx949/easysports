@@ -187,6 +187,28 @@ public class SportRegistrationsController extends BaseController
     public AjaxResult insertUserRegistrations(SportRegistrations sportRegistrations)
     {
         Long userId = SecurityUtils.getUserId();
+        SysUser sysUser = sysUserService.selectUserById(userId);
+        Long deptId = sysUser.getDeptId();
+        Long gameId = sportRegistrations.getGameId();
+
+        String userSex = sysUser.getSex();
+        SportGames sportGames = sportGamesService.selectSportGamesById(sportRegistrations.getGameId());
+        Long numOfGames = sportRegistrationsService.numOfRegistrationsGames(sportRegistrations.getGameId());
+        //检验比赛报名人数是否已满
+        if(numOfGames>=sportGames.getMaxPerson()){
+            return AjaxResult.error("报名人数已满");
+        }
+        //检验用户报名性别是否合法
+        Integer sportGender = sportGames.getGender();
+        if(Integer.parseInt(userSex)!=sportGender&&sportGender!=-1){
+            return AjaxResult.error("用户性别错误");
+        }
+
+        //判断报名时是否在报名时间段内
+        if(sportGames.getStatus()!=0){
+            return AjaxResult.error("未在报名时间段内");
+        }
+
         //检验用户是否已经报名该比赛
         sportRegistrations.setUserId(userId);
         List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
@@ -194,17 +216,26 @@ public class SportRegistrationsController extends BaseController
             return AjaxResult.error("用户已报名该比赛");
         }
 
-        //检验用户报名性别是否合法
-        SysUser sysUser = sysUserService.selectUserById(userId);
-        String userSex = sysUser.getSex();
-        SportGames sportGames = sportGamesService.selectSportGamesById(sportRegistrations.getGameId());
-        if(Integer.parseInt(userSex)!=sportGames.getGender()){
-            return AjaxResult.error("用户性别错误");
-        }
-
-        //判断报名时是否在报名时间段内
-        if(sportGames.getStatus()!=0){
-            return AjaxResult.error("未在报名时间段内");
+        SportItem sportItem = sportItemService.selectSportItemById(sportGames.getItemId());
+        Long type = sportItem.getType();//获取当前比赛的类型，是径赛还是田赛还是团体赛
+        Long itemId= sportItem.getId();
+        //判断是否是田径赛
+        if(type==1L||type==2L){
+            //判断是不是接力赛
+            if(itemId==11L||itemId==12L){
+                if(!sportRegistrationsService.RelayGameRegistrationIsLegal(deptId,gameId,8L)){
+                    return AjaxResult.error("学院接力赛项目报名人数已满");
+                }
+            }else {
+                //判断该院该项目(不包括接力)是否满额(名额限为3)
+                if(!sportRegistrationsService.numOfCollegeRegistrationIsLegal(deptId,gameId,3L)){
+                    return AjaxResult.error("所在学院该项目名额已满");
+                }
+                //判断当前用户报名的田径类赛事是否满额(名额限为2)
+                if(!sportRegistrationsService.TrackFieldGameRegistrationIsLegal(userId,2L)){
+                    return AjaxResult.error("用户已报名2项田径类赛事");
+                }
+            }
         }
 
         sportRegistrations.setUserId(SecurityUtils.getUserId());

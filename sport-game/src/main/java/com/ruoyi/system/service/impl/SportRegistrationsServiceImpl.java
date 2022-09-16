@@ -151,12 +151,6 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     }
 
     /**
-     * 根据用户id查询比赛信息并排序
-     * @param sportRegistrations
-     * @return
-     */
-
-    /**
      * 用户报名
      * @param sportRegistrations
      * @return
@@ -218,5 +212,47 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         //将用户当前成绩缓存，缓存时长设置为1h
         redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
         return userSportGradeVo;
+    }
+
+
+    /**
+     * 查询当前比赛报名人数
+     * @param gameId
+     * @return
+     */
+    @Override
+    public Long  numOfRegistrationsGames(Long gameId) {
+        return sportRegistrationsMapper. numOfRegistrationsGames(gameId);
+    }
+
+    /**
+     * 判断该学院的该项目报名人数是否满额
+     * @param deptId
+     * @param gameId
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public Boolean numOfCollegeRegistrationIsLegal(Long deptId, Long gameId, Long maxNum) {
+        Long num = sportRegistrationsMapper.numOfCollegeRegistration(deptId, gameId);
+        return num<maxNum?true:false;
+    }
+
+    /**
+     * 判断一个人报名田径比赛的预赛和预决赛是否合法
+     * @param userId
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public Boolean TrackFieldGameRegistrationIsLegal(Long userId,Long maxNum) {
+        Long num = sportRegistrationsMapper.numOfPersonTrackFieldGame(userId);//用户已报名田径赛不包括接力赛的项数
+        return num<maxNum?true:false;
+    }
+
+    @Override
+    public Boolean RelayGameRegistrationIsLegal(Long deptId, Long gameId, Long maxNum) {
+        Long num = sportRegistrationsMapper.numOfCollectionRelayGame(deptId, gameId);
+        return num<maxNum?true:false;
     }
 }
