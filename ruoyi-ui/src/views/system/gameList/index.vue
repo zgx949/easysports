@@ -4,12 +4,24 @@
     <!--   赛事时间   -->
       <div class="gameTime">
           <el-row class="timeStyle">
-            <el-col :span="7"><span>上午起始时间：</span>8：00</el-col>
-            <el-col :span="7"><span>下午起始时间：</span>14：00</el-col>
+            <el-col :span="24"><span>上午起始时间：</span>
+              <el-input-number size="small" v-model="startAMHour" :min="0" :max="23" @change="handleChange" />点
+              <el-input-number size="small" v-model="startAMMin" :min="0" :max="23" @change="handleChange" />分
+            </el-col>
+            <el-col :span="24"><span>上午结束时间：</span>
+              <el-input-number size="small" v-model="endAMHour" :min="0" :max="23" @change="handleChange" />点
+              <el-input-number size="small" v-model="endAMMin" :min="0" :max="23" @change="handleChange" />分
+            </el-col>
           </el-row>
           <el-row class="timeStyle">
-            <el-col :span="7"><span>上午结束时间：</span>12：00</el-col>
-            <el-col :span="7"><span>下午结束时间：</span>16：00</el-col>
+            <el-col :span="24"><span>下午起始时间：</span>
+              <el-input-number size="small" v-model="startPMHour" :min="0" :max="23" @change="handleChange" />点
+              <el-input-number size="small" v-model="startPMMin" :min="0" :max="23" @change="handleChange" />分
+            </el-col>
+            <el-col :span="24"><span>下午结束时间：</span>
+              <el-input-number size="small" v-model="endPMHour" :min="0" :max="23" @change="handleChange" />点
+              <el-input-number size="small" v-model="endPMMin" :min="0" :max="23" @change="handleChange" />分
+            </el-col>
           </el-row>
       </div>
       <div>
@@ -19,7 +31,7 @@
     <!--  赛程内容  -->
     <div>
       <h1 style="text-align: center;font-weight: bold">径赛赛程</h1>
-      <div style="margin: 10px 0 10px 10px"><span>两场比赛间隔时间（分钟）：</span>10</div>
+      <div style="margin: 10px 0 10px 10px"><span>两场比赛间隔时间（分钟）：</span><el-input-number size="small" v-model="midTime" :min="0" :max="999" @change="handleChange" />分</div>
       <div>
         <el-table
           :data="tableData"
@@ -55,6 +67,16 @@
 export default {
   data(){
     return{
+      startAMHour: 8,
+      startAMMin: 0,
+      endAMHour: 12,
+      endAMMin: 0,
+      startPMHour: 14,
+      startPMMin: 0,
+      endPMHour: 17,
+      endPMMin: 0,
+      // 比赛间隔分钟
+      midTime: 10,
       tableData:[{
         gameID:'1',
         gameName:'【男子】100米（预赛）',
@@ -74,6 +96,9 @@ export default {
     }
   },
   methods:{
+    handleChange(value) {
+      console.log(value)
+    }
   }
 }
 </script>

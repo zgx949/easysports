@@ -13,12 +13,9 @@ import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
-import com.ruoyi.system.domain.Vo.GameDescVo;
-import com.ruoyi.system.domain.Vo.RegisterReportVo;
+import com.ruoyi.system.domain.Vo.*;
 import com.ruoyi.system.mapper.SportGamesMapper;
 import com.ruoyi.system.utils.WordUtils;
-import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
-import com.ruoyi.system.domain.Vo.GameSequenceItemVO;
 import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 import com.ruoyi.system.domain.vo.CollegeVo;
 import org.apache.commons.lang3.ObjectUtils;
@@ -48,9 +45,9 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     private SysDeptServiceImpl sysDeptService;
     @Autowired
     private SportGamesMapper sportGamesMapper;
-
     @Autowired
     private RedisCache redisCache;
+
 
 
     /**
@@ -242,7 +239,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     */
     public String getDeptRegister(long deptId) {
         SysDept sysDept = sysDeptService.selectDeptById(deptId);
-        String leader = sysDept.getLeader();
+        String leader = sysDept != null? sysDept.getLeader() : "未知";
+        String deptName = sysDept != null? sysDept.getDeptName() : "位置";
         // TODO: 教练暂时随便取个名
         String trainer = "张三教练";
         List<SportRegistrations> allRegister = selectSportRegistrationsList(null);
@@ -260,7 +258,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
                 set.add(user.getUserId());
             }
         }
-        String res = WordUtils.deptTable(sysDept.getDeptName(), leader, trainer, rows);
+        String res = WordUtils.deptTable(deptName, leader, trainer, rows);
         return res;
     }
 
@@ -378,7 +376,160 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
         return res.toString();
 
-//        WordUtils.
+    }
+
+    /**
+    * @Description: 分组安排（Word）
+    * @Param:
+    * @return:
+    * @Author: zgx
+    * @Date: 2022-09-17
+    */
+    public String groupAllocate(String startTime, String endTime, Long itemType) {
+        SportGames games = new SportGames();
+        games.setStartTime(DateUtils.parseDate(startTime));
+        games.setEndTime(DateUtils.parseDate(endTime));
+        SportItem item = new SportItem();
+        item.setType(itemType);
+        games.setItem(item);
+        // 查询出所有该类别的比赛
+        List<SportGames> gamesList = sportGamesMapper.selectSportGamesList(games);
+        List<GameDescVo> gamesDescList = new LinkedList<>();
+        // 遍历所有比赛
+        for (SportGames sportGames : gamesList) {
+            GameDescVo gd = new GameDescVo();
+            String gameName = sportGames.getGameName();
+            String st = DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, sportGames.getStartTime());
+            // 筛选报名条件
+            SportRegistrations registerCondition = new SportRegistrations();
+            registerCondition.setGameId(sportGames.getId());
+            // 所有报名该比赛的报名表
+            List<SportRegistrations> registerList = selectSportRegistrationsList(registerCondition);
+            // 随机分组
+            List<GameGroupDetail> gameGroupDetails = new LinkedList<>();
+            Collections.shuffle(registerList);
+            GameGroupDetail gameGroupDetail = null;
+            for (int i = 0; i < registerList.size(); i++) {
+                SportRegistrations register = registerList.get(i);
+                if (i % 8 == 0) {
+                    // 分完一组
+                    if (i != 0) {
+                        gameGroupDetails.add(gameGroupDetail);
+                    }
+                    gameGroupDetail = new GameGroupDetail();
+                    gameGroupDetail.setGroupName(String.valueOf(i / 8 + 1));
+                    gameGroupDetail.setGroupTitle("序号");
+                }
+                // 分组详细信息
+                SysUser user = register.getUser();
+                SysDept dept = sysDeptService.selectDeptById(user.getDeptId());
+                if (dept == null) {
+                    dept.setDeptName("学院未知");
+                }
+                //TODO: 此处的号码直接获取了用户名
+                // TODO: 需要宽度对齐
+                gameGroupDetail.setNumsList(gameGroupDetail.getNumsList()  + String.format("%-8s", user.getUserName().substring(0,4)));
+                gameGroupDetail.setNameList(gameGroupDetail.getNameList()  + String.format("%-10s", user.getNickName()));
+                gameGroupDetail.setDeptList(gameGroupDetail.getDeptList()  + String.format("%-6s", dept.getDeptName()));
+            }
+
+            int totalPerson = registerList.size();
+            // 单组人数限制
+            Long groupLimit = sportGames.getMaxPerson();
+            // 不允许报名的决赛
+            int groupCount = 1;
+            if (totalPerson == 0 && sportGamesMapper.selectCount(new QueryWrapper<SportGames>().eq("next_game", sportGames.getId())) > 0) {
+                totalPerson = Math.toIntExact(groupLimit);
+            } else {
+                groupCount = (int) (totalPerson / groupLimit + (totalPerson % groupLimit > 0 ? 1 : 0));
+            }
+            // 还有未被分组的人
+            if (groupCount > gameGroupDetails.size()) {
+                gameGroupDetails.add(gameGroupDetail);
+            }
+
+            gd.setGameName(gameName);
+            gd.setGroupCount(String.valueOf(groupCount));
+            gd.setStartTime(st);
+            gd.setTotalPerson(String.valueOf(totalPerson));
+            gd.setGroup(gameGroupDetails);
+
+            gamesDescList.add(gd);
+        }
+        String itemTypeName = null;
+        if (itemType == 1) itemTypeName = "田赛";
+        else if (itemType == 2) itemTypeName = "径赛";
+        else  itemTypeName = "集体项目";
+        String res = WordUtils.gameListDetail(gamesDescList, itemTypeName);
+        return res;
+    }
+    /**
+    * @Description: 获取分组表Word
+    * @Param:
+    * @return:
+    * @Author: zgx
+    * @Date: 2022-09-17
+    */
+    public String getGroupDetail(){
+        String startDate = sportGamesMapper.startDate();
+        String endDate = sportGamesMapper.endDate();
+
+        // 当前起点时间段
+        Calendar curr = Calendar.getInstance();
+
+        Calendar sd = Calendar.getInstance();
+        sd.setTime(DateUtils.parseDate(sportGamesMapper.startDate()));
+        sd.set(Calendar.HOUR_OF_DAY, 0);
+        sd.set(Calendar.MINUTE, 0);
+        sd.set(Calendar.SECOND, 0);
+
+        curr.setTime(sd.getTime());
+
+        Calendar ed = Calendar.getInstance();
+        ed.setTime(DateUtils.parseDate(sportGamesMapper.endDate()));
+        ed.set(Calendar.HOUR_OF_DAY, 23);
+        ed.set(Calendar.MINUTE, 59);
+        ed.set(Calendar.SECOND, 59);
+
+        StringBuilder res = new StringBuilder();
+        // 开始时间小于结束时间
+        while(curr.before(ed)) {
+            StringBuilder sb = new StringBuilder();
+            // TODO:
+            sb.append(groupAllocate(startDate, endDate,1L));
+            sb.append(groupAllocate(startDate, endDate,2L));
+            sb.append(groupAllocate(startDate, endDate,3L));
+
+            // 时间段标记
+            String dateTag = new StringBuilder()
+                    .append(curr.get(Calendar.MONTH))
+                    .append("月")
+                    .append(curr.get(Calendar.DAY_OF_MONTH))
+                    .append("日")
+                    .append(curr.get(Calendar.AM_PM) == Calendar.AM ? "上午" : "下午")
+                    .toString();
+
+            // 当前时间片段的比赛情况 TODO:
+            String slotGames = WordUtils.gameGroupDetail(dateTag, sb.toString());
+            // 组合到总分组日程中 TODO:
+            res.append(slotGames);
+
+            // 如果已分片到下午
+            if (curr.get(Calendar.HOUR_OF_DAY) == 12) {
+                // 跳转到第二天早上
+                curr.add(Calendar.DATE, 1);
+                curr.set(Calendar.HOUR, 0);
+                curr.set(Calendar.MINUTE, 0);
+                curr.set(Calendar.SECOND, 0);
+            } else {
+                // 跳转到当天中午
+                curr.set(Calendar.HOUR_OF_DAY, 12);
+                curr.set(Calendar.MINUTE, 0);
+                curr.set(Calendar.SECOND, 0);
+            }
+        }
+
+        return res.toString();
     }
 
 
@@ -423,7 +574,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         String timeOrder = getTimeOrder();
         mp.put("gamesOrders", timeOrder);
         // 竞赛分组模板
-        mp.put("gamesGroups", "");
+        String gamesGroups = getGroupDetail();
+        mp.put("gamesGroups", gamesGroups);
 
         // 生成最终模板
 

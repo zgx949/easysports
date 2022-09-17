@@ -1,5 +1,7 @@
 package com.ruoyi.system.domain.Vo;
 
+import java.util.List;
+
 /**
  * @program: Ruoyi-Vue
  * @description: 比赛报名情况
@@ -12,6 +14,15 @@ public class GameDescVo {
     public String groupCount;
     public String totalPerson;
     public String startTime;
+    public List<GameGroupDetail> group;
+
+    public List<GameGroupDetail> getGroup() {
+        return group;
+    }
+
+    public void setGroup(List<GameGroupDetail> group) {
+        this.group = group;
+    }
 
     public int getIndex() {
         return index;

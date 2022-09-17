@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,6 +44,23 @@ public class SportRegistrationsTest {
 //        FileUtils.writeBytes("C:\\Users\\Administrator\\Desktop\\模板\\1.doc", in_nocode);
         WordUtils.fileWriterMethod("C:\\Users\\Administrator\\Desktop\\模板\\1.doc", xml);
 //        System.out.println(xml);
+
+    }
+
+    @Test
+    public void groupWord() throws IOException {
+        HashMap<String, String> mp = new HashMap<>();
+        //代表队模板
+        mp.put("depthReport", "");
+        // 竞赛日程模板
+        mp.put("gamesOrders", "");
+        // 竞赛分组模板
+        String gamesGroups = sportRegistrationsService.getGroupDetail();
+        mp.put("gamesGroups", gamesGroups);
+
+        String xml = WordUtils.process(mp, "/vm/sportMeeting/template.ftl").toString();
+
+        WordUtils.fileWriterMethod("C:\\Users\\Administrator\\Desktop\\模板\\1.doc", xml);
 
     }
 
