@@ -3,12 +3,13 @@ package com.ruoyi.system.domain.Vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class GameInsertVo {
+public class GameInsertVo extends BaseEntity {
 
     private String username;
 

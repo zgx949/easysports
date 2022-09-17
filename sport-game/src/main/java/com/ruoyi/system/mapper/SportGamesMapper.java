@@ -114,7 +114,6 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     /**
      * 查询田赛比赛列表
      *
-     * @param sportGames 比赛管理
      * @return 比赛管理集合
      */
     public List<SportGames> selectFieldGames();
@@ -122,7 +121,6 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     /**
      * 查询径赛管理列表
      *
-     * @param sportGames 比赛管理
      * @return 比赛管理集合
      */
     public List<SportGames> selectTrackGames();
@@ -130,7 +128,6 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     /**
      * 查询编排后的比赛列表
      *
-     * @param sportGames 比赛管理
      * @return 比赛管理集合
      */
     public List<SportGames> selectGroupGames();
