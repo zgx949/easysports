@@ -3,6 +3,7 @@ package com.ruoyi.system.controller;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -226,9 +227,11 @@ public class SportRegistrationsController extends BaseController {
         SysUser sysUser = sysUserService.selectUserById(userId);
         String userSex = sysUser.getSex();
         SportGames sportGames = sportGamesService.selectSportGamesById(sportRegistrations.getGameId());
-        if (Integer.parseInt(userSex) != sportGames.getGender()) {
+        // 报名非团体赛，并且性别不匹配
+        if (!sportGames.getGender().equals(-1) && !sportGames.getGender().equals(Integer.parseInt(userSex))) {
             return AjaxResult.error("用户性别错误");
         }
+        // TODO: 报名限制：学生组田径项目每队限报3人，每人限报两项，4*100和4*400每队可报两组即分别8人
 
         sportRegistrations.setUserId(SecurityUtils.getUserId());
         sportRegistrations.setUpdateTime(DateUtils.getNowDate());
