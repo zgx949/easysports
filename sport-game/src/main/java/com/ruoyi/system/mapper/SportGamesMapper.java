@@ -142,7 +142,7 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     * @Author: zgx
     * @Date: 2022-09-16
     */
-    @Select("SELECT MIN(start_time) FROM games_order")
+    @Select("SELECT MIN(start_time) FROM sport_games")
     public String startDate();
 
     /**
@@ -152,6 +152,6 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
      * @Author: zgx
      * @Date: 2022-09-16
      */
-    @Select("SELECT MAX(start_time) FROM games_order")
+    @Select("SELECT MAX(start_time) FROM sport_games")
     public String endDate();
 }
