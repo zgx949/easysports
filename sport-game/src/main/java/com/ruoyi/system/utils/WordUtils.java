@@ -1,4 +1,4 @@
-package com.ruoyi.system.utls;
+package com.ruoyi.system.utils;
 import com.ruoyi.system.domain.Vo.GameDescVo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -59,6 +59,36 @@ public class WordUtils {
         }
         return outputStream;
     }
+    /**
+     * @Author: leftHand
+     * @Date: 2022-09-16
+     */
+    public static String gameListDetail(List<GameDescVo> gamesVo, String itemType) {
+        HashMap<String, Object> mp = new HashMap<>();
+        mp.put("itemType", itemType);
+        int i = 0;
+        for (GameDescVo gameDescVo : gamesVo) {
+            gameDescVo.setIndex(++i);
+        }
+        mp.put("games", gamesVo);
+
+        return WordUtils.process(mp, "/vm/sportMeeting/gameAllocationDetail.ftl").toString();
+    }
+    /**
+     * @Description: 获取按时间编排的比赛分组
+     * @Param:
+     * @return:
+     * @Author: leftHand
+     * @Date: 2022-09-16
+     */
+    public static String gameGroupDetail(String datetime, String groupList) {
+        HashMap<String, Object> mp = new HashMap<>();
+        mp.put("dateTime", datetime);
+        mp.put("groupList", groupList);
+
+        return WordUtils.process(mp, "/vm/sportMeeting/gameGroupDetail.ftl").toString();
+    }
+
     /**
     * @Description: 生成多行比赛
     * @Param:

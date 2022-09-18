@@ -42,8 +42,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @Api
 @RequestMapping("/system/registrations")
-public class SportRegistrationsController extends BaseController
-{
+public class SportRegistrationsController extends BaseController {
     @Autowired
     private ISportRegistrationsService sportRegistrationsService;
 
@@ -64,8 +63,7 @@ public class SportRegistrationsController extends BaseController
      */
     @Log(title = "用户报名", businessType = BusinessType.INSERT)
     @PostMapping("/register")
-    public AjaxResult register(@RequestBody Map<String, String> sportRegistrations)
-    {
+    public AjaxResult register(@RequestBody Map<String, String> sportRegistrations) {
         return toAjax(sportRegistrationsService.userInsertSportRegistrations(sportRegistrations));
     }
 
@@ -74,8 +72,7 @@ public class SportRegistrationsController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SportRegistrations sportRegistrations)
-    {
+    public TableDataInfo list(SportRegistrations sportRegistrations) {
         // 如果传递的积分参数为0（前端默认传0，不是null，所以会导致查询数据丢失）
         Long points = sportRegistrations.getPoints();
         if (points == null || points.equals(0L)) {
@@ -92,8 +89,7 @@ public class SportRegistrationsController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:registrations:export')")
     @Log(title = "报名管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SportRegistrations sportRegistrations)
-    {
+    public void export(HttpServletResponse response, SportRegistrations sportRegistrations) {
         List<SportRegistrations> list = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
         ExcelUtil<SportRegistrations> util = new ExcelUtil<SportRegistrations>(SportRegistrations.class);
         util.exportExcel(response, list, "报名管理数据");
@@ -104,8 +100,7 @@ public class SportRegistrationsController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(sportRegistrationsService.selectSportRegistrationsById(id));
     }
 
@@ -115,8 +110,7 @@ public class SportRegistrationsController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:registrations:add')")
     @Log(title = "报名管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SportRegistrations sportRegistrations)
-    {
+    public AjaxResult add(@RequestBody SportRegistrations sportRegistrations) {
         return toAjax(sportRegistrationsService.insertSportRegistrations(sportRegistrations));
     }
 
@@ -126,8 +120,7 @@ public class SportRegistrationsController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:registrations:edit')")
     @Log(title = "报名管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SportRegistrations sportRegistrations)
-    {
+    public AjaxResult edit(@RequestBody SportRegistrations sportRegistrations) {
         return toAjax(sportRegistrationsService.updateSportRegistrations(sportRegistrations));
     }
 
@@ -137,8 +130,7 @@ public class SportRegistrationsController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
     @Log(title = "报名管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(sportRegistrationsService.deleteSportRegistrationsByIds(ids));
     }
 
@@ -148,10 +140,9 @@ public class SportRegistrationsController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:registrations:list')")
     @ApiOperation("根据用户id查询报名比赛")
     @GetMapping("/user/list")
-    public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations)
-    {
+    public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations) {
         sportRegistrations.setUserId(SecurityUtils.getUserId());
-        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.userRegisterationslist(sportRegistrations);
+        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.userRegisterationslist(sportRegistrations);
         startPage();
         return getDataTable(sportRegistrationsList);
     }
@@ -161,29 +152,28 @@ public class SportRegistrationsController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:query')")
     @GetMapping("/user/{gameId}")
-    public AjaxResult userScore(@PathVariable("gameId") Long gameId)
-    {
-        String redisKey = "userSportGrade:" + SecurityUtils.getUserId()+":"+gameId;
-        UserSportGradeVo cacheObject = (UserSportGradeVo)redisCache.getCacheObject(redisKey);
-        if(!ObjectUtils.isEmpty(cacheObject)){
+    public AjaxResult userScore(@PathVariable("gameId") Long gameId) {
+        String redisKey = "userSportGrade:" + SecurityUtils.getUserId() + ":" + gameId;
+        UserSportGradeVo cacheObject = (UserSportGradeVo) redisCache.getCacheObject(redisKey);
+        if (!ObjectUtils.isEmpty(cacheObject)) {
             return AjaxResult.success(cacheObject);
         }
-        SportRegistrations sportRegistrations=new SportRegistrations();
+        SportRegistrations sportRegistrations = new SportRegistrations();
         sportRegistrations.setGameId(gameId);
         //查询参加该比赛的所有报名集合
         List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
 
-        SportRegistrations userSportRegistrations=new SportRegistrations();//用于从集合中获得用户的报名信息
+        SportRegistrations userSportRegistrations = new SportRegistrations();//用于从集合中获得用户的报名信息
         //遍历集合从中获取当前用户成绩
-        for(SportRegistrations temp:sportRegistrationsList){
-            if(SecurityUtils.getUserId().equals(temp.getUserId())){
-                userSportRegistrations=temp;
+        for (SportRegistrations temp : sportRegistrationsList) {
+            if (SecurityUtils.getUserId().equals(temp.getUserId())) {
+                userSportRegistrations = temp;
             }
         }
-        if(userSportRegistrations.getScore()==null){
+        if (userSportRegistrations.getScore() == null) {
             return AjaxResult.error("未查询到用户成绩");
         }
-        UserSportGradeVo userSportGradeVo=new UserSportGradeVo();
+        UserSportGradeVo userSportGradeVo = new UserSportGradeVo();
 
         //根据比赛id查出比赛的item_id
         SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
@@ -197,23 +187,23 @@ public class SportRegistrationsController extends BaseController
         userSportGradeVo.setSportRegistrations(userSportRegistrations);
 
         //根据升序降序对用户进行排名
-        Long userOrder=1L;
-        for(SportRegistrations temp:sportRegistrationsList){
-           if(temp.getScore()!=null){
-               if(isDesc==1){//降序
-                   if(temp.getScore()!=null&&userSportRegistrations.getScore()<temp.getScore()){
-                       userOrder++;
-                   }
-               }else {//升序
-                   if(temp.getScore()!=null&&userSportRegistrations.getScore()>temp.getScore()){
-                       userOrder++;
-                   }
-               }
-           }
+        Long userOrder = 1L;
+        for (SportRegistrations temp : sportRegistrationsList) {
+            if (temp.getScore() != null) {
+                if (isDesc == 1) {//降序
+                    if (temp.getScore() != null && userSportRegistrations.getScore() < temp.getScore()) {
+                        userOrder++;
+                    }
+                } else {//升序
+                    if (temp.getScore() != null && userSportRegistrations.getScore() > temp.getScore()) {
+                        userOrder++;
+                    }
+                }
+            }
         }
         userSportGradeVo.setUserOrder(userOrder);
         //将用户当前成绩缓存，缓存时长设置为1h
-        redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
+        redisCache.setCacheObject(redisKey, userSportGradeVo, 1, TimeUnit.HOURS);
 
         return AjaxResult.success(userSportGradeVo);
     }
@@ -223,13 +213,12 @@ public class SportRegistrationsController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('system:registrations:add')")
     @PostMapping("/user/{gameId}")
-    public AjaxResult insertUserRegistrations(SportRegistrations sportRegistrations)
-    {
+    public AjaxResult insertUserRegistrations(SportRegistrations sportRegistrations) {
         Long userId = SecurityUtils.getUserId();
         //检验用户是否已经报名该比赛
         sportRegistrations.setUserId(userId);
-        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
-        if(sportRegistrationsList.size()!=0){
+        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+        if (sportRegistrationsList.size() != 0) {
             return AjaxResult.error("用户已报名该比赛");
         }
 
@@ -237,7 +226,7 @@ public class SportRegistrationsController extends BaseController
         SysUser sysUser = sysUserService.selectUserById(userId);
         String userSex = sysUser.getSex();
         SportGames sportGames = sportGamesService.selectSportGamesById(sportRegistrations.getGameId());
-        if(Integer.parseInt(userSex)!=sportGames.getGender()){
+        if (Integer.parseInt(userSex) != sportGames.getGender()) {
             return AjaxResult.error("用户性别错误");
         }
 
@@ -253,21 +242,19 @@ public class SportRegistrationsController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
     @DeleteMapping("/user/{gameId}")
-    public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId)
-    {
-        return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(),gameId));
+    public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId) {
+        return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(), gameId));
     }
 
 
     @PreAuthorize("@ss.hasPermi('system:registrations:edit')")
     @ApiOperation("管理员录入成绩")
     @PutMapping("update/score")
-    public AjaxResult updateGamesScore(@RequestBody UpdateGamesScoreDto updateGamesScoreDto)
-    {
-        if ( ! SecurityUtils.getLoginUser().getUser().isAdmin()){
+    public AjaxResult updateGamesScore(@RequestBody UpdateGamesScoreDto updateGamesScoreDto) {
+        if (!SecurityUtils.getLoginUser().getUser().isAdmin()) {
             throw new ServiceException("无此权限");
         }
-        if (sportRegistrationsService.handleUpdateScore(updateGamesScoreDto)){
+        if (sportRegistrationsService.handleUpdateScore(updateGamesScoreDto)) {
             return AjaxResult.success();
         }
         return AjaxResult.error("录入成绩失败");
@@ -280,8 +267,7 @@ public class SportRegistrationsController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:registrations:query')")
     @GetMapping()
     @ApiOperation("获取生成秩序册所需必要信息")
-    public AjaxResult getGameSequenceBookVO()
-    {
+    public AjaxResult getGameSequenceBookVO() {
         List<GameSequenceBookVO> gameSequenceBookVOS = sportRegistrationsService.exportGameSequenceBookVo();
 
 
