@@ -64,6 +64,10 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     private SportGamesMapper sportGamesMapper;
     @Autowired
     private RedisCache redisCache;
+    @Autowired
+    private SportRegistrationsServiceImpl sportRegistrationsService;
+    @Autowired
+    private SportGamesServiceImpl sportGamesService;
 
 
     /**
