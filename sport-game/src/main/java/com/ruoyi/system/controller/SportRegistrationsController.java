@@ -163,8 +163,8 @@ public class SportRegistrationsController extends BaseController
             return userSportGradeVo;
         }).collect(Collectors.toList());
 
-        //对比赛成绩集合进行按比赛时间从早到晚排序
         Collections.sort(userSportGradeVoList);
+        //对比赛成绩集合进行按比赛时间从早到晚排序
         return getDataTable(userSportGradeVoList);
     }
 
@@ -196,7 +196,7 @@ public class SportRegistrationsController extends BaseController
         Long numOfGames = sportRegistrationsService.numOfRegistrationsGames(sportRegistrations.getGameId());
         //检验比赛报名人数是否已满
         if(numOfGames>=sportGames.getMaxPerson()){
-            return AjaxResult.error("报名人数已满");
+            return AjaxResult.error("参赛人数已满");
         }
         //检验用户报名性别是否合法
         Integer sportGender = sportGames.getGender();
@@ -238,6 +238,7 @@ public class SportRegistrationsController extends BaseController
             }
         }
 
+        sportRegistrations.setStatus("0");
         sportRegistrations.setUserId(SecurityUtils.getUserId());
         sportRegistrations.setUpdateTime(DateUtils.getNowDate());
         sportRegistrations.setCreateTime(DateUtils.getNowDate());
@@ -262,6 +263,13 @@ public class SportRegistrationsController extends BaseController
         if(sportRegistrationsList.size()==0){
             return AjaxResult.error("用户未报名该比赛");
         }
+
+        //判断报名审核是否通过
+        String status = sportRegistrationsList.get(0).getStatus();
+        if(status.equals("1")){
+            return AjaxResult.error("审核通过，不可取消报名");
+        }
+
 
         //判断取消报名时是否在报名时间段内
         if(sportGames.getStatus()!=0){

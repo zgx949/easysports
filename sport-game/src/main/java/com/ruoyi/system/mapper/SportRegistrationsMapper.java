@@ -85,14 +85,14 @@ public interface SportRegistrationsMapper
     public int insertUserRegistrations(SportRegistrations sportRegistrations);
 
     /**
-     * 获取当前比赛报名人数
+     * 获取当前比赛报名并且审核通过人数
      * @param gameId
      * @return
      */
     public Long  numOfRegistrationsGames(@Param("gameId") Long gameId);
 
     /**
-     * 查找一个学院某个田径类赛事(不包括接力)的报名人数
+     * 查找一个学院某个田径类赛事(不包括接力)的报名并且审核通过人数
      * @param deptId
      * @param gameId
      * @return
@@ -107,7 +107,7 @@ public interface SportRegistrationsMapper
     public Long numOfPersonTrackFieldGame(@Param("userId") Long userId);
 
     /**
-     * 查询一个学院的某个接力赛已报名人数
+     * 查询一个学院的某个接力赛已报名并且审核通过人数
      * @param deptId
      * @param gameId
      * @return
