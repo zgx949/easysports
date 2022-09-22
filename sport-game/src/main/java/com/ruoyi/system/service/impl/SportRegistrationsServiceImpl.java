@@ -6,11 +6,16 @@ import com.ruoyi.common.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
@@ -21,6 +26,13 @@ import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 import com.ruoyi.system.domain.vo.CollegeVo;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.SportGames;
+import com.ruoyi.system.domain.SportItem;
+import com.ruoyi.system.domain.Vo.UserSportGradeVo;
+import com.ruoyi.system.service.ISportGamesService;
+import com.ruoyi.system.service.ISportItemService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SportRegistrationsMapper;
@@ -34,8 +46,8 @@ import com.ruoyi.system.service.ISportRegistrationsService;
  * @date 2022-07-05
  */
 @Service
-public class SportRegistrationsServiceImpl implements ISportRegistrationsService {
-
+public class SportRegistrationsServiceImpl implements ISportRegistrationsService
+{
     @Autowired
     private SportRegistrationsMapper sportRegistrationsMapper;
 
@@ -52,6 +64,10 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     private SportGamesMapper sportGamesMapper;
     @Autowired
     private RedisCache redisCache;
+    @Autowired
+    private SportRegistrationsServiceImpl sportRegistrationsService;
+    @Autowired
+    private SportGamesServiceImpl sportGamesService;
 
 
     /**
@@ -82,7 +98,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 报名管理
      */
     @Override
-    public SportRegistrations selectSportRegistrationsById(Long id) {
+    public SportRegistrations selectSportRegistrationsById(Long id)
+    {
         return sportRegistrationsMapper.selectSportRegistrationsById(id);
     }
 
@@ -93,7 +110,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 报名管理
      */
     @Override
-    public List<SportRegistrations> selectSportRegistrationsList(SportRegistrations sportRegistrations) {
+    public List<SportRegistrations> selectSportRegistrationsList(SportRegistrations sportRegistrations)
+    {
         return sportRegistrationsMapper.selectSportRegistrationsList(sportRegistrations);
     }
 
@@ -104,7 +122,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 结果
      */
     @Override
-    public int insertSportRegistrations(SportRegistrations sportRegistrations) {
+    public int insertSportRegistrations(SportRegistrations sportRegistrations)
+    {
         sportRegistrations.setCreateTime(DateUtils.getNowDate());
         return sportRegistrationsMapper.insertSportRegistrations(sportRegistrations);
     }
@@ -116,7 +135,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 结果
      */
     @Override
-    public int updateSportRegistrations(SportRegistrations sportRegistrations) {
+    public int updateSportRegistrations(SportRegistrations sportRegistrations)
+    {
         sportRegistrations.setUpdateTime(DateUtils.getNowDate());
         return sportRegistrationsMapper.updateSportRegistrations(sportRegistrations);
     }
@@ -128,7 +148,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 结果
      */
     @Override
-    public int deleteSportRegistrationsByIds(Long[] ids) {
+    public int deleteSportRegistrationsByIds(Long[] ids)
+    {
         return sportRegistrationsMapper.deleteSportRegistrationsByIds(ids);
     }
 
@@ -139,20 +160,20 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 结果
      */
     @Override
-    public int deleteSportRegistrationsById(Long id) {
+    public int deleteSportRegistrationsById(Long id)
+    {
         return sportRegistrationsMapper.deleteSportRegistrationsById(id);
     }
 
     /**
      * 根据用户id和比赛id取消报名
-     *
      * @param userId
      * @param gameId
      * @return
      */
     @Override
     public int deleteUserRegistrations(Long userId, Long gameId) {
-        return sportRegistrationsMapper.deleteUserSportRegistrations(userId, gameId);
+        return sportRegistrationsMapper.deleteUserSportRegistrations(userId,gameId);
     }
 
     /**
@@ -168,13 +189,108 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
     /**
      * 用户报名
-     *
      * @param sportRegistrations
      * @return
      */
     @Override
     public int insertUserRegistrations(SportRegistrations sportRegistrations) {
         return sportRegistrationsMapper.insertUserRegistrations(sportRegistrations);
+    }
+
+    @Override
+    public UserSportGradeVo selectUserSportGrade(Long gameId) {
+        String redisKey = "userSportGrade:" + SecurityUtils.getUserId()+":"+gameId;
+        UserSportGradeVo cacheObject = (UserSportGradeVo)redisCache.getCacheObject(redisKey);
+        if(!ObjectUtils.isEmpty(cacheObject)){
+            return cacheObject;
+        }
+        SportRegistrations sportRegistrations=new SportRegistrations();
+        sportRegistrations.setGameId(gameId);
+        //查询参加该比赛的所有报名集合
+        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+
+        SportRegistrations userSportRegistrations=new SportRegistrations();//用于从集合中获得用户的报名信息
+        //遍历集合从中获取当前用户成绩
+        for(SportRegistrations temp:sportRegistrationsList){
+            if(SecurityUtils.getUserId()==temp.getUserId()){
+                userSportRegistrations=temp;
+            }
+        }
+
+        UserSportGradeVo userSportGradeVo=new UserSportGradeVo();
+
+        //根据比赛id查出比赛的item_id
+        SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
+        Long itemId = sportGames.getItemId();
+        //根据item_id查出降序还是升序
+        SportItem sportItem = sportItemService.selectSportItemById(itemId);
+        Long isDesc = sportItem.getIsDesc();
+
+        sportGames.setItem(sportItem);
+        userSportRegistrations.setGame(sportGames);
+        userSportGradeVo.setSportRegistrations(userSportRegistrations);
+
+        //根据升序降序对用户进行排名
+        Long userOrder=1L;
+        for(SportRegistrations temp:sportRegistrationsList){
+            if(temp.getScore()!=null){
+                if(isDesc==1){//降序
+                    if(temp.getScore()!=null&&userSportRegistrations.getScore()<temp.getScore()){
+                        userOrder++;
+                    }
+                }else {//升序
+                    if(temp.getScore()!=null&&userSportRegistrations.getScore()>temp.getScore()){
+                        userOrder++;
+                    }
+                }
+            }
+        }
+        userSportGradeVo.setUserOrder(userOrder);
+        //将用户当前成绩缓存，缓存时长设置为1h
+        redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
+        return userSportGradeVo;
+    }
+
+
+    /**
+     * 查询当前比赛报名人数
+     * @param gameId
+     * @return
+     */
+    @Override
+    public Long  numOfRegistrationsGames(Long gameId) {
+        return sportRegistrationsMapper. numOfRegistrationsGames(gameId);
+    }
+
+    /**
+     * 判断该学院的该项目报名人数是否满额
+     * @param deptId
+     * @param gameId
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public Boolean numOfCollegeRegistrationIsLegal(Long deptId, Long gameId, Long maxNum) {
+        Long num = sportRegistrationsMapper.numOfCollegeRegistration(deptId, gameId);
+        return num<maxNum?true:false;
+    }
+
+    /**
+     * 判断一个人报名田径比赛的预赛和预决赛是否合法
+     * @param userId
+     * @param maxNum
+     * @return
+     */
+    @Override
+    public Boolean TrackFieldGameRegistrationIsLegal(Long userId,Long maxNum) {
+        Long num = sportRegistrationsMapper.numOfPersonTrackFieldGame(userId);//用户已报名田径赛不包括接力赛的项数
+        return num<maxNum?true:false;
+    }
+
+    @Override
+    public Boolean RelayGameRegistrationIsLegal(Long deptId, Long gameId, Long maxNum) {
+        Long num = sportRegistrationsMapper.numOfCollectionRelayGame(deptId, gameId);
+        return num<maxNum?true:false;
     }
 
 

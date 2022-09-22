@@ -1,5 +1,12 @@
 package com.ruoyi.system.controller;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
+
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -143,9 +150,19 @@ public class SportRegistrationsController extends BaseController {
     @GetMapping("/user/list")
     public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations) {
         sportRegistrations.setUserId(SecurityUtils.getUserId());
-        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.userRegisterationslist(sportRegistrations);
+        //查询当前用户报名的比赛集合并且分页
         startPage();
-        return getDataTable(sportRegistrationsList);
+        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+
+        //遍历集合获取用户每项比赛成绩
+        List<UserSportGradeVo> userSportGradeVoList=sportRegistrationsList.stream().map((item)->{
+            UserSportGradeVo userSportGradeVo= sportRegistrationsService.selectUserSportGrade(item.getGameId());
+            return userSportGradeVo;
+        }).collect(Collectors.toList());
+
+        Collections.sort(userSportGradeVoList);
+        //对比赛成绩集合进行按比赛时间从早到晚排序
+        return getDataTable(userSportGradeVoList);
     }
 
     /**
@@ -153,59 +170,9 @@ public class SportRegistrationsController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:query')")
     @GetMapping("/user/{gameId}")
-    public AjaxResult userScore(@PathVariable("gameId") Long gameId) {
-        String redisKey = "userSportGrade:" + SecurityUtils.getUserId() + ":" + gameId;
-        UserSportGradeVo cacheObject = (UserSportGradeVo) redisCache.getCacheObject(redisKey);
-        if (!ObjectUtils.isEmpty(cacheObject)) {
-            return AjaxResult.success(cacheObject);
-        }
-        SportRegistrations sportRegistrations = new SportRegistrations();
-        sportRegistrations.setGameId(gameId);
-        //查询参加该比赛的所有报名集合
-        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
-
-        SportRegistrations userSportRegistrations = new SportRegistrations();//用于从集合中获得用户的报名信息
-        //遍历集合从中获取当前用户成绩
-        for (SportRegistrations temp : sportRegistrationsList) {
-            if (SecurityUtils.getUserId().equals(temp.getUserId())) {
-                userSportRegistrations = temp;
-            }
-        }
-        if (userSportRegistrations.getScore() == null) {
-            return AjaxResult.error("未查询到用户成绩");
-        }
-        UserSportGradeVo userSportGradeVo = new UserSportGradeVo();
-
-        //根据比赛id查出比赛的item_id
-        SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
-        Long itemId = sportGames.getItemId();
-        //根据item_id查出降序还是升序
-        SportItem sportItem = sportItemService.selectSportItemById(itemId);
-        Long isDesc = sportItem.getIsDesc();
-
-        sportGames.setItem(sportItem);
-        userSportRegistrations.setGame(sportGames);
-        userSportGradeVo.setSportRegistrations(userSportRegistrations);
-
-        //根据升序降序对用户进行排名
-        Long userOrder = 1L;
-        for (SportRegistrations temp : sportRegistrationsList) {
-            if (temp.getScore() != null) {
-                if (isDesc == 1) {//降序
-                    if (temp.getScore() != null && userSportRegistrations.getScore() < temp.getScore()) {
-                        userOrder++;
-                    }
-                } else {//升序
-                    if (temp.getScore() != null && userSportRegistrations.getScore() > temp.getScore()) {
-                        userOrder++;
-                    }
-                }
-            }
-        }
-        userSportGradeVo.setUserOrder(userOrder);
-        //将用户当前成绩缓存，缓存时长设置为1h
-        redisCache.setCacheObject(redisKey, userSportGradeVo, 1, TimeUnit.HOURS);
-
+    public AjaxResult userScore(@PathVariable("gameId") Long gameId)
+    {
+        UserSportGradeVo userSportGradeVo = sportRegistrationsService.selectUserSportGrade(gameId);
         return AjaxResult.success(userSportGradeVo);
     }
 
@@ -216,6 +183,28 @@ public class SportRegistrationsController extends BaseController {
     @PostMapping("/user/{gameId}")
     public AjaxResult insertUserRegistrations(SportRegistrations sportRegistrations) {
         Long userId = SecurityUtils.getUserId();
+        SysUser sysUser = sysUserService.selectUserById(userId);
+        Long deptId = sysUser.getDeptId();
+        Long gameId = sportRegistrations.getGameId();
+
+        String userSex = sysUser.getSex();
+        SportGames sportGames = sportGamesService.selectSportGamesById(sportRegistrations.getGameId());
+        Long numOfGames = sportRegistrationsService.numOfRegistrationsGames(sportRegistrations.getGameId());
+        //检验比赛报名人数是否已满
+        if(numOfGames>=sportGames.getMaxPerson()){
+            return AjaxResult.error("参赛人数已满");
+        }
+        //检验用户报名性别是否合法
+        Integer sportGender = sportGames.getGender();
+        if(Integer.parseInt(userSex)!=sportGender&&sportGender!=-1){
+            return AjaxResult.error("用户性别错误");
+        }
+
+        //判断报名时是否在报名时间段内
+        if(sportGames.getStatus()!=0){
+            return AjaxResult.error("未在报名时间段内");
+        }
+
         //检验用户是否已经报名该比赛
         sportRegistrations.setUserId(userId);
         List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
@@ -223,16 +212,30 @@ public class SportRegistrationsController extends BaseController {
             return AjaxResult.error("用户已报名该比赛");
         }
 
-        //检验用户报名性别是否合法
-        SysUser sysUser = sysUserService.selectUserById(userId);
-        String userSex = sysUser.getSex();
-        SportGames sportGames = sportGamesService.selectSportGamesById(sportRegistrations.getGameId());
-        // 报名非团体赛，并且性别不匹配
-        if (!sportGames.getGender().equals(-1) && !sportGames.getGender().equals(Integer.parseInt(userSex))) {
-            return AjaxResult.error("用户性别错误");
+        SportItem sportItem = sportItemService.selectSportItemById(sportGames.getItemId());
+        Long type = sportItem.getType();//获取当前比赛的类型，是径赛还是田赛还是团体赛
+        Long itemId= sportItem.getId();
+        //判断是否是田径赛
+        if(type==1L||type==2L){
+            //判断是不是接力赛
+            if(itemId==11L||itemId==12L){
+                if(!sportRegistrationsService.RelayGameRegistrationIsLegal(deptId,gameId,8L)){
+                    return AjaxResult.error("学院接力赛项目报名人数已满");
+                }
+            }else {
+                //判断该院该项目(不包括接力)是否满额(名额限为3)
+                if(!sportRegistrationsService.numOfCollegeRegistrationIsLegal(deptId,gameId,3L)){
+                    return AjaxResult.error("所在学院该项目名额已满");
+                }
+                //判断当前用户报名的田径类赛事是否满额(名额限为2)
+                if(!sportRegistrationsService.TrackFieldGameRegistrationIsLegal(userId,2L)){
+                    return AjaxResult.error("用户已报名2项田径类赛事");
+                }
+            }
         }
         // TODO: 报名限制：学生组田径项目每队限报3人，每人限报两项，4*100和4*400每队可报两组即分别8人
 
+        sportRegistrations.setStatus("0");
         sportRegistrations.setUserId(SecurityUtils.getUserId());
         sportRegistrations.setUpdateTime(DateUtils.getNowDate());
         sportRegistrations.setCreateTime(DateUtils.getNowDate());
@@ -245,8 +248,32 @@ public class SportRegistrationsController extends BaseController {
      */
 //    @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
     @DeleteMapping("/user/{gameId}")
-    public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId) {
-        return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(), gameId));
+    public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId)
+    {
+        SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
+
+        //判断用户是否已经报名
+        SportRegistrations sportRegistrations=new SportRegistrations();
+        sportRegistrations.setGameId(gameId);
+        sportRegistrations.setUserId(SecurityUtils.getUserId());
+        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+        if(sportRegistrationsList.size()==0){
+            return AjaxResult.error("用户未报名该比赛");
+        }
+
+        //判断报名审核是否通过
+        String status = sportRegistrationsList.get(0).getStatus();
+        if(status.equals("1")){
+            return AjaxResult.error("审核通过，不可取消报名");
+        }
+
+
+        //判断取消报名时是否在报名时间段内
+        if(sportGames.getStatus()!=0){
+            return AjaxResult.error("未在报名时间段内");
+        }
+
+        return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(),gameId));
     }
 
 
