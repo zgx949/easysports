@@ -250,7 +250,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         }
         userSportGradeVo.setUserOrder(userOrder);
         //将用户当前成绩缓存，缓存时长设置为1h
-        //redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
+        redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
         return userSportGradeVo;
     }
 
