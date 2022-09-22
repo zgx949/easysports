@@ -152,9 +152,10 @@ public class SportRegistrationsController extends BaseController
     @GetMapping("/user/list")
     public TableDataInfo userRegisterationslist(SportRegistrations sportRegistrations)
     {
-        sportRegistrations.setUserId(SecurityUtils.getUserId());
-        //查询当前用户报名的比赛集合并且分页
+        //查询当前用户报名并且审核通过的比赛集合然后开始分页
         startPage();
+        sportRegistrations.setStatus("1");
+        sportRegistrations.setUserId(SecurityUtils.getUserId());
         List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
 
         //遍历集合获取用户每项比赛成绩
@@ -163,8 +164,6 @@ public class SportRegistrationsController extends BaseController
             return userSportGradeVo;
         }).collect(Collectors.toList());
 
-        Collections.sort(userSportGradeVoList);
-        //对比赛成绩集合进行按比赛时间从早到晚排序
         return getDataTable(userSportGradeVoList);
     }
 

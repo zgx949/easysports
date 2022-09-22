@@ -9,19 +9,8 @@ import com.ruoyi.system.domain.SportRegistrations;
  * Date: 2022/9/13 8:15
  * Description :
  */
-public class UserSportGradeVo implements Comparable<UserSportGradeVo> {
+public class UserSportGradeVo {
     private Long userOrder;
-
-    @Override
-    public int compareTo(UserSportGradeVo userSportGradeVo) {//按日期从先到后排序
-        if(this.sportRegistrations.getGame().getStartTime().compareTo(userSportGradeVo.getSportRegistrations().getGame().getStartTime())<0){
-            return -1;
-        }else if(this.sportRegistrations.getGame().getStartTime().compareTo(userSportGradeVo.getSportRegistrations().getGame().getStartTime())>0){
-            return 1;
-        }else {
-            return 0;
-        }
-    }
 
     private SportRegistrations sportRegistrations;
 

@@ -113,4 +113,11 @@ public interface SportRegistrationsMapper
      * @return
      */
     public Long numOfCollectionRelayGame(@Param("deptId")Long deptId,@Param("gameId")Long gameId);
+
+    /**
+     * 通过比赛id查用户报名信息
+     * @param gameId
+     * @return
+     */
+    public SportRegistrations selectUserRegistation(@Param("gameId") Long gameId,@Param("userId")Long userId);
 }
