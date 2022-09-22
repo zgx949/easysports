@@ -1,10 +1,12 @@
 package com.ruoyi.system.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.ruoyi.system.domain.SportRegistrations;
+import com.ruoyi.system.domain.Vo.GameSequenceItemVO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * 报名管理Mapper接口
@@ -68,6 +70,7 @@ public interface SportRegistrationsMapper
      * @param sportRegistrations
      * @return
      */
+    public List<SportRegistrations>  userRegisterationslist(SportRegistrations sportRegistrations);
 
     /**
      * 根据用户id和比赛id取消报名
@@ -115,9 +118,18 @@ public interface SportRegistrationsMapper
     public Long numOfCollectionRelayGame(@Param("deptId")Long deptId,@Param("gameId")Long gameId);
 
     /**
-     * 通过比赛id查用户报名信息
-     * @param gameId
-     * @return
-     */
-    public SportRegistrations selectUserRegistation(@Param("gameId") Long gameId,@Param("userId")Long userId);
+    * @Description: 查询报名数量
+    * @Param:
+    * @return:
+    * @Author: leftHand
+    * @Date: 2022-09-16
+    */
+    @Select("SELECT count(*) FROM sport_registrations WHERE game_id=#{gameId} AND status=1")
+    public int count(Long gameId);
+
+    boolean updateSportScoreData(SportRegistrations sportRegistrations);
+
+    ArrayList<GameSequenceItemVO> selectGameSequenceItemVOsByDeptID(Long deptId);
+
+    ArrayList<String> getGameSequenceItemGamesName(Long userId);
 }

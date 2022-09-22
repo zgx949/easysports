@@ -31,14 +31,14 @@
 import { constantRoutes } from "@/router";
 
 // 隐藏侧边栏路由
-const hideList = ['/index', '/user/profile'];
+const hideList = ['/index.vue', '/user/profile'];
 
 export default {
   data() {
     return {
       // 顶部栏初始数
       visibleNumber: 5,
-      // 当前激活菜单的 index
+      // 当前激活菜单的 index.vue
       currentIndex: undefined
     };
   },

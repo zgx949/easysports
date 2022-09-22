@@ -59,10 +59,36 @@ export function delGames(id) {
   })
 }
 
-//查询比赛获奖结果
+// 查询比赛获奖结果
 export function getGameWinList(id) {
   return request({
     url: '/system/games/single/' + parseInt(id),
     method: 'get'
   })
 }
+
+// 根据比赛id查询待记录分数人员
+export function getPlayerByGameId(id) {
+  return request({
+    url: '/system/games/insert/' + parseInt(id),
+    method: 'get'
+  })
+}
+
+// 录入比赛成绩
+export function registerScore(data) {
+  return request({
+    url: '/system/registrations/update/score',
+    method: 'put',
+    data: data
+  })
+}
+
+// 获取秩序册信息数据
+export function getRosterInfo() {
+  return request({
+    url: '/system/registrations' ,
+    method: 'get'
+  })
+}
+

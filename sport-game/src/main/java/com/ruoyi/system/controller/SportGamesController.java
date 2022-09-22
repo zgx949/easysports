@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.system.domain.Vo.GameInsertVo;
 import com.ruoyi.system.domain.Vo.GameResultVo;
 
@@ -85,7 +86,6 @@ public class SportGamesController extends BaseController {
         if (null == id) {
             return AjaxResult.error("请传入比赛Id");
         }
-
         List<GameResultVo> gameResultVos = sportGamesService.selectGameResultByGameId(id);
         return AjaxResult.success(gameResultVos);
     }
@@ -96,12 +96,13 @@ public class SportGamesController extends BaseController {
     @ApiOperation("根据比赛id查询待记录分数人员")
     @PreAuthorize("@ss.hasPermi('system:games:list')")
     @GetMapping("/insert/{gameId}")
-    public AjaxResult SelectGameInsertVoByGameId(@PathVariable Long gameId) {
+    public TableDataInfo SelectGameInsertVoByGameId(@PathVariable Long gameId) {
         if (null == gameId) {
-            return AjaxResult.error("请传入比赛Id");
+            throw new ServiceException("请选择比赛项目");
         }
+        startPage();
         List<GameInsertVo> gameInsertVos = sportGamesService.SelectGameInsertVoByGameId(gameId);
-        return AjaxResult.success(gameInsertVos);
+        return getDataTable(gameInsertVos);
     }
 
 

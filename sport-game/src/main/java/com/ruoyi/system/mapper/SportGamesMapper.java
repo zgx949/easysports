@@ -8,6 +8,7 @@ import com.ruoyi.system.domain.Vo.GameInsertVo;
 import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -113,7 +114,6 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     /**
      * 查询田赛比赛列表
      *
-     * @param sportGames 比赛管理
      * @return 比赛管理集合
      */
     public List<SportGames> selectFieldGames();
@@ -121,7 +121,6 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     /**
      * 查询径赛管理列表
      *
-     * @param sportGames 比赛管理
      * @return 比赛管理集合
      */
     public List<SportGames> selectTrackGames();
@@ -129,8 +128,27 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     /**
      * 查询编排后的比赛列表
      *
-     * @param sportGames 比赛管理
      * @return 比赛管理集合
      */
     public List<SportGames> selectGroupGames();
+
+    /**
+    * @Description: 查询起始时间
+    * @Param:
+    * @return:
+    * @Author: zgx
+    * @Date: 2022-09-16
+    */
+    @Select("SELECT MIN(start_time) FROM sport_games")
+    public String startDate();
+
+    /**
+     * @Description: 查询结束时间
+     * @Param:
+     * @return:
+     * @Author: zgx
+     * @Date: 2022-09-16
+     */
+    @Select("SELECT MAX(start_time) FROM sport_games")
+    public String endDate();
 }
