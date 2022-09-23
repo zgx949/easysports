@@ -3,7 +3,7 @@
     <div class="queryterm">
       <div class="selectBox">
         <span>比赛名称:</span>
-        <el-select v-model="gameID" filterable placeholder="请选择" size="small" @change="getPlayerByGameId" style="margin-left: 10px">
+        <el-select v-model="pageObj.gameId" filterable placeholder="请选择" size="small" @change="getPlayerListByGameId" style="margin-left: 10px">
           <el-option
             v-for="item in finishedGame"
             :key="item.id"
@@ -81,6 +81,17 @@
           </template>
         </el-table-column>
       </el-table>
+      <!--   分页   -->
+      <div class="block">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="pageObj.pageNum"
+          :page-size="pageObj.pageSize"
+          layout="total, prev, pager, next"
+          :total="dataTotal">
+        </el-pagination>
+      </div>
     </div>
 <!--  成绩录入表单  -->
     <el-dialog v-bind="$attrs" v-on="$listeners" @close="onClose"  :visible.sync="dialogTableVisible">
@@ -127,14 +138,23 @@ import { getPlayerByGameId, listGames, registerScore} from '@/api/system/games'
   export default {
     data(){
       return{
+
         // 下拉框已结束比赛数据列表
         finishedGame: [],
         // 运动员数据列表
         stuData: [],
         // 运动员数据备份
         dataBackup:[],
-        // 比赛id
-        gameID: '',
+        // 比赛id及分页数据
+        pageObj:{
+          gameId:undefined,
+          // 每页数量
+          pageSize:10,
+          // 页码
+          pageNum:1,
+        },
+        // 数据总数
+        dataTotal:undefined,
         // 根据学号查询的学号
         input: '',
         // 搜索结果
@@ -172,12 +192,13 @@ import { getPlayerByGameId, listGames, registerScore} from '@/api/system/games'
         listGames({status:3}).then(res => {
           const {rows} = res;
           this.finishedGame = rows;
-
         })
       },
       // 根据比赛ID获取运动员数据
-      getPlayerByGameId(val){
-        getPlayerByGameId(val).then(res => {
+      getPlayerListByGameId(val){
+        this.pageObj.gameId = val;
+        getPlayerByGameId(this.pageObj).then(res => {
+          this.dataTotal = res.total;
           const {rows} = res;
           this.stuData = rows;
         })
@@ -237,10 +258,19 @@ import { getPlayerByGameId, listGames, registerScore} from '@/api/system/games'
           if (!valid) return
           registerScore(this.scoreForm)
           this.getPlayerByGameId(this.scoreForm.gameId)
-          // window.location.reload()
           this.close()
         })
       },
+
+      /** 分页处理 */
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.pageObj.pageNum = val;
+        console.log(this.pageObj)
+        this.getPlayerListByGameId(this.pageObj.gameId)
+      }
     }
   }
 </script>
