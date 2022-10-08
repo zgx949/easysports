@@ -18,7 +18,7 @@ public class GameSequenceBookVO {
 
     private String phoneNumber;
 
-    private Integer deptName;
+    private String deptName;
 
     private List<GameSequenceItemVO> gameSequenceItem;
 }

@@ -1,7 +1,6 @@
 package com.ruoyi.system.service.impl;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
@@ -12,11 +11,10 @@ import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.domain.Vo.GameInsertVo;
 import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.mapper.SportItemMapper;
+import com.ruoyi.system.service.ISportItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import com.ruoyi.common.utils.StringUtils;
@@ -26,6 +24,8 @@ import com.ruoyi.system.mapper.SportGamesMapper;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.service.ISportGamesService;
 import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
 
 /**
  * 比赛管理Service业务层处理
@@ -45,6 +45,12 @@ public class SportGamesServiceImpl implements ISportGamesService {
 
     @Autowired
     private RedisCache redisCache;
+
+    @Resource
+    private ISportItemService sportItemService;
+
+    @Resource
+    private ISportGamesService sportGamesService;
 
     /**
      * 获取报名比赛的必要信息
@@ -106,6 +112,7 @@ public class SportGamesServiceImpl implements ISportGamesService {
         for (SportGames games : sportGamess) {
             //根据时间设置比赛状态
             //若需要修改，则标记isUpdate为true 异步更新数据库
+            if (games.getStartTime() == null) continue;
             if (games.getStartTime().after(now)) {
                 if (games.getStatus() != 0L) {
                     games.setStatus(0L);
@@ -117,7 +124,7 @@ public class SportGamesServiceImpl implements ISportGamesService {
                     isUpdate = true;
                 }
             } else {
-                if (games.getStatus() != 2L){
+                if (games.getStatus() != 2L) {
                     games.setStatus(2L);
                     isUpdate = true;
                 }
@@ -248,10 +255,27 @@ public class SportGamesServiceImpl implements ISportGamesService {
         if (CollectionUtils.isEmpty(gameResultVos)) {
             throw new ServiceException("比赛还未结束或成绩暂未录入，请稍等");
         }
+
+        //根据比赛id查出比赛的item_id
+        SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
+        Long itemId = sportGames.getItemId();
+        //根据item_id查出降序还是升序
+        SportItem sportItem = sportItemService.selectSportItemById(itemId);
+        Long isDesc = sportItem.getIsDesc();
+
         //设置排名字段
-        for (int i = 0; i < gameResultVos.size(); i++) {
-            gameResultVos.get(i).setOrder(i + 1);
+        if (isDesc == 0L) {
+            gameResultVos.sort(new Comparator<GameResultVo>() {
+                @Override
+                public int compare(GameResultVo o1, GameResultVo o2) {
+                    return o1.getScore() - o2.getScore();
+                }
+            });
+            setOrderToGameResultVo(gameResultVos);
+        } else {
+            setOrderToGameResultVo(gameResultVos);
         }
+
         //写缓存
         //如果写缓存失败则记录日志
         if (redisCache.setCacheList(redisKey, gameResultVos) == 0L) {
@@ -265,6 +289,24 @@ public class SportGamesServiceImpl implements ISportGamesService {
     }
 
     /**
+     * @Description 给已排序的结果集设置排名
+     * @Param gameResultVos
+     * @Return
+     * @Author coder_jlt
+     * @Date 2022/9/17 12:38
+     */
+    private void setOrderToGameResultVo(List<GameResultVo> gameResultVos) {
+        for (int i = 0; i < gameResultVos.size(); i++) {
+            if (i > 0 && gameResultVos.get(i - 1).getScore() == gameResultVos.get(i).getScore()) {
+                gameResultVos.get(i).setOrder(gameResultVos.get(i-1).getOrder());
+                //i++;
+            } else {
+                gameResultVos.get(i).setOrder(i + 1);
+            }
+        }
+    }
+
+    /**
      * @Description 根据比赛id查询待记录分数人员
      * @Param id
      * @Return {@link List< GameInsertVo>}
@@ -274,13 +316,13 @@ public class SportGamesServiceImpl implements ISportGamesService {
     @Override
     public List<GameInsertVo> SelectGameInsertVoByGameId(Long gameId) {
         //
-        if (gameId == null){
-            throw  new ServiceException("请选择比赛！！！");
+        if (gameId == null) {
+            throw new ServiceException("请选择比赛！！！");
         }
 
         List<GameInsertVo> gameInsertVos = sportGamesMapper.SelectGameInsertVoByGameId(gameId);
 
-        if(CollectionUtils.isEmpty(gameInsertVos)){
+        if (CollectionUtils.isEmpty(gameInsertVos)) {
             throw new ServiceException("未查询到参加此比赛的运动员");
         }
         return gameInsertVos;

@@ -3,9 +3,11 @@ package com.ruoyi.system.service;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.SportRegistrations;
 import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
 import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
+import com.ruoyi.system.domain.Vo.UserSportGradeVo;
 
 /**
  * 报名管理Service接口
@@ -107,4 +109,50 @@ public interface ISportRegistrationsService
      * @Date 2022/9/15 12:00
      */
     List<GameSequenceBookVO> exportGameSequenceBookVo();
+
+    /**
+     * 生成秩序册
+     * @param
+     * @return
+     */
+    public String wordGeneration();
+
+    /**
+     * 根据用户id和比赛id获取用户成绩
+     * @param gameId
+     * @return
+     */
+    public UserSportGradeVo selectUserSportGrade(Long gameId);
+
+    /**
+     * 查询当前比赛报名人数
+     * @param gameId
+     * @return
+     */
+    public Long  numOfRegistrationsGames(Long gameId);
+
+    /**
+     * 判断该学院的该项目报名人数是否满额
+     * @param deptId
+     * @param gameId
+     * @param maxNum
+     * @return
+     */
+    public Boolean numOfCollegeRegistrationIsLegal(Long deptId,Long gameId,Long maxNum);
+
+    /**
+     * 判断一个人报名田径比赛的预赛,预决赛是否合法
+     * @param userId
+     * @return
+     */
+    public Boolean TrackFieldGameRegistrationIsLegal(Long userId,Long maxNum);
+
+    /**
+     * 判断所在学院接力赛报名人数是否已满
+     * @param deptId
+     * @param gameId
+     * @param maxNum
+     * @return
+     */
+    public Boolean RelayGameRegistrationIsLegal(Long deptId,Long gameId,Long maxNum);
 }

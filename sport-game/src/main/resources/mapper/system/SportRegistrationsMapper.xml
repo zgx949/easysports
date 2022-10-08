@@ -5,18 +5,18 @@
 <mapper namespace="com.ruoyi.system.mapper.SportRegistrationsMapper">
 
     <resultMap type="SportRegistrations" id="SportRegistrationsResult">
-        <result property="id" column="id"/>
-        <result property="gameId" column="game_id"/>
-        <result property="userId" column="user_id"/>
-        <result property="fieldId" column="field_id"/>
-        <result property="status" column="status"/>
-        <result property="score" column="score"/>
-        <result property="points" column="points"/>
-        <result property="comment" column="comment"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
-        <association property="game" javaType="SportGames">
-            <id property="id" column="game_id"/>
+        <result property="id"    column="id"    />
+        <result property="gameId"    column="game_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="fieldId"    column="field_id"    />
+        <result property="status"    column="status"    />
+        <result property="score"    column="score"    />
+        <result property="points"    column="points"    />
+        <result property="comment"    column="comment"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="game"    javaType="SportGames">
+            <id     property="id" column="game_id"/>
             <result property="gameName" column="game_name"/>
             <result property="gender" column="gender"/>
             <result property="status" column="game_status"/>
@@ -24,80 +24,87 @@
             <result property="endTime" column="game_end_time"/>
             <result property="itemId" column="item_id"/>
         </association>
-        <association property="user" javaType="SysUser">
-            <id property="userId" column="user_id"/>
-            <result property="deptId" column="dept_id"/>
-            <result property="userName" column="user_name"/>
-            <result property="nickName" column="nick_name"/>
-            <result property="email" column="email"/>
-            <result property="phonenumber" column="phonenumber"/>
-            <result property="sex" column="sex"/>
-            <result property="avatar" column="avatar"/>
-            <result property="password" column="password"/>
-            <result property="status" column="status"/>
-            <result property="remark" column="remark"/>
+        <association property="user"    javaType="SysUser">
+            <id     property="userId"       column="user_id"      />
+            <result property="deptId"       column="dept_id"      />
+            <result property="userName"     column="user_name"    />
+            <result property="nickName"     column="nick_name"    />
+            <result property="email"        column="email"        />
+            <result property="phonenumber"  column="phonenumber"  />
+            <result property="sex"          column="sex"          />
+            <result property="avatar"       column="avatar"       />
+            <result property="password"     column="password"     />
+            <result property="status"       column="status"       />
+            <result property="remark"       column="remark"       />
         </association>
-        <association property="field" javaType="SportFields">
-            <id property="id" column="field_id"/>
-            <result property="name" column="field_name"/>
-            <result property="parentId" column="field_parent_id"/>
+        <association property="field"   javaType="SportFields">
+            <id     property="id"    column="field_id"    />
+            <result property="name"    column="field_name"    />
+            <result property="parentId"    column="field_parent_id"    />
         </association>
     </resultMap>
 
     <sql id="selectSportRegistrationsVo">
-        select sr.id          id,
+        select
+           sr.id            id,
 
-               sr.status      status,
-               sr.score       score,
-               sr.points      points,
-               sr.comment     comment,
-               sr.create_time create_time,
-               sr.update_time update_time,
-               sr.game_id     game_id,
-               sg.game_name   game_name,
-               sg.gender      gender,
-               sg.status      game_status,
-               sg.start_time  game_start_time,
-               sg.end_time    game_end_time,
-               sg.item_id     item_id,
+           sr.status        status,
+           sr.score         score,
+           sr.points        points,
+           sr.comment       comment,
+           sr.create_time   create_time,
+           sr.update_time   update_time,
+           sr.game_id       game_id,
+               sg.game_name     game_name,
+               sg.gender        gender,
+               sg.status        game_status,
+               sg.start_time    game_start_time,
+               sg.end_time      game_end_time,
+               sg.item_id       item_id,
 
-               sr.user_id     user_id,
-               su.dept_id     dept_id,
-               su.user_name   user_name,
-               su.nick_name   nick_name,
-               su.email       email,
-               su.phonenumber phonenumber,
-               su.sex         sex,
-               su.avatar      avatar,
-               su.status      status,
-               su.remark      remark,
+           sr.user_id       user_id,
+               su.dept_id       dept_id,
+               su.user_name     user_name,
+               su.nick_name     nick_name,
+               su.email         email,
+               su.phonenumber   phonenumber,
+               su.sex           sex,
+               su.avatar        avatar,
+               su.status        status,
+               su.remark        remark,
 
-               sr.field_id    field_id,
-               sf.name        field_name,
-               sf.parent_id   field_parent_id
+           sr.field_id      field_id,
+               sf.name          field_name,
+               sf.parent_id     field_parent_id
 
-        from sport_registrations sr
-                 LEFT JOIN sport_games sg on sr.game_id = sg.id
-                 LEFT JOIN sys_user su on sr.user_id = su.user_id
-                 LEFT JOIN (SELECT b.id                             `id`,
-                                   CONCAT(a.`name`, '--', b.`name`) `name`,
-                                   a.id                             `parent_id`
-                            FROM sport_fields a,
-                                 sport_fields b
-                            WHERE a.id = b.parent_id) sf on sr.field_id = sf.id
+        from
+            sport_registrations sr
+                LEFT JOIN sport_games sg    on sr.game_id = sg.id
+                LEFT JOIN sys_user su       on sr.user_id = su.user_id
+                LEFT JOIN (
+                    SELECT
+                        b.id                            `id`,
+                        CONCAT(a.`name`,'--',b.`name`)  `name`,
+                        a.id                            `parent_id`
+                    FROM
+                        sport_fields a,
+                        sport_fields b
+                    WHERE
+                        a.id=b.parent_id
+                )         sf                on sr.field_id = sf.id
 
     </sql>
 
     <select id="selectSportRegistrationsList" parameterType="SportRegistrations" resultMap="SportRegistrationsResult">
         <include refid="selectSportRegistrationsVo"/>
         <where>
-            <if test="gameId != null ">and sr.game_id = #{gameId}</if>
-            <if test="userId != null ">and sr.user_id = #{userId}</if>
-            <if test="fieldId != null ">and sr.field_id = #{fieldId}</if>
-            <if test="status != null  and status != ''">and sr.status = #{status}</if>
-            <if test="score != null ">and sr.score = #{score}</if>
-            <if test="points != null ">and sr.points = #{points}</if>
-            <if test="comment != null  and comment != ''">and sr.comment = #{comment}</if>
+            <if test="gameId != null "> and sr.game_id = #{gameId}</if>
+            <if test="userId != null "> and sr.user_id = #{userId}</if>
+            <if test="fieldId != null "> and sr.field_id = #{fieldId}</if>
+            <if test="status != null  and status != ''"> and sr.status = #{status}</if>
+            <if test="score != null "> and sr.score = #{score}</if>
+            <if test="points != null "> and sr.points = #{points}</if>
+            <if test="comment != null  and comment != ''"> and sr.comment = #{comment}</if>
         </where>
     </select>
 
@@ -105,18 +112,37 @@
         <include refid="selectSportRegistrationsVo"/>
         where sr.id = #{id}
     </select>
-    <select id="userRegisterationslist" parameterType="SportRegistrations" resultMap="SportRegistrationsResult">
-        <include refid="selectSportRegistrationsVo"/>
-        <where>
-            <if test="gameId != null ">and sr.game_id = #{gameId}</if>
-            <if test="userId != null ">and sr.user_id = #{userId}</if>
-            <if test="fieldId != null ">and sr.field_id = #{fieldId}</if>
-            <if test="status != null  and status != ''">and sr.status = #{status}</if>
-            <if test="score != null ">and sr.score = #{score}</if>
-            <if test="points != null ">and sr.points = #{points}</if>
-            <if test="comment != null  and comment != ''">and sr.comment = #{comment}</if>
-        </where>
-        order by create_time desc
+    <select id="numOfRegistrationsGames" resultType="java.lang.Long">
+        select count(*) from sport_registrations where game_id=#{gameId} AND status=1
+    </select>
+    <select id="numOfCollegeRegistration" resultType="java.lang.Long">
+        select count(*) FROM sys_user u,sport_registrations r,sport_games g,sport_item i
+        where u.user_id=r.user_id
+          AND r.game_id=g.id
+          AND g.item_id=i.id
+          AND i.type in(1,2)
+          AND i.id not in (11,12)
+          AND u.dept_id=#{deptId}
+          AND g.id=#{gameId}
+          AND r.status=1
+    </select>
+    <select id="numOfPersonTrackFieldGame" resultType="java.lang.Long">
+        select count(*) FROM sport_registrations r,sport_games g,sport_item i
+        where r.game_id=g.id
+        AND g.item_id=i.id
+        AND i.type in(1,2)
+        AND i.id not in(11,12)
+        AND r.user_id=#{userId}
+    </select>
+    <select id="numOfCollectionRelayGame" resultType="java.lang.Long">
+        select count(*) FROM sys_user u,sport_registrations r,sport_games g,sport_item i
+        WHERE u.user_id=r.user_id
+          AND r.game_id=g.id
+          AND g.item_id=i.id
+          AND i.id in(11,12)
+          AND g.id=#{gameId}
+          AND u.dept_id=#{deptId}
+          AND r.status=1
     </select>
 
     <insert id="insertSportRegistrations" parameterType="SportRegistrations">
@@ -191,22 +217,8 @@
         where id = #{id}
     </update>
 
-
-    <update id="updateSportScoreData">
-        update sport_registrations
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="score != null">score = #{score},</if>
-            <if test="points != null">points = #{points},</if>
-            <if test="comment != null">comment = #{comment},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-        </trim>
-        where game_id = #{gameId} and user_id = #{userId}
-    </update>
-
     <delete id="deleteSportRegistrationsById" parameterType="Long">
-        delete
-        from sport_registrations
-        where id = #{id}
+        delete from sport_registrations where id = #{id}
     </delete>
 
     <delete id="deleteSportRegistrationsByIds" parameterType="String">
@@ -217,9 +229,6 @@
     </delete>
 
     <delete id="deleteUserSportRegistrations">
-        delete
-        from sport_registrations
-        where user_id = #{userId}
-          and game_id = #{gameId}
+        delete from  sport_registrations where user_id =#{userId} and game_id=#{gameId}
     </delete>
 </mapper>

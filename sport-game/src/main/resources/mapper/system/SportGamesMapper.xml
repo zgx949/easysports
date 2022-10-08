@@ -63,6 +63,139 @@
                  LEFT JOIN sport_games g ON s.next_game = g.id
     </sql>
 
+    <!--  查询径赛  -->
+    <select id="selectTrackGames" parameterType="SportGames" resultMap="SportGamesResult">
+        SELECT s.id          id,
+               s.item_id     item_id,
+               s.game_name   game_name,
+               s.next_game   next_game,
+               s.gender      gender,
+               s.field_id    field_id,
+               s.max_person  max_person,
+               s.status      status,
+               s.start_time  start_time,
+               s.end_time    end_time,
+               s.create_time create_time,
+               f.id          fid,
+               f.name        name,
+               f.parent_id   parent_id,
+               i.id          i_id,
+               i.item_name   item_name,
+               i.max_person  item_max_person,
+               i.type        item_type,
+               i.unit        item_unit,
+               i.is_desc     item_sort
+        FROM track_games s
+                 LEFT JOIN (SELECT b.id                             `id`,
+                                   CONCAT(a.`name`, '--', b.`name`) `name`,
+                                   a.id                             `parent_id`
+                            FROM sport_fields a,
+                                 sport_fields b
+                            WHERE a.id = b.parent_id) f ON s.field_id = f.id
+                 LEFT JOIN sport_item i ON s.item_id = i.id
+                 LEFT JOIN sport_games g ON s.next_game = g.id
+    </select>
+
+    <!--  查询田赛  -->
+    <select id="selectFieldGames" parameterType="SportGames" resultMap="SportGamesResult">
+        SELECT s.id          id,
+               s.item_id     item_id,
+               s.game_name   game_name,
+               s.next_game   next_game,
+               s.gender      gender,
+               s.field_id    field_id,
+               s.max_person  max_person,
+               s.status      status,
+               s.start_time  start_time,
+               s.end_time    end_time,
+               s.create_time create_time,
+               f.id          fid,
+               f.name        name,
+               f.parent_id   parent_id,
+               i.id          i_id,
+               i.item_name   item_name,
+               i.max_person  item_max_person,
+               i.type        item_type,
+               i.unit        item_unit,
+               i.is_desc     item_sort
+        FROM field_race s
+                 LEFT JOIN (SELECT b.id                             `id`,
+                                   CONCAT(a.`name`, '--', b.`name`) `name`,
+                                   a.id                             `parent_id`
+                            FROM sport_fields a,
+                                 sport_fields b
+                            WHERE a.id = b.parent_id) f ON s.field_id = f.id
+                 LEFT JOIN sport_item i ON s.item_id = i.id
+                 LEFT JOIN sport_games g ON s.next_game = g.id
+    </select>
+
+
+    <!--  查询田赛  -->
+    <select id="selectGroupGames" parameterType="SportGames" resultMap="SportGamesResult">
+        SELECT s.id          id,
+               s.item_id     item_id,
+               s.game_name   game_name,
+               s.next_game   next_game,
+               s.gender      gender,
+               s.field_id    field_id,
+               s.max_person  max_person,
+               s.status      status,
+               s.start_time  start_time,
+               s.end_time    end_time,
+               s.create_time create_time,
+               f.id          fid,
+               f.name        name,
+               f.parent_id   parent_id,
+               i.id          i_id,
+               i.item_name   item_name,
+               i.max_person  item_max_person,
+               i.type        item_type,
+               i.unit        item_unit,
+               i.is_desc     item_sort
+        FROM group_games s
+                 LEFT JOIN (SELECT b.id                             `id`,
+                                   CONCAT(a.`name`, '--', b.`name`) `name`,
+                                   a.id                             `parent_id`
+                            FROM sport_fields a,
+                                 sport_fields b
+                            WHERE a.id = b.parent_id) f ON s.field_id = f.id
+                 LEFT JOIN sport_item i ON s.item_id = i.id
+                 LEFT JOIN sport_games g ON s.next_game = g.id
+    </select>
+
+    <!--  查询排序后的比赛  -->
+    <select id="selectGamesOrder" parameterType="SportGames" resultMap="SportGamesResult">
+        SELECT s.id          id,
+               s.item_id     item_id,
+               s.game_name   game_name,
+               s.next_game   next_game,
+               s.gender      gender,
+               s.field_id    field_id,
+               s.max_person  max_person,
+               s.status      status,
+               s.start_time  start_time,
+               s.end_time    end_time,
+               s.create_time create_time,
+               f.id          fid,
+               f.name        name,
+               f.parent_id   parent_id,
+               i.id          i_id,
+               i.item_name   item_name,
+               i.max_person  item_max_person,
+               i.type        item_type,
+               i.unit        item_unit,
+               i.is_desc     item_sort
+        FROM games_order s
+                 LEFT JOIN (SELECT b.id                             `id`,
+                                   CONCAT(a.`name`, '--', b.`name`) `name`,
+                                   a.id                             `parent_id`
+                            FROM sport_fields a,
+                                 sport_fields b
+                            WHERE a.id = b.parent_id) f ON s.field_id = f.id
+                 LEFT JOIN sport_item i ON s.item_id = i.id
+                 LEFT JOIN sport_games g ON s.next_game = g.id
+    </select>
+
     <select id="selectSportGamesList" parameterType="SportGames" resultMap="SportGamesResult">
         <include refid="selectSportGamesVo"/>
         <where>
@@ -73,8 +206,9 @@
             <if test="fieldId != null ">and s.field_id = #{fieldId}</if>
             <if test="maxPerson != null ">and s.max_person = #{maxPerson}</if>
             <if test="status != null ">and s.status = #{status}</if>
-            <if test="startTime != null ">and s.start_time = #{startTime}</if>
-            <if test="endTime != null ">and s.end_time = #{endTime}</if>
+            <if test="startTime != null ">and s.start_time >= #{startTime}</if>
+            <if test="startTime != null ">and s.start_time &lt;= #{endTime}</if>
+            <if test="item != null and item.type != null">and i.type = #{item.type}</if>
         </where>
         ORDER BY
         s.start_time
@@ -123,14 +257,16 @@
 
 
     <select id="selectSportResultByGameId" parameterType="Long" resultType="com.ruoyi.system.domain.Vo.GameResultVo">
-        SELECT su.user_name, su.nick_name, sd.dept_name, sr.score, sr.points, sg.start_time
+        SELECT su.user_name, su.nick_name, sd.dept_name, si.type,si.unit,sr.score, sr.points, sg.start_time
         FROM sport_registrations sr
                  LEFT JOIN sys_user su ON sr.user_id = su.user_id
                  LEFT JOIN sport_games sg ON sr.game_id = sg.id
                  LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+                 left join sport_item si on si.id = sg.item_id
         WHERE sr.game_id = #{gameId}
           AND sr.score IS NOT NULL
         ORDER BY sr.score DESC
+
     </select>
 
 

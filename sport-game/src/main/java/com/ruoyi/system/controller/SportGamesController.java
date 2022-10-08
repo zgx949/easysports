@@ -2,12 +2,14 @@ package com.ruoyi.system.controller;
 
 
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.system.domain.Vo.GameInsertVo;
 import com.ruoyi.system.domain.Vo.GameResultVo;
 
+import com.ruoyi.system.mapper.SportGamesMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +35,6 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 比赛管理Controller
  *
  * @author ruoyi
- * @date 2022-07-05
  */
 @Api("运动会信息管理")
 @RestController
@@ -41,6 +42,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 public class SportGamesController extends BaseController {
     @Autowired
     private ISportGamesService sportGamesService;
+
+    @Autowired
+    private SportGamesMapper sportGamesMapper;
 
     /**
      * 获取报名比赛的必要信息
@@ -90,8 +94,8 @@ public class SportGamesController extends BaseController {
      */
     @ApiOperation("根据比赛id查询待记录分数人员")
     @PreAuthorize("@ss.hasPermi('system:games:list')")
-    @GetMapping("/insert/{gameId}")
-    public TableDataInfo SelectGameInsertVoByGameId(@PathVariable Long gameId) {
+    @GetMapping("/insert")
+    public TableDataInfo SelectGameInsertVoByGameId( Long gameId) {
         if (null == gameId) {
             throw new ServiceException("请选择比赛项目");
         }
@@ -109,7 +113,7 @@ public class SportGamesController extends BaseController {
     @PostMapping("/export")
     public void export(HttpServletResponse response, SportGames sportGames) {
         List<SportGames> list = sportGamesService.selectSportGamesList(sportGames);
-        ExcelUtil<SportGames> util = new ExcelUtil<SportGames>(SportGames.class);
+        ExcelUtil<SportGames> util = new ExcelUtil<>(SportGames.class);
         util.exportExcel(response, list, "比赛管理数据");
     }
 
@@ -151,5 +155,28 @@ public class SportGamesController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(sportGamesService.deleteSportGamesByIds(ids));
+    }
+
+
+    /**
+     * 查询比赛分类后的列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @GetMapping("/game-order")
+    public TableDataInfo listView(Map<String, Integer> mp) {
+        Integer type = mp.get("type");
+        List<SportGames> list = null;
+        // 田赛
+        if (type.equals(1)) {
+            list = sportGamesMapper.selectFieldGames();
+        // 径赛
+        } else if (type.equals(2)){
+            list = sportGamesMapper.selectTrackGames();
+        // 团体赛
+        } else if (type.equals(3)) {
+            list = sportGamesMapper.selectGroupGames();
+        }
+
+        return getDataTable(list);
     }
 }
