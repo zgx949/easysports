@@ -95,7 +95,7 @@ public class SportGamesController extends BaseController {
     @ApiOperation("根据比赛id查询待记录分数人员")
     @PreAuthorize("@ss.hasPermi('system:games:list')")
     @GetMapping("/insert")
-    public TableDataInfo SelectGameInsertVoByGameId( Long gameId) {
+    public TableDataInfo SelectGameInsertVoByGameId(Long gameId) {
         if (null == gameId) {
             throw new ServiceException("请选择比赛项目");
         }
