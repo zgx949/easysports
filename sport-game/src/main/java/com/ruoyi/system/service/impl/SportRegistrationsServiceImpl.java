@@ -199,20 +199,23 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
     @Override
     public UserSportGradeVo selectUserSportGrade(Long gameId) {
-        String redisKey = "userSportGrade:" + SecurityUtils.getUserId()+":"+gameId;
+        Long userId = SecurityUtils.getUserId();
+        String redisKey = "userSportGrade:" + userId+":"+gameId;
         UserSportGradeVo cacheObject = (UserSportGradeVo)redisCache.getCacheObject(redisKey);
         if(!ObjectUtils.isEmpty(cacheObject)){
             return cacheObject;
         }
         SportRegistrations sportRegistrations=new SportRegistrations();
         sportRegistrations.setGameId(gameId);
-        //查询参加该比赛的所有报名集合
+        sportRegistrations.setStatus("1");
+        //查询参加该比赛的所有报名并且审核通过的集合
         List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
 
+
         SportRegistrations userSportRegistrations=new SportRegistrations();//用于从集合中获得用户的报名信息
-        //遍历集合从中获取当前用户成绩
+        //从中获取当前用户成绩
         for(SportRegistrations temp:sportRegistrationsList){
-            if(SecurityUtils.getUserId()==temp.getUserId()){
+            if(userId==temp.getUserId()){
                 userSportRegistrations=temp;
             }
         }

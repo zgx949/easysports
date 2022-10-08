@@ -160,8 +160,6 @@ public class SportRegistrationsController extends BaseController {
             return userSportGradeVo;
         }).collect(Collectors.toList());
 
-        Collections.sort(userSportGradeVoList);
-        //对比赛成绩集合进行按比赛时间从早到晚排序
         return getDataTable(userSportGradeVoList);
     }
 

@@ -35,7 +35,6 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 比赛管理Controller
  *
  * @author ruoyi
- * @date 2022-07-05
  */
 @Api("运动会信息管理")
 @RestController
@@ -95,8 +94,8 @@ public class SportGamesController extends BaseController {
      */
     @ApiOperation("根据比赛id查询待记录分数人员")
     @PreAuthorize("@ss.hasPermi('system:games:list')")
-    @GetMapping("/insert/{gameId}")
-    public TableDataInfo SelectGameInsertVoByGameId(@PathVariable Long gameId) {
+    @GetMapping("/insert")
+    public TableDataInfo SelectGameInsertVoByGameId( Long gameId) {
         if (null == gameId) {
             throw new ServiceException("请选择比赛项目");
         }
@@ -114,7 +113,7 @@ public class SportGamesController extends BaseController {
     @PostMapping("/export")
     public void export(HttpServletResponse response, SportGames sportGames) {
         List<SportGames> list = sportGamesService.selectSportGamesList(sportGames);
-        ExcelUtil<SportGames> util = new ExcelUtil<SportGames>(SportGames.class);
+        ExcelUtil<SportGames> util = new ExcelUtil<>(SportGames.class);
         util.exportExcel(response, list, "比赛管理数据");
     }
 
