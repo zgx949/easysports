@@ -315,18 +315,45 @@
     </el-dialog>
 
 <!--  比赛项目成绩  -->
-    <el-dialog :title=this.gName :visible.sync="dialogTableVisible" width="60%">
-      <el-table :data="gameData">
+    <el-dialog :title=this.gName :visible.sync="dialogTableVisible" v-if="this.dialogTableVisible" width="60%">
+      <el-table
+        :data="gameData"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
         <el-table-column property="username" label="学号" width="120"></el-table-column>
         <el-table-column property="deptName" label="学院"></el-table-column>
         <el-table-column property="nickName" label="姓名"></el-table-column>
         <el-table-column property="order" label="名次"></el-table-column>
-        <el-table-column property="score" label="成绩"></el-table-column>
+        <el-table-column property="score" :label="`成绩(${gameData[0].unit})`">
+        </el-table-column>
         <el-table-column property="points" label="积分"></el-table-column>
         <el-table-column property="startTime" label="日期" width="150"></el-table-column>
       </el-table>
-      <el-button type="primary" style="margin-top: 10px;right: 0px" size="mini">打印</el-button>
+      <el-button type="primary" style="margin-top: 10px;right: 0px" size="mini" @click="printSelectedList">打印</el-button>
     </el-dialog>
+<!--  需打印的页面  -->
+
+    <el-dialog title="比赛成绩名单" :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%">
+      <div id="print">
+        <span style="margin: 0 auto">比赛成绩名单</span>
+      <el-table :data="selectPrintInf">
+        <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <el-table-column property="deptName" label="学院"></el-table-column>
+        <el-table-column property="nickName" label="姓名"></el-table-column>
+        <el-table-column property="order" label="名次"></el-table-column>
+        <el-table-column property="score" :label="`成绩(${selectPrintInf[0].unit})`">
+        </el-table-column>
+        <el-table-column property="points" label="积分"></el-table-column>
+        <el-table-column property="startTime" label="日期" width="150"></el-table-column>
+      </el-table>
+    </div>
+      <el-button type="primary" plain style="margin-top: 10px;right: 0px" size="mini" @click="confirmPrint">确定</el-button>
+      <el-button type="info" plain style="margin-top: 10px;right: 0px" size="mini" @click="cancelPrint">取消</el-button>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -344,10 +371,16 @@ export default {
     return {
       // 比赛成绩弹窗判断
       dialogTableVisible : false,
+      // 被选列表打印效果窗口
+      dialogSelectedListVisible: false,
       // 被查询比赛名称
       gName:"",
       // 比赛成绩数据
       gameData:[],
+      // 赛事单位
+      unit:'',
+      // 被选打印信息列表
+      selectPrintInf:[],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -405,16 +438,35 @@ export default {
     })
   },
   methods: {
+    /** 打印被选列表 */
+    printSelectedList(){
+      for (let i = 0; i < this.selectPrintInf.length; i++) {
+        this.selectPrintInf[i].startTime = this.selectPrintInf[i].startTime.split(' ')[0];
+      }
+      this.dialogSelectedListVisible = true;
+    },
+    confirmPrint(){
+      let print= document.getElementById('print');
+      let newContent = print.innerHTML;
+      let oldContent = document.body.innerHTML;
+      document.body.innerHTML = newContent;
+      document.getElementsByTagName('body')[0].style.zoom=0.92;
+      window.print();
+      window.location.reload();
+      //将原有页面还原到页面
+      document.body.innerHTML = oldContent;
+      return false;
+    },
+    cancelPrint(){
+      this.dialogSelectedListVisible = false;
+    },
     /** 获取比赛获奖数据 */
     getGameResult(id,name){
       getGameWinList(id).then(response => {
         this.gName = name
-        this.dialogTableVisible = true;
         const {data} = response
         this.gameData = data
-        var currentdate = new Date()
-        console.log(moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'))
-        console.log('2022-08-13 10:00:00'>data[0].startTime)
+        this.dialogTableVisible = true;
       })
     },
     /** 查询项目字典 */
@@ -425,7 +477,6 @@ export default {
     },
     /** 项目字典格式化 */
     itemFormatter(row, column) {
-      // console.log(row, column);
       for (const item of this.itemDict) {
         if (item.value === row.itemId) {
           return item.label;
@@ -523,9 +574,17 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      if ("id" in selection[0]){
+        this.ids = selection.map(item => item.id)
+        this.single = selection.length!==1
+        this.multiple = !selection.length
+      }
+      else if ("username" in selection[0]){
+        this.selectPrintInf = selection.map(item => item)
+      }
+      else {
+        return
+      }
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -609,7 +668,25 @@ export default {
       this.download('system/games/export', {
         ...this.queryParams
       }, `games_${new Date().getTime()}.xlsx`)
-    }
+    },
   }
 };
 </script>
+
+<style>
+/*@page{*/
+/*  size: A4 landscape; !*portrait： 纵向打印,  landscape: 横向*!*/
+/*}*/
+@media print{
+  table,
+  tbody,
+  thead {
+    width: 100% !important;
+  }
+
+  colgroup {
+    position: absolute;
+    width: 90% !important;
+  }
+}
+</style>
