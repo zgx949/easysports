@@ -144,6 +144,9 @@
           AND u.dept_id=#{deptId}
           AND r.status=1
     </select>
+    <select id="selectUserRegistation" resultType="com.ruoyi.system.domain.SportRegistrations">
+        select * from sport_registrations where game_id=#{gameId} AND user_id=#{userId}
+    </select>
 
     <insert id="insertSportRegistrations" parameterType="SportRegistrations">
         insert into sport_registrations
