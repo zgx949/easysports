@@ -68,10 +68,11 @@ export function getGameWinList(id) {
 }
 
 // 根据比赛id查询待记录分数人员
-export function getPlayerByGameId(id) {
+export function getPlayerByGameId(pageData) {
   return request({
-    url: '/system/games/insert/' + parseInt(id),
-    method: 'get'
+    url: '/system/games/insert/',
+    method: 'get',
+    params: pageData
   })
 }
 
