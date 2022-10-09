@@ -819,7 +819,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     /**
      * @Description 根据学号查询其参加比赛的数据
      * @Param userId
-     * @Return {@link ArrayList< String>}
+     * @Return {@link ArrayList<String>}
      * @Author coder_jlt
      * @Date 2022/9/15 13:38
      */
