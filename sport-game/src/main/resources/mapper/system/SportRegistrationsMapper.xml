@@ -219,6 +219,23 @@
         </trim>
         where id = #{id}
     </update>
+    <update id="updateSportScoreData">
+
+        update sport_registrations
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="gameId != null">game_id = #{gameId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="fieldId != null">field_id = #{fieldId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="comment != null">comment = #{comment},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where game_id = #{gameId} and user_id = #{userId}
+
+    </update>
 
     <delete id="deleteSportRegistrationsById" parameterType="Long">
         delete from sport_registrations where id = #{id}
