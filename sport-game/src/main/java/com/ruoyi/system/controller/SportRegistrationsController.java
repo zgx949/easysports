@@ -274,16 +274,15 @@ public class SportRegistrationsController extends BaseController {
     }
 
 
-    @PreAuthorize("@ss.hasPermi('system:registrations:edit')")
+    @PreAuthorize("@ss.hasAnyRoles('referee,admin')")
     @ApiOperation("管理员录入成绩")
     @PutMapping("update/score")
     public AjaxResult updateGamesScore(@RequestBody UpdateGamesScoreDto updateGamesScoreDto) {
-        if (!SecurityUtils.getLoginUser().getUser().isAdmin()) {
-            throw new ServiceException("无此权限");
-        }
+
         if (sportRegistrationsService.handleUpdateScore(updateGamesScoreDto)) {
             return AjaxResult.success();
         }
+
         return AjaxResult.error("录入成绩失败");
     }
 

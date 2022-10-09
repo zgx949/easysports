@@ -67,7 +67,7 @@ public class SportGamesController extends BaseController {
     /**
      * 查询比赛管理列表
      */
-    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @PreAuthorize("@ss.hasAnyRoles('referee,admin')")
     @GetMapping("/list")
     public TableDataInfo list(SportGames sportGames) {
         startPage();
@@ -93,7 +93,7 @@ public class SportGamesController extends BaseController {
      * 根据比赛id查询待记录分数人员
      */
     @ApiOperation("根据比赛id查询待记录分数人员")
-    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @PreAuthorize("@ss.hasAnyRoles('referee,admin')")
     @GetMapping("/insert")
     public TableDataInfo SelectGameInsertVoByGameId(Long gameId) {
         if (null == gameId) {
