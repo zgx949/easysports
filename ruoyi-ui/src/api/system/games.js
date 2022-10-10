@@ -75,7 +75,14 @@ export function getPlayerByGameId(pageData) {
     params: pageData
   })
 }
-
+// 根据用户ID查询待记录分数比赛列表
+export function searchGameListByUserId(pageData) {
+  return request({
+    url: '/system/games/search/',
+    method: 'get',
+    params: pageData
+  })
+}
 // 录入比赛成绩
 export function registerScore(data) {
   return request({
