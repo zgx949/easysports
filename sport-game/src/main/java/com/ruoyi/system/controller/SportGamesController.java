@@ -67,7 +67,7 @@ public class SportGamesController extends BaseController {
     /**
      * 查询比赛管理列表
      */
-    @PreAuthorize("@ss.hasAnyRoles('referee,admin')")
+//    @PreAuthorize("@ss.hasAnyRoles('referee,admin')")
     @GetMapping("/list")
     public TableDataInfo list(SportGames sportGames) {
         startPage();
