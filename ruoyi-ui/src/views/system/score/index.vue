@@ -3,7 +3,7 @@
     <div class="queryterm">
       <div class="selectBox">
         <span>比赛名称:</span>
-        <el-select v-model="pageObj.gameId" filterable placeholder="请选择" size="small" @change="getPlayerListByGameId" style="margin-left: 10px">
+        <el-select v-model="pageObj.gameId" filterable clearable placeholder="请选择" size="small" @change="getPlayerListByGameId" style="margin-left: 10px">
           <el-option
             v-for="item in finishedGame"
             :key="item.id"
@@ -58,9 +58,10 @@
         <el-table-column
           prop="score,unit"
           label="成绩"
-        width="150">
+          width="150">
           <template slot-scope="scope" v-if="scope.row.score ? true:false">
-            {{scope.row.score}} {{scope.row.unit}}
+            <span v-if="scope.row.type != 2">{{scope.row.score}} {{scope.row.unit}}</span>
+            <span v-else>{{Math.floor(scope.row.score/60000)}}分{{Math.floor((scope.row.score%60000)/1000)}}秒{{Math.floor((scope.row.score%60000)%1000)}}毫秒</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -77,7 +78,7 @@
               size="mini"
               type="text"
               @click="showScoreForm(scope.row)"
-              >录入成绩</el-button>
+            >录入成绩</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -93,7 +94,7 @@
         </el-pagination>
       </div>
     </div>
-<!--  成绩录入表单  -->
+    <!--  成绩录入表单  -->
     <el-dialog v-bind="$attrs" v-on="$listeners" @close="onClose"  :visible.sync="dialogTableVisible">
       <div class="stuInfo">
         <div><label>姓名：</label><span>{{this.scoreForm.nickName}}</span></div>
@@ -106,9 +107,20 @@
         <el-form ref="dataForm" :model="scoreForm" :rules="rules" size="medium" label-width="60px">
           <el-col :span="12">
             <el-form-item label="成绩" prop="score">
-              <el-input v-model="scoreForm.score" placeholder="请输入成绩" clearable :style="{width: '100%'}">
+              <el-input v-model="scoreForm.score" placeholder="请输入成绩" clearable :style="{width: '100%'}" v-if="scoreForm.type != 2">
                 <template slot="append">{{scoreForm.unit}}</template>
               </el-input>
+              <div v-else>
+                <el-input v-model="trackScore.minute" placeholder="分" clearable :style="{width: '100%'}">
+                  <template slot="append">分</template>
+                </el-input>
+                <el-input v-model="trackScore.second" placeholder="秒" clearable :style="{width: '100%'}">
+                  <template slot="append">秒</template>
+                </el-input>
+                <el-input v-model="trackScore.millisecond" placeholder="毫秒" clearable :style="{width: '100%'}">
+                  <template slot="append">毫秒</template>
+                </el-input>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -134,154 +146,155 @@
 </template>
 
 <script>
-import { getPlayerByGameId, listGames, registerScore} from '@/api/system/games'
-  export default {
-    data(){
-      return{
+import {getPlayerByGameId, listGames, registerScore, searchGameListByUserId} from '@/api/system/games'
+export default {
+  data(){
+    return{
+      // 下拉框已结束比赛数据列表
+      finishedGame: [],
+      // 运动员数据列表
+      stuData: [],
+      // 运动员数据备份
+      dataBackup:[],
+      // 比赛id及分页数据
+      pageObj:{
+        gameId:undefined,
+        // 每页数量
+        pageSize:10,
+        // 页码
+        pageNum:1,
+        userId:undefined
+      },
+      // 数据总数
+      dataTotal:undefined,
+      // 根据学号查询的学号
+      input: '',
+      // 搜索结果
+      searchResult:[],
+      // 成绩录入表单数据
+      scoreForm: {
+        score:undefined,
+        points:undefined,
+        comment:""
+      },
+      // 径赛成绩
+      trackScore:{
+        minute:undefined,
+        second:undefined,
+        millisecond:undefined
+      },
+      // 表单展示条件
+      dialogTableVisible: false,
 
-        // 下拉框已结束比赛数据列表
-        finishedGame: [],
-        // 运动员数据列表
-        stuData: [],
-        // 运动员数据备份
-        dataBackup:[],
-        // 比赛id及分页数据
-        pageObj:{
-          gameId:undefined,
-          // 每页数量
-          pageSize:10,
-          // 页码
-          pageNum:1,
-        },
-        // 数据总数
-        dataTotal:undefined,
-        // 根据学号查询的学号
-        input: '',
-        // 搜索结果
-        searchResult:[],
-        // 成绩录入表单数据
-        scoreForm: {
-          score:undefined,
-          points:undefined,
-          comment:""
-        },
-        // 表单展示条件
-        dialogTableVisible: false,
-
-        rules: {
-          score: [{
-            required: true,
-            message: '请输入成绩',
-            trigger: 'blur'
-          }],
-          points: [{
-            required: true,
-            message: '请输入积分',
-            trigger: 'blur'
-          }],
-          comment: [],
-        }
-      }
-    },
-    created() {
-      this.getFinishedList()
-    },
-    methods:{
-      // 获取已完成比赛列表
-      getFinishedList(){
-        listGames({status:3, pageSize: 1000}).then(res => {
-          const {rows} = res;
-          this.finishedGame = rows;
-        })
-      },
-      // 根据比赛ID获取运动员数据
-      getPlayerListByGameId(val){
-        this.pageObj.gameId = val;
-        getPlayerByGameId(this.pageObj).then(res => {
-          this.dataTotal = res.total;
-          const {rows} = res;
-          this.stuData = rows;
-        })
-      },
-
-      // 运动员信息获取
-      showScoreForm(data){
-        console.log(data)
-        this.scoreForm['userId'] = data.userId
-        this.scoreForm['username'] = data.username
-        this.scoreForm['gameId'] = data.gameId
-        this.scoreForm['score'] = data.score
-        this.scoreForm['points'] = data.points
-        this.scoreForm['comment'] = data.comment
-        this.scoreForm['unit'] = data.unit
-        this.scoreForm['deptName'] = data.deptName
-        this.scoreForm['nickName'] = data.nickName
-        this.scoreForm['gameName'] = data.gameName
-        console.log(this.scoreForm)
-        this.dialogTableVisible = true
-      },
-
-      searchPerson(){
-        if(this.input){
-          if(JSON.stringify(this.dataBackup)==='[]'){
-            this.dataBackup = this.stuData
-          }
-          this.stuData = this.dataBackup.filter( (value) => {
-            if (value.username === this.input)
-              return true
-            else
-              return false
-          })
-          if (JSON.stringify(this.stuData)==='[]'){
-            this.stuData = this.dataBackup
-            this.$message({
-              message:'查无此人',
-              type:'error'
-            });
-            this.input=""
-            return
-          }
-        }
-        else {
-          this.getPlayerByGameId(this.stuData[0].gameId)
-        }
-        console.log(this.stuData)
-      },
-      onClose() {
-        this.$refs['scoreForm'].resetFields()
-      },
-      close() {
-        this.dialogTableVisible = false
-      },
-      handleConfirm() {
-        this.$refs['dataForm'].validate(async valid => {
-          if (!valid) return
-          const result = await registerScore(this.scoreForm)
-          if (result.code === 200){
-            this.stuData.forEach((value) => {
-              if(value.userId === this.scoreForm.userId && value.gameId === this.scoreForm.gameId){
-                value.score = this.scoreForm.score
-                value.points = this.scoreForm.points
-                value.comment = this.scoreForm.comment
-              }
-            })
-          }
-          //this.getPlayerByGameId(this.scoreForm.gameId)
-          this.close()
-        })
-      },
-
-      /** 分页处理 */
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        this.pageObj.pageNum = val;
-        console.log(this.pageObj)
-        this.getPlayerListByGameId(this.pageObj.gameId)
+      rules: {
+        score: [{
+          required: true,
+          message: '请输入成绩',
+          trigger: 'blur'
+        }],
+        points: [{
+          required: true,
+          message: '请输入积分',
+          trigger: 'blur'
+        }],
+        comment: [],
       }
     }
+  },
+  created() {
+    this.getFinishedList()
+  },
+  methods:{
+    // 获取已完成比赛列表
+    getFinishedList(){
+      listGames({status:3}).then(res => {
+        const {rows} = res;
+        this.finishedGame = rows;
+      })
+    },
+    // 根据比赛ID获取运动员数据
+    getPlayerListByGameId(val){
+      if (!val) return
+      this.pageObj.gameId = val;
+      getPlayerByGameId(this.pageObj).then(res => {
+        this.dataTotal = res.total;
+        const {rows} = res;
+        this.stuData = rows;
+      })
+    },
+    searchPlayerListByUserId(val){
+      this.pageObj.userId = val;
+      console.log(this.pageObj)
+      searchGameListByUserId(this.pageObj).then(res => {
+        this.dataTotal = res.total;
+        const {rows} = res;
+        this.stuData = rows;
+      })
+    },
+
+    // 运动员信息获取
+    showScoreForm(data){
+      console.log(data)
+      this.scoreForm['userId'] = data.userId
+      this.scoreForm['username'] = data.username
+      this.scoreForm['gameId'] = data.gameId
+      this.scoreForm['score'] = data.score
+      this.scoreForm['points'] = data.points
+      this.scoreForm['comment'] = data.comment
+      this.scoreForm['unit'] = data.unit
+      this.scoreForm['deptName'] = data.deptName
+      this.scoreForm['nickName'] = data.nickName
+      this.scoreForm['gameName'] = data.gameName
+      this.scoreForm['type'] = data.type
+      console.log(this.scoreForm)
+      this.dialogTableVisible = true
+    },
+
+    // 搜索指定学号人员的所有比赛
+    searchPerson(){
+        this.searchPlayerListByUserId(parseInt(this.input))
+    },
+    onClose() {
+      this.$refs['scoreForm'].resetFields()
+    },
+    close() {
+      this.dialogTableVisible = false
+    },
+
+    // 提交成绩
+    handleConfirm() {
+      if (this.scoreForm.type === 2){
+        const trackGradeResult = Math.ceil(this.trackScore.minute*60*1000)+Math.ceil(this.trackScore.second*1000)+Math.ceil(this.trackScore.millisecond)
+        this.scoreForm.score = trackGradeResult
+      }
+       this.$refs['dataForm'].validate(async valid => {
+        if (!valid) return
+        // 径赛单位换算
+        const result = await registerScore(this.scoreForm)
+        if(result.code === 200){
+          this.stuData.forEach((value) => {
+            if(value.userId === this.scoreForm.userId && value.gameId === this.scoreForm.gameId){
+              value.score = this.scoreForm.score
+              value.points = this.scoreForm.points
+              value.comment = this.scoreForm.comment
+            }
+          })
+        }
+        this.close()
+      })
+    },
+
+    /** 分页处理 */
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.pageObj.pageNum = val;
+      console.log(this.pageObj)
+      this.getPlayerListByGameId(this.pageObj.gameId)
+    }
   }
+}
 </script>
 
 <style>
