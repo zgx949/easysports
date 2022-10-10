@@ -58,6 +58,7 @@ export default {
   openPage(title, url, params) {
     var obj = { path: url, meta: { title: title } }
     store.dispatch('tagsView/addView', obj);
+
     return router.push({ path: url, query: params });
   },
   // 修改tab页签
