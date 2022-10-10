@@ -254,10 +254,19 @@ import { getPlayerByGameId, listGames, registerScore} from '@/api/system/games'
         this.dialogTableVisible = false
       },
       handleConfirm() {
-        this.$refs['dataForm'].validate(valid => {
+        this.$refs['dataForm'].validate(async valid => {
           if (!valid) return
-          registerScore(this.scoreForm)
-          this.getPlayerByGameId(this.scoreForm.gameId)
+          const result = await registerScore(this.scoreForm)
+          if (result.code === 200){
+            this.stuData.forEach((value) => {
+              if(value.userId === this.scoreForm.userId && value.gameId === this.scoreForm.gameId){
+                value.score = this.scoreForm.score
+                value.points = this.scoreForm.points
+                value.comment = this.scoreForm.comment
+              }
+            })
+          }
+          //this.getPlayerByGameId(this.scoreForm.gameId)
           this.close()
         })
       },
