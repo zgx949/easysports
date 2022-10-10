@@ -174,14 +174,14 @@ export default {
       // 成绩录入表单数据
       scoreForm: {
         score:undefined,
-        points:undefined,
+        points:0,
         comment:""
       },
       // 径赛成绩
       trackScore:{
-        minute:undefined,
-        second:undefined,
-        millisecond:undefined
+        minute:0,
+        second:0,
+        millisecond:0
       },
       // 表单展示条件
       dialogTableVisible: false,
@@ -207,7 +207,7 @@ export default {
   methods:{
     // 获取已完成比赛列表
     getFinishedList(){
-      listGames({status:3}).then(res => {
+      listGames({status:3, pageNum: 1, pageSize: 1000}).then(res => {
         const {rows} = res;
         this.finishedGame = rows;
       })
