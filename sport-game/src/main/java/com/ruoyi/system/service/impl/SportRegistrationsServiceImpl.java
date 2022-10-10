@@ -215,8 +215,9 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         SportRegistrations userSportRegistrations=new SportRegistrations();//用于从集合中获得用户的报名信息
         //从中获取当前用户成绩
         for(SportRegistrations temp:sportRegistrationsList){
-            if(userId==temp.getUserId()){
+            if(userId.equals(temp.getUserId())){
                 userSportRegistrations=temp;
+                break;
             }
         }
 
@@ -250,7 +251,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         }
         userSportGradeVo.setUserOrder(userOrder);
         //将用户当前成绩缓存，缓存时长设置为1h
-        redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
+        redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.MINUTES);
         return userSportGradeVo;
     }
 
