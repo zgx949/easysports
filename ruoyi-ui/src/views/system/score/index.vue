@@ -3,7 +3,7 @@
     <div class="queryterm">
       <div class="selectBox">
         <span>比赛名称:</span>
-        <el-select v-model="pageObj.gameId" filterable clearable placeholder="请选择" size="small" @change="getPlayerListByGameId" style="margin-left: 10px">
+        <el-select v-model="pageObj.gameId" filterable clearable placeholder="请选择" @change="getPlayerListByGameId" style="margin-left: 10px">
           <el-option
             v-for="item in finishedGame"
             :key="item.id"
@@ -12,9 +12,12 @@
           </el-option>
         </el-select>
       </div>
-      <el-input v-model="input" placeholder="请输入学号查询" size="small" style="width: 200px;margin-left: 50px" clearable>
+      <el-input v-model="input" placeholder="请输入学号查询" style="width: 220px;margin-left: 50px" clearable>
         <el-button slot="append" icon="el-icon-search" @click="searchPerson"></el-button>
       </el-input>
+      <div style="margin-left: auto">
+        <el-button type="primary" @click="getGameResult()" :disabled="typeof(this.pageObj.gameId)=='undefined'">成绩单</el-button>
+      </div>
     </div>
     <div>
       <el-table
@@ -105,22 +108,28 @@
 
       <el-row :gutter="15">
         <el-form ref="dataForm" :model="scoreForm" :rules="rules" size="medium" label-width="60px">
-          <el-col :span="12">
+          <el-col>
             <el-form-item label="成绩" prop="score">
               <el-input v-model="scoreForm.score" placeholder="请输入成绩" clearable :style="{width: '100%'}" v-if="scoreForm.type != 2">
                 <template slot="append">{{scoreForm.unit}}</template>
               </el-input>
-              <div v-else>
-                <el-input v-model="trackScore.minute" placeholder="分" clearable :style="{width: '100%'}">
+              <el-row v-else type="flex" justify="start">
+                <el-col >
+                  <el-input v-model="trackScore.minute" placeholder="分" clearable :style="{width: '100%'}">
                   <template slot="append">分</template>
-                </el-input>
+                  </el-input>
+                </el-col>
+                <el-col >
                 <el-input v-model="trackScore.second" placeholder="秒" clearable :style="{width: '100%'}">
                   <template slot="append">秒</template>
                 </el-input>
+                </el-col>
+                <el-col >
                 <el-input v-model="trackScore.millisecond" placeholder="毫秒" clearable :style="{width: '100%'}">
                   <template slot="append">毫秒</template>
                 </el-input>
-              </div>
+                </el-col>
+              </el-row>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -142,20 +151,78 @@
         <el-button type="primary" @click="handleConfirm">确定</el-button>
       </div>
     </el-dialog>
+
+    <!--  比赛项目成绩  -->
+    <el-dialog :title=this.gName :visible.sync="dialogTableVisibleSearch" v-if="this.dialogTableVisibleSearch" width="60%" style="height: 90%">
+      <div>
+      <el-table
+        :data="searchGameData"
+        height="400"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <el-table-column property="deptName" label="学院"></el-table-column>
+        <el-table-column property="nickName" label="姓名"></el-table-column>
+        <el-table-column property="order" label="名次"></el-table-column>
+        <el-table-column property="score" :label="searchGameData[0].type === 2 ?(`成绩`):(`成绩(${searchGameData[0].unit})`)">
+          <template slot-scope="scope">
+            <span v-if="scope.row.type != 2">{{ scope.row.score }}</span>
+            <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column property="points" label="积分"></el-table-column>
+        <el-table-column property="startTime" label="日期" width="150"></el-table-column>
+      </el-table>
+      </div>
+      <el-button type="primary" style="margin-top: 10px;right: 0px" size="mini" @click="printSelectedList">打印</el-button>
+    </el-dialog>
+
+    <!--  需打印的页面  -->
+
+    <el-dialog :title=this.gName :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%">
+      <div id="print">
+        <span style="margin: 0 auto;">{{this.gName}}成绩名单</span>
+        <el-table :data="selectPrintInf">
+          <el-table-column property="username" label="学号" width="120"></el-table-column>
+          <el-table-column property="deptName" label="学院"></el-table-column>
+          <el-table-column property="nickName" label="姓名"></el-table-column>
+          <el-table-column property="order" label="名次"></el-table-column>
+          <el-table-column property="score" :label="selectPrintInf[0].type === 2 ?(`成绩`):(`成绩(${selectPrintInf[0].unit})`)">
+            <template slot-scope="scope">
+              <span v-if="scope.row.type != 2">{{ scope.row.score }}</span>
+              <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column property="points" label="积分"></el-table-column>
+          <el-table-column property="startTime" label="日期" width="150"></el-table-column>
+        </el-table>
+      </div>
+      <el-button type="primary" plain style="margin-top: 10px;right: 0px" size="mini" @click="confirmPrint">确定</el-button>
+      <el-button type="info" plain style="margin-top: 10px;right: 0px" size="mini" @click="cancelPrint">取消</el-button>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {getPlayerByGameId, listGames, registerScore, searchGameListByUserId} from '@/api/system/games'
+import {getGameWinList, getPlayerByGameId, listGames, registerScore, searchGameListByUserId} from '@/api/system/games'
 export default {
   data(){
     return{
+      // 所查询比赛名称
+      gName:'',
+      // 所查询比赛数据
+      searchGameData:[],
       // 下拉框已结束比赛数据列表
       finishedGame: [],
       // 运动员数据列表
       stuData: [],
       // 运动员数据备份
       dataBackup:[],
+      // 被选打印信息列表
+      selectPrintInf:[],
       // 比赛id及分页数据
       pageObj:{
         gameId:undefined,
@@ -185,6 +252,10 @@ export default {
       },
       // 表单展示条件
       dialogTableVisible: false,
+      // 成绩单展示
+      dialogTableVisibleSearch:false,
+      // 被选列表打印效果窗口
+      dialogSelectedListVisible: false,
 
       rules: {
         score: [{
@@ -220,8 +291,28 @@ export default {
         this.dataTotal = res.total;
         const {rows} = res;
         this.stuData = rows;
+        console.log(this.stuData)
       })
     },
+    getGameResult(){
+      getGameWinList(this.stuData[0].gameId).then(response => {
+        this.gName = name
+        const {data} = response
+        this.searchGameData = data
+        this.dialogTableVisibleSearch = true;
+      })
+    },
+
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      if ("username" in selection[0]){
+        this.selectPrintInf = selection.map(item => item)
+      }
+      else {
+        return
+      }
+    },
+
     searchPlayerListByUserId(val){
       this.pageObj.userId = val;
       console.log(this.pageObj)
@@ -292,12 +383,36 @@ export default {
       this.pageObj.pageNum = val;
       console.log(this.pageObj)
       this.getPlayerListByGameId(this.pageObj.gameId)
-    }
+    },
+
+    /** 打印处理 */
+    printSelectedList(){
+      for (let i = 0; i < this.selectPrintInf.length; i++) {
+        this.selectPrintInf[i].startTime = this.selectPrintInf[i].startTime.split(' ')[0];
+      }
+      this.dialogSelectedListVisible = true;
+    },
+    confirmPrint(){
+      let print= document.getElementById('print');
+      let newContent = print.innerHTML;
+      let oldContent = document.body.innerHTML;
+      document.body.innerHTML = newContent;
+      document.getElementsByTagName('body')[0].style.zoom=0.92;
+      window.print();
+      window.location.reload();
+      //将原有页面还原到页面
+      document.body.innerHTML = oldContent;
+      return false;
+    },
+    cancelPrint(){
+      this.dialogSelectedListVisible = false;
+    },
   }
 }
 </script>
 
 <style>
+
 .queryterm{
   display: flex;
   margin-bottom: 20px;
