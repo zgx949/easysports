@@ -1,6 +1,7 @@
 package com.ruoyi.system.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.mapper.SportGamesMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -104,6 +106,27 @@ public class SportGamesController extends BaseController {
         return getDataTable(gameInsertVos);
     }
 
+    /**
+     * 根据用户学号查询待记录分数比赛
+     */
+    @ApiOperation("根据用户学号查询待记录分数比赛")
+    @PreAuthorize("@ss.hasAnyRoles('referee,admin')")
+    @GetMapping("/search")
+    public TableDataInfo SelectGameInsertVoByUserId(Long userId, @Nullable Long gameId) {
+        if (null == userId) {
+            throw new ServiceException("请输入用户Id");
+        }
+        List<GameInsertVo> gameInsertVos;
+        if (gameId == null) {
+            startPage();
+            gameInsertVos = sportGamesService.SelectGameInsertVoByUserId(userId);
+        } else {
+            startPage();
+            gameInsertVos = sportGamesMapper.SelectGameInsertVoByUserIdAndGameId(userId, gameId);
+        }
+        return getDataTable(gameInsertVos);
+    }
+
 
     /**
      * 导出比赛管理列表
@@ -169,10 +192,10 @@ public class SportGamesController extends BaseController {
         // 田赛
         if (type.equals(1)) {
             list = sportGamesMapper.selectFieldGames();
-        // 径赛
-        } else if (type.equals(2)){
+            // 径赛
+        } else if (type.equals(2)) {
             list = sportGamesMapper.selectTrackGames();
-        // 团体赛
+            // 团体赛
         } else if (type.equals(3)) {
             list = sportGamesMapper.selectGroupGames();
         }
