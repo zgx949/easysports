@@ -90,4 +90,6 @@ public interface ISportGamesService
      * @Date 2022/9/13 08:12
      */
     List<GameInsertVo> SelectGameInsertVoByGameId(Long gameId);
+
+    List<GameInsertVo> SelectGameInsertVoByUserId(Long userId);
 }

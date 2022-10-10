@@ -329,6 +329,28 @@ public class SportGamesServiceImpl implements ISportGamesService {
     }
 
     /**
+     * @Description 根据用户学号查询待记录分数比赛
+     * @Param id
+     * @Return {@link List< GameInsertVo>}
+     * @Author coder_jlt
+     * @Date 2022/9/13 08:55
+     */
+    @Override
+    public List<GameInsertVo> SelectGameInsertVoByUserId(Long userId) {
+        //
+        if (userId == null) {
+            throw new ServiceException("请输入学号");
+        }
+
+        List<GameInsertVo> gameInsertVos = sportGamesMapper.SelectGameInsertVoByUserId(userId);
+
+        if (CollectionUtils.isEmpty(gameInsertVos)) {
+            throw new ServiceException("未查询到此运动员比赛信息");
+        }
+        return gameInsertVos;
+    }
+
+    /**
      * 新增项目管理信息
      *
      * @param sportGames 比赛管理对象
