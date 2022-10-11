@@ -3,6 +3,7 @@ package com.ruoyi.system.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.exception.ServiceException;
@@ -12,6 +13,9 @@ import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.mapper.SportGamesMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +49,7 @@ public class SportGamesController extends BaseController {
 
     @Autowired
     private SportGamesMapper sportGamesMapper;
+
 
     /**
      * 获取报名比赛的必要信息
@@ -101,6 +106,27 @@ public class SportGamesController extends BaseController {
         }
         startPage();
         List<GameInsertVo> gameInsertVos = sportGamesService.SelectGameInsertVoByGameId(gameId);
+        return getDataTable(gameInsertVos);
+    }
+
+    /**
+     * 根据用户学号查询待记录分数比赛
+     */
+    @ApiOperation("根据用户学号查询待记录分数比赛")
+    @PreAuthorize("@ss.hasAnyRoles('referee,admin')")
+    @GetMapping("/search")
+    public TableDataInfo SelectGameInsertVoByUserId(Long userId, @Nullable Long gameId) {
+        if (null == userId) {
+            throw new ServiceException("请输入用户Id");
+        }
+        List<GameInsertVo> gameInsertVos;
+        if (gameId == null) {
+            startPage();
+            gameInsertVos = sportGamesService.SelectGameInsertVoByUserId(userId);
+        } else {
+            startPage();
+            gameInsertVos = sportGamesMapper.SelectGameInsertVoByUserIdAndGameId(userId, gameId);
+        }
         return getDataTable(gameInsertVos);
     }
 
@@ -169,14 +195,76 @@ public class SportGamesController extends BaseController {
         // 田赛
         if (type.equals(1)) {
             list = sportGamesMapper.selectFieldGames();
-        // 径赛
-        } else if (type.equals(2)){
+            // 径赛
+        } else if (type.equals(2)) {
             list = sportGamesMapper.selectTrackGames();
-        // 团体赛
+            // 团体赛
         } else if (type.equals(3)) {
             list = sportGamesMapper.selectGroupGames();
         }
 
         return getDataTable(list);
     }
+
+    /**
+     * @Description 搜索所有有决赛的比赛
+     * @Param gameId
+     * @Return {@link AjaxResult}
+     * @Author coder_jlt
+     * @Date 2022/10/11 11:10
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @ApiOperation("搜索所有有决赛的比赛")
+    @GetMapping("/promotion/list")
+    public AjaxResult promotionList() {
+
+        List<SportGames> sportGames = sportGamesService.selectSportGamesList(new SportGames());
+
+        if (CollectionUtils.isEmpty(sportGames)) {
+            return AjaxResult.error("系统开小差啦～ 稍后再试");
+        }
+
+        Stream<SportGames> sportGamesStream = sportGames.stream().filter((value) -> !value.getNextGame().equals(0L));
+
+        return AjaxResult.success(sportGamesStream);
+    }
+
+    /**
+     * @Description 根据比赛Id搜索所有运动员 及 对应待晋级比赛
+     * @Param gameId
+     * @Return {@link AjaxResult}
+     * @Author coder_jlt
+     * @Date 2022/10/11 11:10
+     */
+    @PreAuthorize("@ss.hasPermi('system:games:list')")
+    @ApiOperation("根据比赛Id搜索所有运动员 及 对应待晋级比赛")
+    @GetMapping("/promotion/{gameId}")
+    public AjaxResult promotionPlayerListByGameId(@PathVariable Long gameId) {
+
+
+        List<GameInsertVo> promotionPlayers = sportGamesService.SelectGameInsertVoByGameId(gameId);
+
+        Stream<GameInsertVo> gameInsertVoStream = promotionPlayers.stream().filter((item) -> !ObjectUtils.isEmpty(item.getScore()));
+
+        SportGames games = sportGamesService.selectSportGamesById(gameId);
+
+        if (ObjectUtils.isEmpty(games)){
+            return AjaxResult.error("未查询到此场比赛");
+        }
+
+        SportGames nextGame = sportGamesService.selectSportGamesById(games.getNextGame());
+
+        if (ObjectUtils.isEmpty(nextGame)){
+            return AjaxResult.error("未查询到此场比赛的决赛");
+        }
+
+        AjaxResult ajaxResult = AjaxResult.success();
+        ajaxResult.put("nextGame",nextGame.getGameName());
+        ajaxResult.put("data",gameInsertVoStream);
+
+        return ajaxResult;
+    }
+
+
+
 }
