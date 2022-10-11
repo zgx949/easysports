@@ -193,7 +193,7 @@
           <el-table-column property="score" :label="selectPrintInf[0].type === 2 ?(`成绩`):(`成绩(${selectPrintInf[0].unit})`)">
             <template slot-scope="scope">
               <span v-if="scope.row.type != 2">{{ scope.row.score }}</span>
-              <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+              <span v-else>{{ Math.floor(scope.row.score/60000) != 0 ? `${Math.floor(scope.row.score/60000)}\'`: '' }} {{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
             </template>
           </el-table-column>
           <el-table-column property="points" label="积分"></el-table-column>
