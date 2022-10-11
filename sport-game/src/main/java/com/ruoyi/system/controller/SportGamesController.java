@@ -1,8 +1,10 @@
 package com.ruoyi.system.controller;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -241,30 +243,35 @@ public class SportGamesController extends BaseController {
     @GetMapping("/promotion/{gameId}")
     public AjaxResult promotionPlayerListByGameId(@PathVariable Long gameId) {
 
-
         List<GameInsertVo> promotionPlayers = sportGamesService.SelectGameInsertVoByGameId(gameId);
 
-        Stream<GameInsertVo> gameInsertVoStream = promotionPlayers.stream().filter((item) -> !ObjectUtils.isEmpty(item.getScore()));
+        List<GameInsertVo> gameInsertVoList = promotionPlayers.stream().filter((item) -> !ObjectUtils.isEmpty(item.getScore())).collect(Collectors.toList());
+
+
+        for (int i = 0; i < gameInsertVoList.size(); i++) {
+            gameInsertVoList.get(i).setOrder(i + 1);
+        }
+
+        //gameInsertVoStream = gameInsertVoStream.sorted();
 
         SportGames games = sportGamesService.selectSportGamesById(gameId);
 
-        if (ObjectUtils.isEmpty(games)){
+        if (ObjectUtils.isEmpty(games)) {
             return AjaxResult.error("未查询到此场比赛");
         }
 
         SportGames nextGame = sportGamesService.selectSportGamesById(games.getNextGame());
 
-        if (ObjectUtils.isEmpty(nextGame)){
+        if (ObjectUtils.isEmpty(nextGame)) {
             return AjaxResult.error("未查询到此场比赛的决赛");
         }
 
         AjaxResult ajaxResult = AjaxResult.success();
-        ajaxResult.put("nextGame",nextGame.getGameName());
-        ajaxResult.put("data",gameInsertVoStream);
+        ajaxResult.put("nextGame", nextGame.getGameName());
+        ajaxResult.put("data", gameInsertVoList);
 
         return ajaxResult;
     }
-
 
 
 }
