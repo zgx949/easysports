@@ -5,12 +5,18 @@
         <div ref="left">
         <div class="head-text">预赛名单</div>
         <div style="border: solid 1px #d3d3d3;border-width: 0px 1px 0px 1px">
-          <el-select v-model="value" clearable size="mini" placeholder="请选择比赛" style="margin: 10px 0px 10px 5px;">
+          <el-select
+            v-model="selectedGame"
+            clearable size="mini"
+            placeholder="请选择比赛"
+            style="margin: 10px 0px 10px 5px;"
+            @change="getFinalGameData"
+            @focus="backupId">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in finalList"
+              :key="item.id"
+              :label="item.gameName"
+              :value="item.id">
             </el-option>
           </el-select>
         </div>
@@ -22,7 +28,7 @@
             border
             style="width: 100%;"
             @selection-change="handleSelectionChange($event,1)"
-            :default-sort="{ prop: 'rank', order: 'ascending' }"
+            :default-sort="{ prop: 'order', order: 'ascending' }"
             :row-class-name="tableRowClassName"
             :header-row-style="{height:'20px'}"
             :header-cell-style="{'font-size':'6px',padding:'0px'}">
@@ -33,32 +39,36 @@
               align="center">
             </el-table-column>
             <el-table-column
-              prop="rank"
+              prop="order"
               label="排名"
               min-width="10%"
               align="center"
               :sortable = "true">
             </el-table-column>
             <el-table-column
-              prop="college"
+              prop="deptName"
               label="学院"
               min-width="13%">
             </el-table-column>
             <el-table-column
-              prop="id"
+              prop="userId"
               label="编号"
               min-width="10%">
             </el-table-column>
             <el-table-column
-              prop="name"
+              prop="nickName"
               label="姓名"
               min-width="12%">
-            </el-table-column><el-table-column
+            </el-table-column>
+            <el-table-column
             prop="score"
             label="成绩"
             min-width="10%">
+              <template slot-scope="scope" v-if="scope.row.score ? true:false">
+                <span v-if="scope.row.type != 2">{{scope.row.score}} {{scope.row.unit}}</span>
+                <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+              </template>
           </el-table-column>
-
           </el-table>
         </div>
       </div>
@@ -77,7 +87,7 @@
             border
             style="width: 100%"
             @selection-change="handleSelectionChange($event,2)"
-            :default-sort="{ prop: 'rank', order: 'ascending' }"
+            :default-sort="{ prop: 'order', order: 'ascending' }"
             :header-row-style="{height:'20px'}"
             :header-cell-style="{'font-size':'6px',padding:'0px'}">
             <el-table-column
@@ -87,24 +97,24 @@
              align="center">
             </el-table-column>
             <el-table-column
-              prop="rank"
+              prop="order"
               label="排名"
               min-width="10%"
               align="center"
               :sortable="true">
             </el-table-column>
             <el-table-column
-              prop="college"
+              prop="deptName"
               label="学院"
               min-width="13%">
             </el-table-column>
             <el-table-column
-              prop="id"
+              prop="userId"
               label="编号"
               min-width="10%">
             </el-table-column>
             <el-table-column
-              prop="name"
+              prop="nickName"
               label="姓名"
               min-width="12%">
             </el-table-column><el-table-column
@@ -122,9 +132,16 @@
 </template>
 
 <script>
+import {getFinalGameDataById, getFinalGameList} from '@/api/system/games'
 export default {
   data(){
     return{
+      // 需决赛比赛列表
+      finalList:[],
+      // 被选比赛ID
+      selectedGame:null,
+      // 被选比赛ID备份
+      selectedGameIdBackUp:null,
       LeftData: [{
         rank: '1',
         college: '软件学院',
@@ -154,8 +171,36 @@ export default {
     }
   },
   created() {
+    this.getGameList()
   },
   methods:{
+    backupId(){
+      this.selectedGameIdBackUp = this.selectedGame;
+    },
+    // 获取需决赛比赛列表
+    getGameList(){
+      getFinalGameList().then(res => {
+        console.log(res)
+        const {data} = res
+        this.finalList = data;
+      })
+    },
+    // 获得决赛项目数据
+    getFinalGameData(val){
+
+      if (val){
+        if(this.selectedGameIdBackUp !== val){
+          this.rightData = [];
+        }
+        getFinalGameDataById(val).then((res) => {
+          console.log(res)
+          const {data} = res;
+          this.LeftData = data;
+          console.log(this.LeftData)
+        })
+      }
+
+    },
     // 添加索引
     tableRowClassName(row, index){
       // 给每条数据添加一个索引
