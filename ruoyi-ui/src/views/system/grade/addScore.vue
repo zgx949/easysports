@@ -20,7 +20,12 @@
             </el-input>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" icon="el-icon-search" size="medium" @click="scanf">
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="medium"
+              @click="scanf"
+            >
               扫码
             </el-button>
           </el-col>
@@ -38,7 +43,12 @@
         </el-form-item> -->
         <el-form-item label="" prop="submit">
           <el-col :span="24">
-            <el-button type="primary" icon="el-icon-search" size="medium" @click="addUser">
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="medium"
+              @click="addUser"
+            >
               添加
             </el-button>
           </el-col>
@@ -53,30 +63,27 @@
             <el-button class="button" text @click="del(index)">删除</el-button>
           </div>
         </template>
+        <div class="text item">学院：{{ data.insName }}</div>
+        <div class="text item">学号：{{ data.idcard }}</div>
+        <div class="text item">班级：{{ data.className }}</div>
         <div class="text item">
-            学院：{{ data.insName }}
-        </div>
-        <div class="text item">
-            学号：{{ data.idcard }}
-        </div>
-        <div class="text item">
-            班级：{{ data.className }}
-        </div>
-        <div class="text item">
-            成绩：<el-input v-model="data.score" placeholder="请输入成绩"></el-input>
+          成绩：<el-input
+            v-model="data.score"
+            placeholder="请输入成绩"
+          ></el-input>
         </div>
       </el-card>
     </div>
     <div>
-    <el-row :gutter="20" style="padding-top: 1rem;">
+      <el-row :gutter="20" style="padding-top: 1rem">
         <el-col :offset="4" :span="10">
-            <el-button type="primary" @click="submitForm">提交</el-button>
+          <el-button type="primary" @click="submitForm">提交</el-button>
         </el-col>
-    
+
         <el-col :span="10">
-            <el-button @click="resetForm">重置</el-button>
+          <el-button @click="resetForm">重置</el-button>
         </el-col>
-    </el-row>
+      </el-row>
     </div>
   </div>
 </template>
@@ -94,13 +101,29 @@ export default {
         score: undefined,
         submit: undefined,
       },
-      
     };
   },
   computed: {},
   watch: {},
-  created() {},
-  mounted() {},
+  created() {
+    // $.getScript(
+    //   "https://res.wx.qq.com/open/js/jweixin-1.2.0.js",
+    //   function () {}
+    // );
+  },
+  mounted() {
+    this.cards = JSON.parse(localStorage.getItem("cards"));
+    this.userDatas = JSON.parse(localStorage.getItem("userDatas"));
+    if (!this.cards) this.cards = [];
+    if (!this.userDatas) this.userDatas = [];
+    // debugger
+    var qr = this.getQueryString("qrresult"); //获取二维码的值
+    if (qr) {
+      this.formData.idcard = qr;
+      this.addUser();
+    //   alert(qr);
+    }
+  },
   methods: {
     submitForm() {
       this.$refs["elForm"].validate((valid) => {
@@ -108,36 +131,49 @@ export default {
         // TODO 提交表单
       });
     },
+    getQueryString(name) {
+      var reg = new RegExp("\\b" + name + "=([^&]*)");
+      var r = location.href.match(reg);
+      if (r != null) return unescape(r[1]);
+    },
     addUser() {
-        const idcard = this.formData.idcard;
-        if (!idcard) {
-            alert('请输入学号')
-            return;
-        }
-        if (this.cards.indexOf(idcard) !== -1) {
-            alert('用户已经添加过');
-            return;
-        }
-        this.cards.push(idcard);
-        console.log(idcard);
-        this.userDatas.push({
-            insName: 'XX',
-            name: '',
-            gender: '',
-            idcard: idcard,
-            className: '',
-            score: 0
-        });
+      const idcard = this.formData.idcard;
+      if (!idcard) {
+        alert("请输入学号");
+        return;
+      }
+      if (this.cards.indexOf(idcard) !== -1) {
+        alert("用户已经添加过");
+        return;
+      }
+      this.cards.push(idcard);
+      console.log(idcard);
+      this.userDatas.push({
+        insName: "XX",
+        name: "",
+        gender: "",
+        idcard: idcard,
+        className: "",
+        score: 0,
+      });
+      localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
+      localStorage.setItem("cards", JSON.stringify(this.cards));
     },
     del(index) {
-        this.userDatas.splice(index, 1);
-        this.cards.splice(index, 1);
+      this.userDatas.splice(index, 1);
+      this.cards.splice(index, 1);
+      localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
+      localStorage.setItem("cards", JSON.stringify(this.cards));
     },
     scanf() {
-        alert('暂不支持');
+      location.href = `http://sao315.com/w/api/saoyisao/?redirect_uri=${location.href}`;
     },
     resetForm() {
       this.$refs["elForm"].resetFields();
+      this.userDatas = [];
+      this.cards = [];
+      localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
+      localStorage.setItem("cards", JSON.stringify(this.cards));
     },
   },
 };
