@@ -1,6 +1,9 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SportFeedbackMapper;
 import com.ruoyi.system.domain.SportFeedback;
 import com.ruoyi.system.service.ISportFeedbackService;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 反馈Service业务层处理
@@ -21,6 +25,9 @@ public class SportFeedbackServiceImpl implements ISportFeedbackService
 {
     @Autowired
     private SportFeedbackMapper sportFeedbackMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询反馈
@@ -43,7 +50,8 @@ public class SportFeedbackServiceImpl implements ISportFeedbackService
     @Override
     public List<SportFeedback> selectSportFeedbackList(SportFeedback sportFeedback)
     {
-        return sportFeedbackMapper.selectSportFeedbackList(sportFeedback);
+        List<SportFeedback> sportFeedbacks = sportFeedbackMapper.selectSportFeedbackList(sportFeedback);
+        return sportFeedbacks;
     }
 
     /**
@@ -114,6 +122,8 @@ public class SportFeedbackServiceImpl implements ISportFeedbackService
         sportFeedback.setCreateTime(DateUtils.getNowDate());
         sportFeedback.setUpdateTime(DateUtils.getNowDate());
         sportFeedback.setStatus(0);
+        String redisKey="sportFeedback:selectFeedback:feedbackList:"+SecurityUtils.getUserId();
+        redisCache.deleteObject(redisKey);
         return sportFeedbackMapper.insertSportFeedback(sportFeedback);
     }
 
@@ -136,8 +146,11 @@ public class SportFeedbackServiceImpl implements ISportFeedbackService
         if(status==1){
             return 0;
         }
+        String redisKey="sportFeedback:selectFeedback:feedbackList:"+SecurityUtils.getUserId();
+        redisCache.deleteObject(redisKey);
         sportFeedback.setUpdateTime(DateUtils.getNowDate());
-        return sportFeedbackMapper.updateSportFeedback(sportFeedback);
+        sportFeedback.setUserId(SecurityUtils.getUserId());
+        return sportFeedbackMapper.updateUserFeedback(sportFeedback);
     }
 
     /**
@@ -147,10 +160,46 @@ public class SportFeedbackServiceImpl implements ISportFeedbackService
      */
     @Override
     public int checkUserFeedback(Long feedbackId) {
+        Long userId = sportFeedbackMapper.selectSportFeedbackByFeedbackId(feedbackId).getUserId();
+        String redisKey="sportFeedback:selectFeedback:feedbackList:"+userId;
+        redisCache.deleteObject(redisKey);
         SportFeedback sportFeedback = sportFeedbackMapper.selectSportFeedbackByFeedbackId(feedbackId);
         sportFeedback.setCheckTime(DateUtils.getNowDate());
         sportFeedback.setCheckId(SecurityUtils.getUserId());
         sportFeedback.setStatus(1);
         return sportFeedbackMapper.updateSportFeedback(sportFeedback);
+    }
+
+    /**
+     * 用户查询自身所有反馈
+     * @return
+     */
+    @Override
+    public List<SportFeedback> selectUserFeedbacks() {
+        String redisKey="sportFeedback:selectFeedback:feedbackList:"+SecurityUtils.getUserId();
+        List<SportFeedback> cacheList = redisCache.getCacheList(redisKey);
+        if(!CollectionUtils.isEmpty(cacheList)){
+            return cacheList;
+        }
+        SportFeedback sportFeedback=new SportFeedback();
+        sportFeedback.setUserId(SecurityUtils.getUserId());
+        List<SportFeedback> sportFeedbacks = sportFeedbackMapper.selectSportFeedbackList(sportFeedback);
+        redisCache.setCacheList(redisKey,sportFeedbacks);
+        redisCache.expire(redisKey, 1, TimeUnit.HOURS);//将用户自身所有反馈进行缓存
+        return sportFeedbacks;
+    }
+
+
+    /**
+     * 用户删除一条反馈
+     * @param feedbackId
+     * @return
+     */
+    @Override
+    public int deleteUserFeedback(Long feedbackId) {
+        Long userId = sportFeedbackMapper.selectSportFeedbackByFeedbackId(feedbackId).getUserId();
+        String redisKey="sportFeedback:selectFeedback:feedbackList:"+userId;
+        redisCache.deleteObject(redisKey);
+        return sportFeedbackMapper.deleteUserFeedback(feedbackId,userId);
     }
 }

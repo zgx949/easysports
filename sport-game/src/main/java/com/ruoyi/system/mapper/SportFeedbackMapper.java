@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SportFeedback;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
@@ -62,4 +63,20 @@ public interface SportFeedbackMapper
      * @return 结果
      */
     public int deleteSportFeedbackByFeedbackIds(Long[] feedbackIds);
+
+    /**
+     * 用户删除一条反馈
+     * @param feedbackId
+     * @param userId
+     * @return
+     */
+    @Delete("delete from sport_feedback where feedback_id=#{feedbackId} and user_id=#{userId}")
+    public int deleteUserFeedback(@Param("feedbackId") Long feedbackId,@Param("userId") Long userId);
+
+    /**
+     * 用户更新反馈内容
+     * @param sportFeedback
+     * @return
+     */
+    public int updateUserFeedback(SportFeedback sportFeedback);
 }

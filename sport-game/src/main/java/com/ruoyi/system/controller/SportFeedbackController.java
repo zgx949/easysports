@@ -1,11 +1,15 @@
 package com.ruoyi.system.controller;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,6 +39,9 @@ public class SportFeedbackController extends BaseController
 {
     @Autowired
     private ISportFeedbackService sportFeedbackService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询反馈列表
@@ -105,7 +112,7 @@ public class SportFeedbackController extends BaseController
     }
 
     /**
-     * 根据反馈ID查询反馈
+     * 用户根据反馈ID查询反馈
      */
     @GetMapping("/user/{feedbackId}")
     public AjaxResult selectFeedbackById(@PathVariable("feedbackId")Long feedbackId){
@@ -117,10 +124,8 @@ public class SportFeedbackController extends BaseController
      */
     @GetMapping("/user/list")
     public TableDataInfo selectUserFeedbacks(){
-        SportFeedback sportFeedback=new SportFeedback();
-        sportFeedback.setUserId(SecurityUtils.getUserId());
         startPage();
-        List<SportFeedback> sportFeedbacks=sportFeedbackService.selectSportFeedbackList(sportFeedback);
+        List<SportFeedback> sportFeedbacks=sportFeedbackService.selectUserFeedbacks();
         return getDataTable(sportFeedbacks);
     }
 
@@ -129,6 +134,13 @@ public class SportFeedbackController extends BaseController
      */
     @PostMapping("/user")
     public AjaxResult inserUserFeedback(@RequestBody SportFeedback sportFeedback){
+        String redisKey="sportFeedback:addFeedback:limitTime:"+SecurityUtils.getUserId();
+        Object cacheObject = redisCache.getCacheObject(redisKey);
+        if(!ObjectUtils.isEmpty(cacheObject)){
+            return AjaxResult.error("反馈过于频繁，请稍后再试");
+        }
+        //提交反馈限制,1h内只能提交一次反馈
+        redisCache.setCacheObject(redisKey,"limitFeedbackUserId:"+SecurityUtils.getUserId(),1, TimeUnit.HOURS);
         int insertIndex=sportFeedbackService.insertUserFeedback(sportFeedback);
         return insertIndex==0?AjaxResult.error("字数不符合要求"):toAjax(insertIndex);
     }
@@ -147,7 +159,7 @@ public class SportFeedbackController extends BaseController
      */
     @DeleteMapping("/user/{feedbackId}")
     public AjaxResult deleteUserFeedback(@PathVariable("feedbackId")Long feedbackId){
-        return toAjax(sportFeedbackService.deleteSportFeedbackByFeedbackId(feedbackId));
+        return toAjax(sportFeedbackService.deleteUserFeedback(feedbackId));
     }
 
     /**
