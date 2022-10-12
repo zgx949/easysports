@@ -116,10 +116,12 @@ export default {
     this.userDatas = JSON.parse(localStorage.getItem("userDatas"));
     if (!this.cards) this.cards = [];
     if (!this.userDatas) this.userDatas = [];
+    // debugger
     var qr = this.getQueryString("qrresult"); //获取二维码的值
     if (qr) {
-      var wl = JSON.parse(qr);
-      alert(wl);
+      this.formData.idcard = qr;
+      this.addUser();
+    //   alert(qr);
     }
   },
   methods: {
@@ -160,6 +162,8 @@ export default {
     del(index) {
       this.userDatas.splice(index, 1);
       this.cards.splice(index, 1);
+      localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
+      localStorage.setItem("cards", JSON.stringify(this.cards));
     },
     scanf() {
       location.href = `http://sao315.com/w/api/saoyisao/?redirect_uri=${location.href}`;
@@ -168,6 +172,8 @@ export default {
       this.$refs["elForm"].resetFields();
       this.userDatas = [];
       this.cards = [];
+      localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
+      localStorage.setItem("cards", JSON.stringify(this.cards));
     },
   },
 };
