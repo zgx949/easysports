@@ -8,6 +8,7 @@ import com.ruoyi.system.domain.Vo.GameInsertVo;
 import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
@@ -18,14 +19,14 @@ import org.springframework.stereotype.Repository;
  * @date 2022-07-05
  */
 @Repository
-public interface SportGamesMapper extends BaseMapper<SportGames>
-{
+public interface SportGamesMapper extends BaseMapper<SportGames> {
     /**
      * 获取报名比赛的必要信息
      *
      * @return 结果
      */
     public List<Dict> selectSportGamesRegisterDict();
+
     /**
      * 查询比赛管理
      *
@@ -133,12 +134,12 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
     public List<SportGames> selectGroupGames();
 
     /**
-    * @Description: 查询起始时间
-    * @Param:
-    * @return:
-    * @Author: zgx
-    * @Date: 2022-09-16
-    */
+     * @Description: 查询起始时间
+     * @Param:
+     * @return:
+     * @Author: zgx
+     * @Date: 2022-09-16
+     */
     @Select("SELECT MIN(start_time) FROM sport_games")
     public String startDate();
 
@@ -151,4 +152,8 @@ public interface SportGamesMapper extends BaseMapper<SportGames>
      */
     @Select("SELECT MAX(start_time) FROM sport_games")
     public String endDate();
+
+    List<GameInsertVo> SelectGameInsertVoByUserId(Long userId);
+
+    List<GameInsertVo> SelectGameInsertVoByUserIdAndGameId(@Param("userId") Long userId, @Param("gameId") Long gameId);
 }

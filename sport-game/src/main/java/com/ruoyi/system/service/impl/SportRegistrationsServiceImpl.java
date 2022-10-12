@@ -46,8 +46,7 @@ import com.ruoyi.system.service.ISportRegistrationsService;
  * @date 2022-07-05
  */
 @Service
-public class SportRegistrationsServiceImpl implements ISportRegistrationsService
-{
+public class SportRegistrationsServiceImpl implements ISportRegistrationsService {
     @Autowired
     private SportRegistrationsMapper sportRegistrationsMapper;
 
@@ -98,8 +97,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 报名管理
      */
     @Override
-    public SportRegistrations selectSportRegistrationsById(Long id)
-    {
+    public SportRegistrations selectSportRegistrationsById(Long id) {
         return sportRegistrationsMapper.selectSportRegistrationsById(id);
     }
 
@@ -110,8 +108,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 报名管理
      */
     @Override
-    public List<SportRegistrations> selectSportRegistrationsList(SportRegistrations sportRegistrations)
-    {
+    public List<SportRegistrations> selectSportRegistrationsList(SportRegistrations sportRegistrations) {
         return sportRegistrationsMapper.selectSportRegistrationsList(sportRegistrations);
     }
 
@@ -122,8 +119,13 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 结果
      */
     @Override
-    public int insertSportRegistrations(SportRegistrations sportRegistrations)
-    {
+    public int insertSportRegistrations(SportRegistrations sportRegistrations) {
+
+        if (ObjectUtils.isNotEmpty(sportRegistrations.getScore()) || ObjectUtils.isNotEmpty(sportRegistrations.getPoints()) || ObjectUtils.isNotEmpty(sportRegistrations.getGameId())) {
+            String redisKey = "sport:game:result:" + sportRegistrations.getGameId();
+            redisCache.deleteObject(redisKey);
+        }
+
         sportRegistrations.setCreateTime(DateUtils.getNowDate());
         return sportRegistrationsMapper.insertSportRegistrations(sportRegistrations);
     }
@@ -135,8 +137,11 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 结果
      */
     @Override
-    public int updateSportRegistrations(SportRegistrations sportRegistrations)
-    {
+    public int updateSportRegistrations(SportRegistrations sportRegistrations) {
+
+        String redisKey = "sport:game:result:" + sportRegistrationsService.selectSportRegistrationsById(sportRegistrations.getId()).getGameId();
+        redisCache.deleteObject(redisKey);
+
         sportRegistrations.setUpdateTime(DateUtils.getNowDate());
         return sportRegistrationsMapper.updateSportRegistrations(sportRegistrations);
     }
@@ -148,8 +153,18 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 结果
      */
     @Override
-    public int deleteSportRegistrationsByIds(Long[] ids)
-    {
+    public int deleteSportRegistrationsByIds(Long[] ids) {
+        // 删除涉及比赛的比赛缓存
+        SportRegistrations sportRegistrations;
+        String redisKey;
+        for (Long id : ids) {
+            sportRegistrations = sportRegistrationsMapper.selectSportRegistrationsById(id);
+
+            redisKey = "sport:game:result:" + sportRegistrations.getGameId();
+
+            redisCache.deleteObject(redisKey);
+        }
+        //删除数据
         return sportRegistrationsMapper.deleteSportRegistrationsByIds(ids);
     }
 
@@ -160,20 +175,20 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 结果
      */
     @Override
-    public int deleteSportRegistrationsById(Long id)
-    {
+    public int deleteSportRegistrationsById(Long id) {
         return sportRegistrationsMapper.deleteSportRegistrationsById(id);
     }
 
     /**
      * 根据用户id和比赛id取消报名
+     *
      * @param userId
      * @param gameId
      * @return
      */
     @Override
     public int deleteUserRegistrations(Long userId, Long gameId) {
-        return sportRegistrationsMapper.deleteUserSportRegistrations(userId,gameId);
+        return sportRegistrationsMapper.deleteUserSportRegistrations(userId, gameId);
     }
 
     /**
@@ -189,6 +204,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
     /**
      * 用户报名
+     *
      * @param sportRegistrations
      * @return
      */
@@ -200,27 +216,28 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     @Override
     public UserSportGradeVo selectUserSportGrade(Long gameId) {
         Long userId = SecurityUtils.getUserId();
-        String redisKey = "userSportGrade:" + userId+":"+gameId;
-        UserSportGradeVo cacheObject = (UserSportGradeVo)redisCache.getCacheObject(redisKey);
-        if(!ObjectUtils.isEmpty(cacheObject)){
+        String redisKey = "userSportGrade:" + userId + ":" + gameId;
+        UserSportGradeVo cacheObject = (UserSportGradeVo) redisCache.getCacheObject(redisKey);
+        if (!ObjectUtils.isEmpty(cacheObject)) {
             return cacheObject;
         }
-        SportRegistrations sportRegistrations=new SportRegistrations();
+        SportRegistrations sportRegistrations = new SportRegistrations();
         sportRegistrations.setGameId(gameId);
         sportRegistrations.setStatus("1");
         //查询参加该比赛的所有报名并且审核通过的集合
         List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
 
 
-        SportRegistrations userSportRegistrations=new SportRegistrations();//用于从集合中获得用户的报名信息
+        SportRegistrations userSportRegistrations = new SportRegistrations();//用于从集合中获得用户的报名信息
         //从中获取当前用户成绩
         for(SportRegistrations temp:sportRegistrationsList){
-            if(userId==temp.getUserId()){
+            if(userId.equals(temp.getUserId())){
                 userSportRegistrations=temp;
+                break;
             }
         }
 
-        UserSportGradeVo userSportGradeVo=new UserSportGradeVo();
+        UserSportGradeVo userSportGradeVo = new UserSportGradeVo();
 
         //根据比赛id查出比赛的item_id
         SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
@@ -234,15 +251,15 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         userSportGradeVo.setSportRegistrations(userSportRegistrations);
 
         //根据升序降序对用户进行排名
-        Long userOrder=1L;
-        for(SportRegistrations temp:sportRegistrationsList){
-            if(temp.getScore()!=null){
-                if(isDesc==1){//降序
-                    if(temp.getScore()!=null&&userSportRegistrations.getScore()<temp.getScore()){
+        Long userOrder = 1L;
+        for (SportRegistrations temp : sportRegistrationsList) {
+            if (temp.getScore() != null) {
+                if (isDesc == 1) {//降序
+                    if (temp.getScore() != null && userSportRegistrations.getScore() < temp.getScore()) {
                         userOrder++;
                     }
-                }else {//升序
-                    if(temp.getScore()!=null&&userSportRegistrations.getScore()>temp.getScore()){
+                } else {//升序
+                    if (temp.getScore() != null && userSportRegistrations.getScore() > temp.getScore()) {
                         userOrder++;
                     }
                 }
@@ -250,23 +267,25 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
         }
         userSportGradeVo.setUserOrder(userOrder);
         //将用户当前成绩缓存，缓存时长设置为1h
-        redisCache.setCacheObject(redisKey,userSportGradeVo,1, TimeUnit.HOURS);
+        redisCache.setCacheObject(redisKey, userSportGradeVo, 1, TimeUnit.HOURS);
         return userSportGradeVo;
     }
 
 
     /**
      * 查询当前比赛报名人数
+     *
      * @param gameId
      * @return
      */
     @Override
-    public Long  numOfRegistrationsGames(Long gameId) {
-        return sportRegistrationsMapper. numOfRegistrationsGames(gameId);
+    public Long numOfRegistrationsGames(Long gameId) {
+        return sportRegistrationsMapper.numOfRegistrationsGames(gameId);
     }
 
     /**
      * 判断该学院的该项目报名人数是否满额
+     *
      * @param deptId
      * @param gameId
      * @param maxNum
@@ -275,25 +294,26 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     @Override
     public Boolean numOfCollegeRegistrationIsLegal(Long deptId, Long gameId, Long maxNum) {
         Long num = sportRegistrationsMapper.numOfCollegeRegistration(deptId, gameId);
-        return num<maxNum?true:false;
+        return num < maxNum ? true : false;
     }
 
     /**
      * 判断一个人报名田径比赛的预赛和预决赛是否合法
+     *
      * @param userId
      * @param maxNum
      * @return
      */
     @Override
-    public Boolean TrackFieldGameRegistrationIsLegal(Long userId,Long maxNum) {
+    public Boolean TrackFieldGameRegistrationIsLegal(Long userId, Long maxNum) {
         Long num = sportRegistrationsMapper.numOfPersonTrackFieldGame(userId);//用户已报名田径赛不包括接力赛的项数
-        return num<maxNum?true:false;
+        return num < maxNum ? true : false;
     }
 
     @Override
     public Boolean RelayGameRegistrationIsLegal(Long deptId, Long gameId, Long maxNum) {
         Long num = sportRegistrationsMapper.numOfCollectionRelayGame(deptId, gameId);
-        return num<maxNum?true:false;
+        return num < maxNum ? true : false;
     }
 
 
@@ -317,11 +337,11 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
             SportRegistrations item = registerList.get(i);
             Long itemId = item.getGame().getItemId();
             SportItem sportItem = sportItemService.selectSportItemById(itemId);
-            if (i == registerListSize - 1){
+            if (i == registerListSize - 1) {
                 itemList.append(sportItem.getItemName());
-            }else {
-            itemList.append(String.format("%-7s\t", sportItem.getItemName()));
-                }
+            } else {
+                itemList.append(String.format("%-7s\t", sportItem.getItemName()));
+            }
         }
         RegisterReportVo registerReportVo = new RegisterReportVo();
         // TODO: 这里的号码临时先用用户名测试
@@ -432,8 +452,8 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 //            gd.setTotalPerson(String.valueOf(totalPerson));
 //            gamesDescList.add(gd);
             gd.setGameName(String.format("%-20s\t%-15s\t%-15s\t%s",
-                    gameName, groupCount + "组", totalPerson + "人",st.substring(10, 16)
-                    ));
+                    gameName, groupCount + "组", totalPerson + "人", st.substring(10, 16)
+            ));
             gamesDescList.add(gd);
         }
         String itemTypeName = null;
@@ -575,40 +595,40 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
                     gameGroupDetail.setDeptList(gameGroupDetail.getDeptList() + String.format("%-5s", dept.getDeptName()));
                 } else {
                     gameGroupDetail.setDeptList(gameGroupDetail.getDeptList() + String.format("%-6s", dept.getDeptName()));
+                }
             }
+
+            int totalPerson = registerList.size();
+            // 单组人数限制
+            Long groupLimit = sportGames.getMaxPerson();
+            // 不允许报名的决赛
+            int groupCount = 1;
+            if (totalPerson == 0 && sportGamesMapper.selectCount(new QueryWrapper<SportGames>().eq("next_game", sportGames.getId())) > 0) {
+                totalPerson = Math.toIntExact(groupLimit);
+            } else {
+                groupCount = (int) (totalPerson / groupLimit + (totalPerson % groupLimit > 0 ? 1 : 0));
+            }
+            // 还有未被分组的人
+            if (groupCount > gameGroupDetails.size()) {
+                gameGroupDetails.add(gameGroupDetail);
+            }
+
+            gd.setGameName(gameName);
+            gd.setGroupCount(String.valueOf(groupCount));
+            gd.setStartTime(st);
+            gd.setTotalPerson(String.valueOf(totalPerson));
+            gd.setGroup(gameGroupDetails);
+
+            gamesDescList.add(gd);
         }
 
-        int totalPerson = registerList.size();
-        // 单组人数限制
-        Long groupLimit = sportGames.getMaxPerson();
-        // 不允许报名的决赛
-        int groupCount = 1;
-        if (totalPerson == 0 && sportGamesMapper.selectCount(new QueryWrapper<SportGames>().eq("next_game", sportGames.getId())) > 0) {
-            totalPerson = Math.toIntExact(groupLimit);
-        } else {
-            groupCount = (int) (totalPerson / groupLimit + (totalPerson % groupLimit > 0 ? 1 : 0));
-        }
-        // 还有未被分组的人
-        if (groupCount > gameGroupDetails.size()) {
-            gameGroupDetails.add(gameGroupDetail);
-        }
-
-        gd.setGameName(gameName);
-        gd.setGroupCount(String.valueOf(groupCount));
-        gd.setStartTime(st);
-        gd.setTotalPerson(String.valueOf(totalPerson));
-        gd.setGroup(gameGroupDetails);
-
-        gamesDescList.add(gd);
-    }
-
-    String itemTypeName = null;
-        if(itemType ==1)itemTypeName ="田赛";
-        else if(itemType ==2)itemTypeName ="径赛";
-        else itemTypeName ="集体项目";
-    String res = WordUtils.gameListDetail(gamesDescList, itemTypeName);
+        String itemTypeName = null;
+        if (itemType == 1) itemTypeName = "田赛";
+        else if (itemType == 2) itemTypeName = "径赛";
+        else itemTypeName = "集体项目";
+        String res = WordUtils.gameListDetail(gamesDescList, itemTypeName);
         return res;
-}
+    }
 
     /**
      * @Description: 获取分组表Word

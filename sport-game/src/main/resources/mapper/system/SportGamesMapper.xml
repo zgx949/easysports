@@ -281,6 +281,28 @@
         ORDER BY sr.score ASC
     </select>
 
+    <select id="SelectGameInsertVoByUserId" resultType="com.ruoyi.system.domain.Vo.GameInsertVo">
+        SELECT su.user_name, su.nick_name, sd.dept_name, sg.game_name , si.type , sr.score, si.unit, sr.points, sg.start_time, sr.`comment` ,sr.user_id, sr.game_id
+        FROM sport_registrations sr
+                 LEFT JOIN sys_user su ON sr.user_id = su.user_id
+                 LEFT JOIN sport_games sg ON sr.game_id = sg.id
+                 LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+                 LEFT JOIN sport_item si on si.id = sg.item_id
+        WHERE su.user_name = #{userId} AND sg.`status` = 3 AND sr.status = 1
+        ORDER BY sr.score ASC
+    </select>
+
+    <select id="SelectGameInsertVoByUserIdAndGameId" resultType="com.ruoyi.system.domain.Vo.GameInsertVo">
+        SELECT su.user_name, su.nick_name, sd.dept_name, sg.game_name , si.type , sr.score, si.unit, sr.points, sg.start_time, sr.`comment` ,sr.user_id, sr.game_id
+        FROM sport_registrations sr
+                 LEFT JOIN sys_user su ON sr.user_id = su.user_id
+                 LEFT JOIN sport_games sg ON sr.game_id = sg.id
+                 LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+                 LEFT JOIN sport_item si on si.id = sg.item_id
+        WHERE sr.game_id = #{gameId} AND su.user_name = #{userId} AND sg.`status` = 3 AND sr.status = 1
+        ORDER BY sr.score ASC
+    </select>
+
 
     <insert id="insertSportGames" parameterType="SportGames" useGeneratedKeys="true" keyProperty="id">
         insert into sport_games

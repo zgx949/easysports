@@ -230,7 +230,6 @@
               :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
-<!--          <el-input v-model="form.fieldId" placeholder="请输入" />-->
         </el-form-item>
         <el-form-item label="限制人数" prop="maxPerson">
           <el-input-number v-model="form.maxPerson" placeholder="请输入限制人数" />
@@ -318,6 +317,7 @@
     <el-dialog :title=this.gName :visible.sync="dialogTableVisible" v-if="this.dialogTableVisible" width="60%">
       <el-table
         :data="gameData"
+        height="400"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
@@ -327,7 +327,11 @@
         <el-table-column property="deptName" label="学院"></el-table-column>
         <el-table-column property="nickName" label="姓名"></el-table-column>
         <el-table-column property="order" label="名次"></el-table-column>
-        <el-table-column property="score" :label="`成绩(${gameData[0].unit})`">
+        <el-table-column property="score" :label="this.gameData[0].type === 2?(`成绩`):(`成绩(${gameData[0].unit})`)">
+          <template slot-scope="scope">
+            <span v-if="scope.row.type != 2">{{ scope.row.score }}</span>
+            <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+          </template>
         </el-table-column>
         <el-table-column property="points" label="积分"></el-table-column>
         <el-table-column property="startTime" label="日期" width="150"></el-table-column>
@@ -336,15 +340,19 @@
     </el-dialog>
 <!--  需打印的页面  -->
 
-    <el-dialog title="比赛成绩名单" :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%">
+    <el-dialog :title=this.gName :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%">
       <div id="print">
-        <span style="margin: 0 auto">比赛成绩名单</span>
+        <span style="margin: 0 auto;">{{this.gName}}成绩名单</span>
       <el-table :data="selectPrintInf">
         <el-table-column property="username" label="学号" width="120"></el-table-column>
         <el-table-column property="deptName" label="学院"></el-table-column>
         <el-table-column property="nickName" label="姓名"></el-table-column>
         <el-table-column property="order" label="名次"></el-table-column>
-        <el-table-column property="score" :label="`成绩(${selectPrintInf[0].unit})`">
+        <el-table-column property="score" :label="selectPrintInf[0].type === 2 ?(`成绩`):(`成绩(${selectPrintInf[0].unit})`)">
+          <template slot-scope="scope">
+            <span v-if="scope.row.type != 2">{{ scope.row.score }}</span>
+            <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+          </template>
         </el-table-column>
         <el-table-column property="points" label="积分"></el-table-column>
         <el-table-column property="startTime" label="日期" width="150"></el-table-column>
@@ -466,6 +474,7 @@ export default {
         this.gName = name
         const {data} = response
         this.gameData = data
+        console.log(this.gameData)
         this.dialogTableVisible = true;
       })
     },
