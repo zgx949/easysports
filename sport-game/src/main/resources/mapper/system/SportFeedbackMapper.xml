@@ -28,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null "> and create_time = #{createTime}</if>
             <if test="checkId != null "> and check_id = #{checkId}</if>
         </where>
+        order by status,create_time desc
     </select>
     
     <select id="selectSportFeedbackByFeedbackId" parameterType="Long" resultMap="SportFeedbackResult">
@@ -72,6 +73,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="reserveCol != null">reserve_col = #{reserveCol},</if>
         </trim>
         where feedback_id = #{feedbackId}
+    </update>
+    <update id="updateUserFeedback">
+        update sport_feedback
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where feedback_id = #{feedbackId} and user_id=#{userId}
     </update>
 
     <delete id="deleteSportFeedbackByFeedbackId" parameterType="Long">

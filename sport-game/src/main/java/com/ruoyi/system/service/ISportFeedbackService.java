@@ -79,4 +79,17 @@ public interface ISportFeedbackService
      * @return
      */
     public int checkUserFeedback(Long feedbackId);
+
+    /**
+     * 用户查询自身所有反馈
+     * @return
+     */
+    public List<SportFeedback> selectUserFeedbacks();
+
+    /**
+     * 用户删除自己的一条反馈
+     * @param feedbackId
+     * @return
+     */
+    public int deleteUserFeedback(Long feedbackId);
 }
