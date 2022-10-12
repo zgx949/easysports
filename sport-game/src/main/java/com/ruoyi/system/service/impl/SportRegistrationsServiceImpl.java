@@ -228,9 +228,10 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
 
         SportRegistrations userSportRegistrations = new SportRegistrations();//用于从集合中获得用户的报名信息
         //从中获取当前用户成绩
-        for (SportRegistrations temp : sportRegistrationsList) {
-            if (userId == temp.getUserId()) {
-                userSportRegistrations = temp;
+        for(SportRegistrations temp:sportRegistrationsList){
+            if(userId.equals(temp.getUserId())){
+                userSportRegistrations=temp;
+                break;
             }
         }
 
