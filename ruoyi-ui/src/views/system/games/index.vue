@@ -683,9 +683,7 @@ export default {
 </script>
 
 <style>
-/*@page{*/
-/*  size: A4 landscape; !*portrait： 纵向打印,  landscape: 横向*!*/
-/*}*/
+
 @media print{
   table,
   tbody,

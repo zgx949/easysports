@@ -1,11 +1,14 @@
 package com.ruoyi.system.controller;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.system.domain.Vo.GameInsertVo;
 import com.ruoyi.system.domain.Vo.GameResultVo;
@@ -49,6 +52,9 @@ public class SportGamesController extends BaseController {
 
     @Autowired
     private SportGamesMapper sportGamesMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
 
     /**
@@ -241,30 +247,48 @@ public class SportGamesController extends BaseController {
     @GetMapping("/promotion/{gameId}")
     public AjaxResult promotionPlayerListByGameId(@PathVariable Long gameId) {
 
-
         List<GameInsertVo> promotionPlayers = sportGamesService.SelectGameInsertVoByGameId(gameId);
 
-        Stream<GameInsertVo> gameInsertVoStream = promotionPlayers.stream().filter((item) -> !ObjectUtils.isEmpty(item.getScore()));
+        //未记录分数不可晋级
+        List<GameInsertVo> gameInsertVoList = promotionPlayers.stream().filter((item) -> !ObjectUtils.isEmpty(item.getScore())).collect(Collectors.toList());
+
+
+        for (int i = 0; i < gameInsertVoList.size(); i++) {
+            gameInsertVoList.get(i).setOrder(i + 1);
+        }
+
+        //gameInsertVoStream = gameInsertVoStream.sorted();
 
         SportGames games = sportGamesService.selectSportGamesById(gameId);
 
-        if (ObjectUtils.isEmpty(games)){
+        if (ObjectUtils.isEmpty(games)) {
             return AjaxResult.error("未查询到此场比赛");
         }
 
         SportGames nextGame = sportGamesService.selectSportGamesById(games.getNextGame());
 
-        if (ObjectUtils.isEmpty(nextGame)){
+
+
+        if (ObjectUtils.isEmpty(nextGame)) {
             return AjaxResult.error("未查询到此场比赛的决赛");
         }
 
+        //过滤已晋级的运动员
+        gameInsertVoList = gameInsertVoList.stream().filter((item) -> {
+            String redisKey = "sport:game:promotion:" + nextGame.getId() + item.getUserId();
+            if (redisCache.getCacheObject(redisKey) != null){
+                return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+
+
         AjaxResult ajaxResult = AjaxResult.success();
-        ajaxResult.put("nextGame",nextGame.getGameName());
-        ajaxResult.put("data",gameInsertVoStream);
+        ajaxResult.put("nextGame", nextGame.getId());
+        ajaxResult.put("data", gameInsertVoList);
 
         return ajaxResult;
     }
-
 
 
 }

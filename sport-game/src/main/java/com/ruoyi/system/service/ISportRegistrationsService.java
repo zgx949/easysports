@@ -3,7 +3,6 @@ package com.ruoyi.system.service;
 import java.util.List;
 import java.util.Map;
 
-import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.SportRegistrations;
 import com.ruoyi.system.domain.Vo.GameSequenceBookVO;
 import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
@@ -31,7 +30,7 @@ public interface ISportRegistrationsService
      * @param id 报名管理主键
      * @return 报名管理
      */
-    public SportRegistrations selectSportRegistrationsById(Long id);
+    public SportRegistrations selectSportRegistrationsById(Object id);
 
     /**
      * 查询报名管理列表
@@ -155,4 +154,13 @@ public interface ISportRegistrationsService
      * @return
      */
     public Boolean RelayGameRegistrationIsLegal(Long deptId,Long gameId,Long maxNum);
+
+    /**
+     * @Description 晋级比赛
+     * @Param map
+     * @Return {@link boolean}
+     * @Author coder_jlt
+     * @Date 2022/10/12 10:17
+     */
+    boolean doPromotion(Map<String, String> map);
 }
