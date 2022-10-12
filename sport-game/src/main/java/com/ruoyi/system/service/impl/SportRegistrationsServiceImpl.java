@@ -160,6 +160,12 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
             redisKey = "sport:game:result:" + sportRegistrations.getGameId();
 
             redisCache.deleteObject(redisKey);
+
+            //String redisKey = "sport:game:promotion:" + nextGame + player;
+
+            redisKey = "sport:game:promotion:" + sportRegistrations.getGameId() + sportRegistrations.getUserId();
+
+            redisCache.deleteObject(redisKey);
         }
         //删除数据
         return sportRegistrationsMapper.deleteSportRegistrationsByIds(ids);
