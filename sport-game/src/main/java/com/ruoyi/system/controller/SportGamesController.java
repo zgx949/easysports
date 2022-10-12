@@ -219,7 +219,7 @@ public class SportGamesController extends BaseController {
      * @Author coder_jlt
      * @Date 2022/10/11 11:10
      */
-    @PreAuthorize("@ss.hasPermi('system:games:list')")
+//    @PreAuthorize("@ss.hasPermi('system:games:list')")
     @ApiOperation("搜索所有有决赛的比赛")
     @GetMapping("/promotion/list")
     public AjaxResult promotionList() {
