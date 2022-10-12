@@ -193,7 +193,7 @@
           <el-table-column property="score" :label="selectPrintInf[0].type === 2 ?(`成绩`):(`成绩(${selectPrintInf[0].unit})`)">
             <template slot-scope="scope">
               <span v-if="scope.row.type != 2">{{ scope.row.score }}</span>
-              <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+              <span v-else>{{ Math.floor(scope.row.score/60000) != 0 ? `${Math.floor(scope.row.score/60000)}\'`: '' }} {{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
             </template>
           </el-table-column>
           <el-table-column property="points" label="积分"></el-table-column>
@@ -241,14 +241,14 @@ export default {
       // 成绩录入表单数据
       scoreForm: {
         score:undefined,
-        points:undefined,
+        points:0,
         comment:""
       },
       // 径赛成绩
       trackScore:{
-        minute:undefined,
-        second:undefined,
-        millisecond:undefined
+        minute:0,
+        second:0,
+        millisecond:0
       },
       // 表单展示条件
       dialogTableVisible: false,
@@ -278,7 +278,7 @@ export default {
   methods:{
     // 获取已完成比赛列表
     getFinishedList(){
-      listGames({status:3}).then(res => {
+      listGames({status:3, pageNum: 1, pageSize: 1000}).then(res => {
         const {rows} = res;
         this.finishedGame = rows;
       })
