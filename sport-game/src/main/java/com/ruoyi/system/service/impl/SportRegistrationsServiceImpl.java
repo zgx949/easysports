@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.impl;
 
+import ch.qos.logback.core.pattern.ConverterUtil;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
@@ -14,8 +15,6 @@ import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
@@ -24,20 +23,18 @@ import com.ruoyi.system.mapper.SportGamesMapper;
 import com.ruoyi.system.utils.WordUtils;
 import com.ruoyi.system.domain.dto.UpdateGamesScoreDto;
 import com.ruoyi.system.domain.vo.CollegeVo;
+import com.sun.org.apache.bcel.internal.generic.LLOAD;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.system.domain.SportGames;
-import com.ruoyi.system.domain.SportItem;
 import com.ruoyi.system.domain.Vo.UserSportGradeVo;
-import com.ruoyi.system.service.ISportGamesService;
-import com.ruoyi.system.service.ISportItemService;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SportRegistrationsMapper;
 import com.ruoyi.system.domain.SportRegistrations;
 import com.ruoyi.system.service.ISportRegistrationsService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 报名管理Service业务层处理
@@ -46,6 +43,7 @@ import com.ruoyi.system.service.ISportRegistrationsService;
  * @date 2022-07-05
  */
 @Service
+@Slf4j
 public class SportRegistrationsServiceImpl implements ISportRegistrationsService {
     @Autowired
     private SportRegistrationsMapper sportRegistrationsMapper;
@@ -97,7 +95,7 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
      * @return 报名管理
      */
     @Override
-    public SportRegistrations selectSportRegistrationsById(Long id) {
+    public SportRegistrations selectSportRegistrationsById(Object id) {
         return sportRegistrationsMapper.selectSportRegistrationsById(id);
     }
 
@@ -313,6 +311,54 @@ public class SportRegistrationsServiceImpl implements ISportRegistrationsService
     public Boolean RelayGameRegistrationIsLegal(Long deptId, Long gameId, Long maxNum) {
         Long num = sportRegistrationsMapper.numOfCollectionRelayGame(deptId, gameId);
         return num < maxNum ? true : false;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {RuntimeException.class})
+    public boolean doPromotion(Map<String, String> map) {
+        Long nextGame = Long.valueOf(map.get("nextGame"));
+
+        String[] playersStr = map.get("playerIds").split(",");
+
+        if(ObjectUtils.isEmpty(nextGame) || ObjectUtils.isEmpty(playersStr) || playersStr.length == 0){
+            return false;
+        }
+
+        Long[] players = new Long[playersStr.length];
+
+        for (int i = 0; i < playersStr.length; i++) {
+                players[i] = Long.valueOf(playersStr[i]);
+        }
+
+        SportRegistrations temp = new SportRegistrations();
+        int result = 0;
+
+        for (Long player : players) {
+            temp.setUserId(player);
+            SportRegistrations sportRegistrations = sportRegistrationsService.selectSportRegistrationsList(temp).get(0);
+            //todo 防止给未参加预赛的人晋级
+            sportRegistrations.setId(null);
+            sportRegistrations.setGameId(nextGame);
+            sportRegistrations.setStatus("1");
+            sportRegistrations.setScore(null);
+            sportRegistrations.setPoints(null);
+            sportRegistrations.setComment(null);
+            sportRegistrations.setCreateTime(DateUtils.getNowDate());
+            sportRegistrations.setUpdateTime(DateUtils.getNowDate());
+            result = sportRegistrationsService.insertSportRegistrations(sportRegistrations);
+            //用redis记录已晋级过的比赛运动员
+            if (result > 0) {
+                String redisKey = "sport:game:promotion:" + nextGame + player;
+                if (redisCache.getCacheObject(redisKey) != null){
+                    throw new RuntimeException("晋级失败,重复晋级");
+                }
+                redisCache.setCacheObject(redisKey, redisKey);
+            }else {
+                throw new RuntimeException("晋级失败");
+            }
+        }
+
+        return true;
     }
 
 

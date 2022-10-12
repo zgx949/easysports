@@ -247,7 +247,6 @@ public class SportGamesController extends BaseController {
 
         List<GameInsertVo> gameInsertVoList = promotionPlayers.stream().filter((item) -> !ObjectUtils.isEmpty(item.getScore())).collect(Collectors.toList());
 
-
         for (int i = 0; i < gameInsertVoList.size(); i++) {
             gameInsertVoList.get(i).setOrder(i + 1);
         }
@@ -267,11 +266,12 @@ public class SportGamesController extends BaseController {
         }
 
         AjaxResult ajaxResult = AjaxResult.success();
-        ajaxResult.put("nextGame", nextGame.getGameName());
+        ajaxResult.put("nextGame", nextGame.getId());
         ajaxResult.put("data", gameInsertVoList);
 
         return ajaxResult;
     }
+
 
 
 }
