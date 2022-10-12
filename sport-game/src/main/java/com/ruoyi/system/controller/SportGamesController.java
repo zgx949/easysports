@@ -267,7 +267,7 @@ public class SportGamesController extends BaseController {
         }
 
         AjaxResult ajaxResult = AjaxResult.success();
-        ajaxResult.put("nextGame", nextGame.getGameName());
+        ajaxResult.put("nextGame", nextGame.getId());
         ajaxResult.put("data", gameInsertVoList);
 
         return ajaxResult;

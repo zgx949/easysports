@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="transferbox" ref="boxHeight">
+    <div class="transferbox" ref="boxHeight" v-if="isReloadData">
       <div class="transferbox-left">
         <div ref="left">
         <div class="head-text">预赛名单</div>
@@ -51,7 +51,7 @@
               min-width="13%">
             </el-table-column>
             <el-table-column
-              prop="userId"
+              prop="username"
               label="编号"
               min-width="10%">
             </el-table-column>
@@ -109,7 +109,7 @@
               min-width="13%">
             </el-table-column>
             <el-table-column
-              prop="userId"
+              prop="username"
               label="编号"
               min-width="10%">
             </el-table-column>
@@ -125,7 +125,8 @@
 
           </el-table>
         </div>
-        <div style="text-align: center;margin: 5px 0px 5px 0px"><el-button type="primary" size="mini" plain>保存</el-button></div>
+        <div style="text-align: center;margin: 5px 0px 5px 0px">
+          <el-button type="primary" size="mini" plain @click="saveData" :disabled="this.rightData.length == 0 ? true:false">保存</el-button></div>
       </div>
     </div>
   </div>
@@ -136,33 +137,17 @@ import {getFinalGameDataById, getFinalGameList} from '@/api/system/games'
 export default {
   data(){
     return{
+      // 当前比赛决赛编号
+      nextGame: 0,
+      //局部刷新标识
+      isReloadData:true,
       // 需决赛比赛列表
       finalList:[],
       // 被选比赛ID
       selectedGame:null,
       // 被选比赛ID备份
       selectedGameIdBackUp:null,
-      LeftData: [{
-        rank: '1',
-        college: '软件学院',
-        id: '001',
-        name:'张三',
-        score:'2'
-      },
-        {
-          rank: '2',
-          college: '软件学院',
-          id: '001',
-          name:'张三',
-          score:'2'
-        },
-        {
-          rank: '3',
-          college: '软件学院',
-          id: '001',
-          name:'张三',
-          score:'2'
-        }],
+      LeftData: [],
       rightData:[],
       // 左边选中的数据
       LeftSelection:[],
@@ -176,6 +161,19 @@ export default {
   methods:{
     backupId(){
       this.selectedGameIdBackUp = this.selectedGame;
+    },
+    saveData(){
+      let idList = [];
+      this.rightData.forEach((v, i) => {
+        let { userId } = v;
+        idList.push(userId);
+      })
+      console.log(idList)
+      this.getFinalGameData(this.selectedGame)
+      this.isReloadData = false
+      this.$nextTick(() => {
+        this.isReloadData = true
+      })
     },
     // 获取需决赛比赛列表
     getGameList(){
@@ -193,8 +191,8 @@ export default {
           this.rightData = [];
         }
         getFinalGameDataById(val).then((res) => {
-          console.log(res)
-          const {data} = res;
+          const {data,nextGame} = res;
+          this.nextGame = nextGame;
           this.LeftData = data;
           console.log(this.LeftData)
         })
