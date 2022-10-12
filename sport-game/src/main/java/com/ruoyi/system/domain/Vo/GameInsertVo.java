@@ -9,7 +9,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class GameInsertVo extends BaseEntity {
+public class GameInsertVo extends BaseEntity implements Comparable<GameInsertVo> {
 
     private String username;
 
@@ -19,7 +19,7 @@ public class GameInsertVo extends BaseEntity {
 
     private Integer points;
 
-//    private int order;
+    private int order;
 
     private String gameName;
 
@@ -38,4 +38,9 @@ public class GameInsertVo extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
+
+    @Override
+    public int compareTo(GameInsertVo o) {
+        return -(this.score - o.getScore());
+    }
 }

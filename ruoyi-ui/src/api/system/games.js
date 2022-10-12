@@ -100,3 +100,27 @@ export function getRosterInfo() {
   })
 }
 
+// 查询需要决赛的比赛列表
+export function getFinalGameList() {
+  return request({
+    url: 'system/games/promotion/list' ,
+    method: 'get'
+  })
+}
+
+// 根据项目ID查询决赛项目数据
+export function getFinalGameDataById(gameId) {
+  return request({
+    url: 'system/games/promotion/'+gameId ,
+    method: 'get'
+  })
+}
+
+// 保存晋级名单
+export function savePromotionData(data) {
+  return request({
+    url: '/system/registrations/promotion',
+    method: 'post',
+    data: data
+  })
+}
