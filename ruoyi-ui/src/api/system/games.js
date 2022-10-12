@@ -116,3 +116,11 @@ export function getFinalGameDataById(gameId) {
   })
 }
 
+// 保存晋级名单
+export function savePromotionData(data) {
+  return request({
+    url: '/system/registrations/promotion',
+    method: 'post',
+    data: data
+  })
+}

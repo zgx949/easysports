@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import {getFinalGameDataById, getFinalGameList} from '@/api/system/games'
+import {getFinalGameDataById, getFinalGameList, savePromotionData} from '@/api/system/games'
 export default {
   data(){
     return{
@@ -168,7 +168,13 @@ export default {
         let { userId } = v;
         idList.push(userId);
       })
-      console.log(idList)
+      let i = idList.join(',')
+      let obj = {
+        nextGame : this.nextGame,
+        playerIds: i,
+      }
+      const {code} = savePromotionData(obj)
+      console.log(code)
       this.getFinalGameData(this.selectedGame)
       this.isReloadData = false
       this.$nextTick(() => {
@@ -178,7 +184,6 @@ export default {
     // 获取需决赛比赛列表
     getGameList(){
       getFinalGameList().then(res => {
-        console.log(res)
         const {data} = res
         this.finalList = data;
       })
@@ -194,7 +199,6 @@ export default {
           const {data,nextGame} = res;
           this.nextGame = nextGame;
           this.LeftData = data;
-          console.log(this.LeftData)
         })
       }
 
