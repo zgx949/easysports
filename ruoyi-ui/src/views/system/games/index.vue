@@ -323,7 +323,7 @@
           type="selection"
           width="55">
         </el-table-column>
-        <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <el-table-column property="username" label="编码" width="120"></el-table-column>
         <el-table-column property="deptName" label="学院"></el-table-column>
         <el-table-column property="nickName" label="姓名"></el-table-column>
         <el-table-column property="order" label="名次"></el-table-column>
@@ -344,7 +344,7 @@
       <div id="print">
         <span style="margin: 0 auto;">{{this.gName}}成绩名单</span>
       <el-table :data="selectPrintInf">
-        <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <el-table-column property="username" label="编码" width="120"></el-table-column>
         <el-table-column property="deptName" label="学院"></el-table-column>
         <el-table-column property="nickName" label="姓名"></el-table-column>
         <el-table-column property="order" label="名次"></el-table-column>

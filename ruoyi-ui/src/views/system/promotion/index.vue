@@ -173,13 +173,24 @@ export default {
         nextGame : this.nextGame,
         playerIds: i,
       }
-      const {code} = savePromotionData(obj)
-      console.log(code)
-      this.getFinalGameData(this.selectedGame)
-      this.isReloadData = false
-      this.$nextTick(() => {
-        this.isReloadData = true
+      savePromotionData(obj).then((res) => {
+        let status = null
+        let {code} = res
+        status = code
+        if(status === 200){
+          this.$message({
+            message:"保存成功",
+            type:'success'
+          })
+          this.getFinalGameData(this.selectedGame)
+          this.isReloadData = false
+          this.$nextTick(() => {
+            this.isReloadData = true
+          })
+        }
+
       })
+
     },
     // 获取需决赛比赛列表
     getGameList(){
