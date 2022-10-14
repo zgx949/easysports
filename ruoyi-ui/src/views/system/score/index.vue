@@ -157,7 +157,6 @@
       <div>
       <el-table
         :data="searchGameData"
-        height="400"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
@@ -185,7 +184,7 @@
     <el-dialog :title=this.gName :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%" style="height: 100%">
       <div id="print">
         <span style="margin: 0 auto;">{{this.gName}}成绩名单</span>
-        <el-table :data="selectPrintInf" height="400">
+        <el-table :data="selectPrintInf">
           <el-table-column property="username" label="编码" width="120"></el-table-column>
           <el-table-column property="deptName" label="学院"></el-table-column>
           <el-table-column property="nickName" label="姓名"></el-table-column>

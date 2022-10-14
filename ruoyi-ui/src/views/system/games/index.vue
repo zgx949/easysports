@@ -317,7 +317,6 @@
     <el-dialog :title=this.gName :visible.sync="dialogTableVisible" v-if="this.dialogTableVisible" width="60%">
       <el-table
         :data="gameData"
-        height="400"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
