@@ -16,12 +16,18 @@ spring:
         url:
         username:
         password:
+      # 开启超时回收机制
+      removeAbandoned: true
+      # 超时回收时间 秒
+      removeAbandonedTimeout: 180
+      # 关闭abanded连接时输出错误日志
+      logAbandoned: true
       # 初始连接数
       initialSize: 5
       # 最小连接池数量
       minIdle: 10
       # 最大连接池数量
-      maxActive: 20
+      maxActive: 50
       # 配置获取连接等待超时的时间
       maxWait: 60000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
