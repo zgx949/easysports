@@ -12,6 +12,9 @@ public class UserConstants
      */
     public static final String SYS_USER = "SYS_USER";
 
+    /** 默认新用户角色（普通用户） */
+    public static final long DEFAULT_USER_ROLE = 2L;
+
     /** 正常状态 */
     public static final String NORMAL = "0";
 

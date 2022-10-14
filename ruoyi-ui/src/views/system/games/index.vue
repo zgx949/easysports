@@ -38,21 +38,7 @@
             :value="dict.value"
           />
         </el-select>
-<!--        <el-input-->
-<!--          v-model="queryParams.fieldId"-->
-<!--          placeholder="请选择场地"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
       </el-form-item>
-<!--      <el-form-item label="限制人数" prop="maxPerson">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.maxPerson"-->
-<!--          placeholder="请输入限制人数"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
@@ -136,7 +122,7 @@
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="项目" align="center" prop="itemId" :formatter="itemFormatter" />
       <el-table-column label="比赛名" align="center" prop="gameName" />
-      <el-table-column label="决赛" align="center" prop="nextGame" />
+      <el-table-column label="决赛编码" align="center" prop="nextGame" :formatter="(row)=>{return row.nextGame === 0 || row.nextGame === 0? '无': row.nextGame}"/>
       <el-table-column label="性别" align="center" prop="gender">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.gender"/>
@@ -168,6 +154,7 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:games:edit']"
           >修改</el-button>
+
           <el-button
             size="mini"
             type="text"
@@ -175,6 +162,15 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:games:remove']"
           >删除</el-button>
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-search"
+            @click="getGameResult(scope.row.id,scope.row.gameName)"
+            v-hasPermi="['system:games:list']"
+            v-if="scope.row.status == 3"
+          >查询</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -199,13 +195,21 @@
               :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
-<!--          <el-input v-model="form.itemId" placeholder="请输入项目" />-->
         </el-form-item>
         <el-form-item label="比赛名" prop="gameName">
           <el-input v-model="form.gameName" placeholder="请输入比赛名" />
         </el-form-item>
         <el-form-item label="决赛" prop="nextGame">
-          <el-input v-model="form.nextGame" placeholder="请输入决赛" />
+<!--          TODO: 下拉选择-->
+          <el-select v-model="form.nextGame" placeholder="请选择项目">
+
+          <el-option
+            v-for="dict in gameDict"
+            :key="dict.value"
+            :label="dict.label"
+            :value="parseInt(dict.value)"
+          ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="性别" prop="gender">
           <el-select v-model="form.gender" placeholder="请选择性别">
@@ -226,7 +230,6 @@
               :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
-<!--          <el-input v-model="form.fieldId" placeholder="请输入" />-->
         </el-form-item>
         <el-form-item label="限制人数" prop="maxPerson">
           <el-input-number v-model="form.maxPerson" placeholder="请输入限制人数" />
@@ -244,7 +247,7 @@
           <el-date-picker clearable
                           v-model="form.startTime"
                           type="datetime"
-                          value-format="yyyy-MM-dd h:m:s"
+                          value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="请选择开始时间">
           </el-date-picker>
         </el-form-item>
@@ -252,7 +255,7 @@
           <el-date-picker clearable
                           v-model="form.endTime"
                           type="datetime"
-                          value-format="yyyy-MM-dd h:m:s"
+                          value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="请选择结束时间">
           </el-date-picker>
         </el-form-item>
@@ -309,6 +312,56 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+<!--  比赛项目成绩  -->
+    <el-dialog :title=this.gName :visible.sync="dialogTableVisible" v-if="this.dialogTableVisible" width="60%">
+      <el-table
+        :data="gameData"
+        height="400"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column property="username" label="编码" width="120"></el-table-column>
+        <el-table-column property="deptName" label="学院"></el-table-column>
+        <el-table-column property="nickName" label="姓名"></el-table-column>
+        <el-table-column property="order" label="名次"></el-table-column>
+        <el-table-column property="score" :label="this.gameData[0].type === 2?(`成绩`):(`成绩(${gameData[0].unit})`)">
+          <template slot-scope="scope">
+            <span v-if="scope.row.type != 2">{{ scope.row.score }}</span>
+            <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column property="points" label="积分"></el-table-column>
+        <el-table-column property="startTime" label="日期" width="150"></el-table-column>
+      </el-table>
+      <el-button type="primary" style="margin-top: 10px;right: 0px" size="mini" @click="printSelectedList">打印</el-button>
+    </el-dialog>
+<!--  需打印的页面  -->
+
+    <el-dialog :title=this.gName :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%">
+      <div id="print">
+        <span style="margin: 0 auto;">{{this.gName}}成绩名单</span>
+      <el-table :data="selectPrintInf">
+        <el-table-column property="username" label="编码" width="120"></el-table-column>
+        <el-table-column property="deptName" label="学院"></el-table-column>
+        <el-table-column property="nickName" label="姓名"></el-table-column>
+        <el-table-column property="order" label="名次"></el-table-column>
+        <el-table-column property="score" :label="selectPrintInf[0].type === 2 ?(`成绩`):(`成绩(${selectPrintInf[0].unit})`)">
+          <template slot-scope="scope">
+            <span v-if="scope.row.type != 2">{{ scope.row.score }}</span>
+            <span v-else>{{Math.floor(scope.row.score/60000)}}'{{Math.floor((scope.row.score%60000)/1000)}}''{{Math.floor((scope.row.score%60000)%1000)}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column property="points" label="积分"></el-table-column>
+        <el-table-column property="startTime" label="日期" width="150"></el-table-column>
+      </el-table>
+    </div>
+      <el-button type="primary" plain style="margin-top: 10px;right: 0px" size="mini" @click="confirmPrint">确定</el-button>
+      <el-button type="info" plain style="margin-top: 10px;right: 0px" size="mini" @click="cancelPrint">取消</el-button>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -316,12 +369,26 @@
 import { listGames, getGames, delGames, addGames, updateGames } from "@/api/system/games";
 import { dictItem } from "@/api/system/item";
 import { dictFields } from "@/api/system/fields";
+import { dictGames, getGameWinList } from "@/api/system/games";
+import moment from 'moment'
 
 export default {
   name: "Games",
   dicts: ['sport_game_status', 'sys_user_sex', 'sport_item_type', 'sport_sort_type'],
   data() {
     return {
+      // 比赛成绩弹窗判断
+      dialogTableVisible : false,
+      // 被选列表打印效果窗口
+      dialogSelectedListVisible: false,
+      // 被查询比赛名称
+      gName:"",
+      // 比赛成绩数据
+      gameData:[],
+      // 赛事单位
+      unit:'',
+      // 被选打印信息列表
+      selectPrintInf:[],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -367,12 +434,50 @@ export default {
       itemDict: [],
       // 场地字典
       fieldDict: [],
+      // 比赛字典
+      gameDict: [],
     };
   },
   created() {
     this.getList();
+    /** 查询比赛字典 */
+    dictGames().then(res => {
+      this.gameDict = res.data;
+    })
   },
   methods: {
+    /** 打印被选列表 */
+    printSelectedList(){
+      for (let i = 0; i < this.selectPrintInf.length; i++) {
+        this.selectPrintInf[i].startTime = this.selectPrintInf[i].startTime.split(' ')[0];
+      }
+      this.dialogSelectedListVisible = true;
+    },
+    confirmPrint(){
+      let print= document.getElementById('print');
+      let newContent = print.innerHTML;
+      let oldContent = document.body.innerHTML;
+      document.body.innerHTML = newContent;
+      document.getElementsByTagName('body')[0].style.zoom=0.92;
+      window.print();
+      window.location.reload();
+      //将原有页面还原到页面
+      document.body.innerHTML = oldContent;
+      return false;
+    },
+    cancelPrint(){
+      this.dialogSelectedListVisible = false;
+    },
+    /** 获取比赛获奖数据 */
+    getGameResult(id,name){
+      getGameWinList(id).then(response => {
+        this.gName = name
+        const {data} = response
+        this.gameData = data
+        console.log(this.gameData)
+        this.dialogTableVisible = true;
+      })
+    },
     /** 查询项目字典 */
     getItemDict() {
       dictItem().then(response => {
@@ -381,7 +486,6 @@ export default {
     },
     /** 项目字典格式化 */
     itemFormatter(row, column) {
-      // console.log(row, column);
       for (const item of this.itemDict) {
         if (item.value === row.itemId) {
           return item.label;
@@ -402,7 +506,37 @@ export default {
         }
       }
     },
+    /** 处理比赛状态 */
+    handleGameStatus(res){
+      let currentTime = moment(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss')
+      let statusResult = [];
 
+      for (let i = 0; i < res.length; i++) {
+        let item = res[i]
+        if(currentTime<item.startTime){
+          res[i].status = 0;
+          if(this.queryParams.status && this.queryParams.status == 0){
+            statusResult.push(res[i]);
+          }
+        }
+        else if(currentTime>item.endTime){
+          res[i].status = 3;
+          if(this.queryParams.status && this.queryParams.status == 3){
+            statusResult.push(res[i]);
+          }
+        }
+        else {
+          res[i].status = 2;
+          if(this.queryParams.status && this.queryParams.status == 2){
+            statusResult.push(res[i]);
+          }
+        }
+      }
+      if (this.queryParams.status){
+        return statusResult;
+      }
+      return res
+    },
     /** 查询比赛管理列表 */
     getList() {
       this.loading = true;
@@ -449,9 +583,17 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      if ("id" in selection[0]){
+        this.ids = selection.map(item => item.id)
+        this.single = selection.length!==1
+        this.multiple = !selection.length
+      }
+      else if ("username" in selection[0]){
+        this.selectPrintInf = selection.map(item => item)
+      }
+      else {
+        return
+      }
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -535,7 +677,23 @@ export default {
       this.download('system/games/export', {
         ...this.queryParams
       }, `games_${new Date().getTime()}.xlsx`)
-    }
+    },
   }
 };
 </script>
+
+<style>
+
+@media print{
+  table,
+  tbody,
+  thead {
+    width: 100% !important;
+  }
+
+  colgroup {
+    position: absolute;
+    width: 90% !important;
+  }
+}
+</style>

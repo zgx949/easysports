@@ -3,6 +3,8 @@ package com.ruoyi.system.service;
 import java.util.List;
 
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.system.domain.Vo.GameInsertVo;
+import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.domain.SportGames;
 
 /**
@@ -13,6 +15,13 @@ import com.ruoyi.system.domain.SportGames;
  */
 public interface ISportGamesService
 {
+    /**
+     * 查询比赛预决赛字典信息
+     *
+     * @return 比赛管理
+     */
+    public List<Dict> selectSportGamesRegisterDict();
+
     /**
      * 查询比赛管理
      *
@@ -67,4 +76,20 @@ public interface ISportGamesService
      * @return 结果
      */
     public int deleteSportGamesById(Long id);
+
+    /**
+     * 根据比赛id查询比赛结果
+     */
+    List<GameResultVo> selectGameResultByGameId(Long gameId);
+
+    /**
+     * @Description 根据比赛id查询待记录分数人员
+     * @Param id
+     * @Return {@link List<GameInsertVo>}
+     * @Author coder_jlt
+     * @Date 2022/9/13 08:12
+     */
+    List<GameInsertVo> SelectGameInsertVoByGameId(Long gameId);
+
+    List<GameInsertVo> SelectGameInsertVoByUserId(Long userId);
 }

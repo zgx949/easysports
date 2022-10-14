@@ -9,7 +9,7 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: D:/ruoyi/uploadPath
+  profile: /Users/davidfeng/Desktop/Code/IdeaProjects/主打项目/event-management-ruoyi/uploadPath
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -38,6 +38,7 @@ logging:
   level:
     com.ruoyi: debug
     org.springframework: warn
+  config: classpath:logback/logback-${spring.profiles.active}.xml
 
 # Spring配置
 spring:
@@ -45,8 +46,8 @@ spring:
   messages:
     # 国际化资源文件路径
     basename: i18n/messages
-  profiles: 
-    active: druid
+  profiles:
+    active: ${env:dev}
   # 文件上传
   servlet:
      multipart:
@@ -59,54 +60,40 @@ spring:
     restart:
       # 热部署开关
       enabled: true
-  # redis 配置
-  redis:
-    # 地址
-    #    host: localhost
-    host: 8.134.216.66
-    # 端口，默认为6379
-    port: 6379
-    # 数据库索引
-    database: 0
-    # 密码
-    #    password:
-    password: zgx949
-    # 连接超时时间
-    timeout: 10s
-    lettuce:
-      pool:
-        # 连接池中的最小空闲连接
-        min-idle: 0
-        # 连接池中的最大空闲连接
-        max-idle: 8
-        # 连接池的最大数据库连接数
-        max-active: 8
-        # #连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-wait: -1ms
+
 
 # token配置
 token:
     # 令牌自定义标识
     header: Authorization
     # 令牌密钥
-    secret: abcdefghijklmnopqrstuvwxyz
+    secret: abcL@defghiE#jklF$mnT%opH@qrsA*tN^uvwxyD%z
     # 令牌有效期（默认30分钟）
-    expireTime: 30
-  
-# MyBatis配置
-mybatis:
-    # 搜索指定包别名
-    typeAliasesPackage: com.ruoyi.**.domain
-    # 配置mapper的扫描，找到所有的mapper.xml映射文件
-    mapperLocations: classpath*:mapper/**/*Mapper.xml
-    # 加载全局的配置文件
-    configLocation: classpath:mybatis/mybatis-config.xml
+    expireTime: 2592000
+
+## MyBatis配置
+#mybatis:
+#    # 搜索指定包别名
+#    typeAliasesPackage: com.ruoyi.**.domain
+#    # 配置mapper的扫描，找到所有的mapper.xml映射文件
+#    mapperLocations: classpath*:mapper/**/*Mapper.xml
+#    # 加载全局的配置文件
+#    configLocation: classpath:mybatis/mybatis-config.xml
+
+# MyBatis Plus配置
+mybatis-plus:
+  # 搜索指定包别名
+  typeAliasesPackage: com.ruoyi.**.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  # 加载全局的配置文件
+  configLocation: classpath:mybatis/mybatis-config.xml
 
 # PageHelper分页插件
-pagehelper: 
+pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true
-  params: count=countSql 
+  params: count=countSql
 
 # Swagger配置
 swagger:
@@ -116,10 +103,11 @@ swagger:
   pathMapping: /dev-api
 
 # 防止XSS攻击
-xss: 
+xss:
   # 过滤开关
   enabled: true
   # 排除链接（多个用逗号分隔）
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+

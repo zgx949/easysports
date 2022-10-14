@@ -2,9 +2,14 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.common.core.domain.Dict;
+import com.ruoyi.system.domain.Vo.GameInsertVo;
+import com.ruoyi.system.domain.Vo.GameResultVo;
 import com.ruoyi.system.domain.SportGames;
 import com.ruoyi.system.domain.SportItem;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,8 +19,14 @@ import org.springframework.stereotype.Repository;
  * @date 2022-07-05
  */
 @Repository
-public interface SportGamesMapper
-{
+public interface SportGamesMapper extends BaseMapper<SportGames> {
+    /**
+     * 获取报名比赛的必要信息
+     *
+     * @return 结果
+     */
+    public List<Dict> selectSportGamesRegisterDict();
+
     /**
      * 查询比赛管理
      *
@@ -95,4 +106,54 @@ public interface SportGamesMapper
      * @return 结果
      */
     public List<Dict> selectSportGamesDict();
+
+    public List<GameResultVo> selectSportResultByGameId(Long gameId);
+
+
+    List<GameInsertVo> SelectGameInsertVoByGameId(Long gameId);
+
+    /**
+     * 查询田赛比赛列表
+     *
+     * @return 比赛管理集合
+     */
+    public List<SportGames> selectFieldGames();
+
+    /**
+     * 查询径赛管理列表
+     *
+     * @return 比赛管理集合
+     */
+    public List<SportGames> selectTrackGames();
+
+    /**
+     * 查询编排后的比赛列表
+     *
+     * @return 比赛管理集合
+     */
+    public List<SportGames> selectGroupGames();
+
+    /**
+     * @Description: 查询起始时间
+     * @Param:
+     * @return:
+     * @Author: zgx
+     * @Date: 2022-09-16
+     */
+    @Select("SELECT MIN(start_time) FROM sport_games")
+    public String startDate();
+
+    /**
+     * @Description: 查询结束时间
+     * @Param:
+     * @return:
+     * @Author: zgx
+     * @Date: 2022-09-16
+     */
+    @Select("SELECT MAX(start_time) FROM sport_games")
+    public String endDate();
+
+    List<GameInsertVo> SelectGameInsertVoByUserId(Long userId);
+
+    List<GameInsertVo> SelectGameInsertVoByUserIdAndGameId(@Param("userId") Long userId, @Param("gameId") Long gameId);
 }

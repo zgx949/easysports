@@ -33,7 +33,7 @@ import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 用户信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -233,5 +233,23 @@ public class SysUserController extends BaseController
         userService.checkUserDataScope(userId);
         userService.insertUserAuth(userId, roleIds);
         return success();
+    }
+
+    /**
+    * @Description: 获取用户的随机编码（用于生成二维码）
+    * @Param:
+    * @return:
+    * @Author: leftHand
+    * @Date: 2022-08-25
+    */
+    @RequestMapping("/qrcode")
+    public String makeQrCode()
+    {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        if (user != null) {
+            return userService.makeQrCode(user);
+        } else {
+            return "";
+        }
     }
 }

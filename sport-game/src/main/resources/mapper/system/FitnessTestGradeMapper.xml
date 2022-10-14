@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FitnessTestGradeMapper">
+
+    <resultMap type="FitnessTestGrade" id="FitnessTestGradeResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="ftaId"    column="fta_id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="score"    column="score"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUid"    column="create_uid"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUid"    column="update_uid"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="user" javaType="com.ruoyi.common.core.domain.entity.SysUser">
+            <id property="userId" column="su_user_id"></id>
+            <result property="userName" column="user_id"></result>
+            <result property="deptId" column="su_dept_id"></result>
+        </association>
+        <association property="fta" javaType="FitnessTestActivity">
+            <id property="id" column="fta_id"></id>
+            <result property="name" column="fta_name"></result>
+        </association>
+        <association property="item" javaType="SportItem">
+            <id property="id" column="id"></id>
+            <result property="itemName" column="si_item_name"></result>
+            <result property="type" column="si_type"></result>
+            <result property="unit" column="si_unit"></result>
+            <result property="isDesc" column="si_is_desc"></result>
+            <result property="maxPerson" column="si_max_person"></result>
+        </association>
+<!--        <association property="createUser" javaType="com.ruoyi.common.core.domain.entity.SysUser">-->
+<!--            <result property=""-->
+<!--            <result property="maxPerson" column="si_max_person"></result>-->
+<!--            <result property="maxPerson" column="si_max_person"></result>-->
+<!--        </association>-->
+<!--        <association property="updateUser" javaType="com.ruoyi.common.core.domain.entity.SysUser">-->
+<!--            <id property="id" column="fid"></id>-->
+<!--        </association>-->
+    </resultMap>
+
+    <sql id="selectFitnessTestGradeVo">
+        select
+            ftg.id              id,
+            ftg.user_id         user_id,
+                su.user_id      su_user_id,
+                su.dept_id      su_dept_id,
+            ftg.fta_id          fta_id,
+                fta.name        fta_name,
+            ftg.item_id         item_id,
+                si.item_name    si_item_name,
+                si.type         si_type,
+                si.unit         si_unit,
+                si.is_desc      si_is_desc,
+                si.max_person   si_max_person,
+            ftg.score,
+            ftg.remark,
+            ftg.create_uid,
+            ftg.create_time,
+            ftg.update_uid,
+            ftg.update_time
+        from
+            fitness_test_grade      ftg,
+            sys_user                su,
+            fitness_test_activity   fta,
+            sport_item              si
+    </sql>
+
+    <select id="selectFitnessTestGradeList" parameterType="FitnessTestGrade" resultMap="FitnessTestGradeResult">
+        <include refid="selectFitnessTestGradeVo"/>
+        <where>
+            ftg.user_id=su.user_name AND
+            ftg.fta_id=fta.id AND
+            ftg.item_id=si.id
+            <if test="userId != null "> and ftg.user_id = #{userId}</if>
+            <if test="ftaId != null "> and ftg.fta_id = #{ftaId}</if>
+            <if test="itemId != null "> and ftg.item_id = #{itemId}</if>
+            <if test="score != null "> and ftg.score = #{score}</if>
+            <if test="createUid != null "> and ftg.create_uid = #{createUid}</if>
+            <if test="createTime != null "> and ftg.create_time = #{createTime}</if>
+            <if test="updateUid != null "> and ftg.update_uid = #{updateUid}</if>
+            <if test="updateTime != null "> and ftg.update_time = #{updateTime}</if>
+
+        </where>
+    </select>
+
+    <select id="selectFitnessTestGradeById" parameterType="Long" resultMap="FitnessTestGradeResult">
+        <include refid="selectFitnessTestGradeVo"/>
+        where ftg.id = #{id} AND
+        ftg.user_id=su.user_name AND
+        ftg.fta_id=fta.id AND
+        ftg.item_id=si.id
+    </select>
+
+    <insert id="insertFitnessTestGrade" parameterType="FitnessTestGrade">
+        insert into fitness_test_grade
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="ftaId != null">fta_id,</if>
+            <if test="itemId != null">item_id,</if>
+            <if test="score != null">score,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUid != null">create_uid,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUid != null">update_uid,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="ftaId != null">#{ftaId},</if>
+            <if test="itemId != null">#{itemId},</if>
+            <if test="score != null">#{score},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUid != null">#{createUid},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUid != null">#{updateUid},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFitnessTestGrade" parameterType="FitnessTestGrade">
+        update fitness_test_grade
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="ftaId != null">fta_id = #{ftaId},</if>
+            <if test="itemId != null">item_id = #{itemId},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUid != null">create_uid = #{createUid},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUid != null">update_uid = #{updateUid},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFitnessTestGradeById" parameterType="Long">
+        delete from fitness_test_grade where id = #{id}
+    </delete>
+
+    <delete id="deleteFitnessTestGradeByIds" parameterType="String">
+        delete from fitness_test_grade where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

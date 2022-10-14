@@ -21,14 +21,8 @@
         <el-input v-model="formData.name" placeholder="请输入单行文本姓名" clearable :style="{width: '95%'}">
         </el-input>
       </el-form-item>
-      <el-form-item label="学院" prop="institution">
-        <el-select v-model="formData.institution" placeholder="请选择学院" clearable :style="{width: '95%'}">
-          <el-option v-for="(item, index) in field105Options" :key="index" :label="item.label"
-            :value="item.value" :disabled="item.disabled"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="比赛项目" prop="game_id">
-        <el-select v-model="formData.game_id" placeholder="请选择比赛项目" clearable :style="{width: '95%'}">
+      <el-form-item label="比赛" prop="gameId">
+        <el-select v-model="formData.gameId" placeholder="请选择比赛项目" clearable :style="{width: '95%'}">
           <el-option v-for="(item, index) in gameOptions" :key="index" :label="item.label" :value="item.value"
             :disabled="item.disabled"></el-option>
         </el-select>
@@ -41,18 +35,21 @@
   </div>
 </template>
 <script>
+import { dictGamesRegister } from "@/api/system/games";
+import { getUserProfile } from "@/api/system/user";
+import { userRegistrations } from "@/api/system/registrations";
+
 export default {
   components: {},
   props: [],
   data() {
     return {
       formData: {
-        user_id: 'admin',
-        password: 'admin123',
+        user_id: undefined,
+        password: undefined,
         idcard: undefined,
         name: undefined,
-        institution: undefined,
-        game_id: 1,
+        gameId: undefined,
       },
       rules: {
         user_id: [{
@@ -75,44 +72,37 @@ export default {
           message: '请输入单行文本姓名',
           trigger: 'blur'
         }],
-        institution: [{
-          required: true,
-          message: '请选择学院',
-          trigger: 'change'
-        }],
-        game_id: [{
+        gameId: [{
           required: true,
           message: '请选择比赛项目',
           trigger: 'change'
         }],
       },
-      field105Options: [{
-        "label": "选项一",
-        "value": 1
-      }, {
-        "label": "选项二",
-        "value": 2
-      }],
-      gameOptions: [{
-        "label": "选项一",
-        "value": 1
-      }, {
-        "label": "选项二",
-        "value": 2
-      }],
+      gameOptions: [],
     }
   },
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    // 获取用户信息
+    getUserProfile().then(res => {
+      this.formData.user_id = res.data.userName;
+    });
+
+    dictGamesRegister().then(res => {
+      this.gameOptions = res.data;
+    })
+  },
   methods: {
     submitForm() {
       this.$refs['elForm'].validate(valid => {
         if (!valid) return
         // TODO 提交表单
-        alert("提交成功！");
-        console.log(this.formData);
+        userRegistrations(this.formData).then(res => {
+
+        })
+
       })
     },
     resetForm() {
@@ -123,6 +113,7 @@ export default {
 
 </script>
 <style scoped>
+/*TODO: 编译后出现flex不生效问题*/
 .header {
   padding: 1rem;
   display: flex;

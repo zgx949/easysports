@@ -15,7 +15,6 @@
         <result property="comment"    column="comment"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
-<!--        TODO: field name did not show-->
         <association property="game"    javaType="SportGames">
             <id     property="id" column="game_id"/>
             <result property="gameName" column="game_name"/>
@@ -99,13 +98,13 @@
     <select id="selectSportRegistrationsList" parameterType="SportRegistrations" resultMap="SportRegistrationsResult">
         <include refid="selectSportRegistrationsVo"/>
         <where>
-            <if test="gameId != null "> and game_id = #{gameId}</if>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="fieldId != null "> and field_id = #{fieldId}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
-            <if test="score != null "> and score = #{score}</if>
-            <if test="points != null "> and points = #{points}</if>
-            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+            <if test="gameId != null "> and sr.game_id = #{gameId}</if>
+            <if test="userId != null "> and sr.user_id = #{userId}</if>
+            <if test="fieldId != null "> and sr.field_id = #{fieldId}</if>
+            <if test="status != null  and status != ''"> and sr.status = #{status}</if>
+            <if test="score != null "> and sr.score = #{score}</if>
+            <if test="points != null "> and sr.points = #{points}</if>
+            <if test="comment != null  and comment != ''"> and sr.comment = #{comment}</if>
         </where>
     </select>
 
@@ -113,20 +112,83 @@
         <include refid="selectSportRegistrationsVo"/>
         where sr.id = #{id}
     </select>
+    <select id="numOfRegistrationsGames" resultType="java.lang.Long">
+        select count(*) from sport_registrations where game_id=#{gameId} AND status=1
+    </select>
+    <select id="numOfCollegeRegistration" resultType="java.lang.Long">
+        select count(*) FROM sys_user u,sport_registrations r,sport_games g,sport_item i
+        where u.user_id=r.user_id
+          AND r.game_id=g.id
+          AND g.item_id=i.id
+          AND i.type in(1,2)
+          AND i.id not in (11,12)
+          AND u.dept_id=#{deptId}
+          AND g.id=#{gameId}
+          AND r.status=1
+    </select>
+    <select id="numOfPersonTrackFieldGame" resultType="java.lang.Long">
+        select count(*) FROM sport_registrations r,sport_games g,sport_item i
+        where r.game_id=g.id
+        AND g.item_id=i.id
+        AND i.type in(1,2)
+        AND i.id not in(11,12)
+        AND r.user_id=#{userId}
+    </select>
+    <select id="numOfCollectionRelayGame" resultType="java.lang.Long">
+        select count(*) FROM sys_user u,sport_registrations r,sport_games g,sport_item i
+        WHERE u.user_id=r.user_id
+          AND r.game_id=g.id
+          AND g.item_id=i.id
+          AND i.id in(11,12)
+          AND g.id=#{gameId}
+          AND u.dept_id=#{deptId}
+          AND r.status=1
+    </select>
+    <select id="selectUserRegistation" resultType="com.ruoyi.system.domain.SportRegistrations">
+        select * from sport_registrations where game_id=#{gameId} AND user_id=#{userId}
+    </select>
 
     <insert id="insertSportRegistrations" parameterType="SportRegistrations">
         insert into sport_registrations
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">sr.id,</if>
-            <if test="gameId != null">sr.game_id,</if>
-            <if test="userId != null">sr.user_id,</if>
-            <if test="fieldId != null">sr.field_id,</if>
-            <if test="status != null">sr.status,</if>
-            <if test="score != null">sr.score,</if>
-            <if test="points != null">sr.points,</if>
-            <if test="comment != null">sr.comment,</if>
-            <if test="createTime != null">sr.create_time,</if>
-            <if test="updateTime != null">sr.update_time,</if>
+            <if test="id != null">id,</if>
+            <if test="gameId != null">game_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="fieldId != null">field_id,</if>
+            <if test="status != null">status,</if>
+            <if test="score != null">score,</if>
+            <if test="points != null">points,</if>
+            <if test="comment != null">comment,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="gameId != null">#{gameId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="fieldId != null">#{fieldId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="score != null">#{score},</if>
+            <if test="points != null">#{points},</if>
+            <if test="comment != null">#{comment},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="insertUserRegistrations" parameterType="SportRegistrations">
+        insert into sport_registrations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="gameId != null">game_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="fieldId != null">field_id,</if>
+            <if test="status != null">status,</if>
+            <if test="score != null">score,</if>
+            <if test="points != null">points,</if>
+            <if test="comment != null">comment,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -157,6 +219,23 @@
         </trim>
         where id = #{id}
     </update>
+    <update id="updateSportScoreData">
+
+        update sport_registrations
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="gameId != null">game_id = #{gameId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="fieldId != null">field_id = #{fieldId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="comment != null">comment = #{comment},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where game_id = #{gameId} and user_id = #{userId}
+
+    </update>
 
     <delete id="deleteSportRegistrationsById" parameterType="Long">
         delete from sport_registrations where id = #{id}
@@ -167,5 +246,9 @@
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="deleteUserSportRegistrations">
+        delete from  sport_registrations where user_id =#{userId} and game_id=#{gameId}
     </delete>
 </mapper>
