@@ -23,7 +23,7 @@ public interface SportRegistrationsMapper
      * @param id 报名管理主键
      * @return 报名管理
      */
-    public SportRegistrations selectSportRegistrationsById(Long id);
+    public SportRegistrations selectSportRegistrationsById(Object id);
 
     /**
      * 查询报名管理列表

@@ -12,11 +12,13 @@
           </el-option>
         </el-select>
       </div>
-      <el-input v-model="input" placeholder="请输入学号查询" style="width: 220px;margin-left: 50px" clearable>
+      <el-input v-model="input" placeholder="请输入编码查询" style="width: 220px;margin-left: 50px" clearable>
         <el-button slot="append" icon="el-icon-search" @click="searchPerson"></el-button>
       </el-input>
       <div style="margin-left: auto">
-        <el-button type="primary" @click="getGameResult()" :disabled="typeof(this.pageObj.gameId)=='undefined'">成绩单</el-button>
+        <el-button type="primary" @click="turnTo(`http://sport.lefthand.top/tab.html?gid=${pageObj.gameId}`)" :disabled="typeof(this.pageObj.gameId)=='undefined'">决赛通知单</el-button>
+        <el-button type="success" @click="getGameResult()" :disabled="typeof(this.pageObj.gameId)=='undefined'">成绩单</el-button>
+        <el-button type="info" @click="turnTo(`http://sport.lefthand.top/print.html?gid=${pageObj.gameId}`)" :disabled="typeof(this.pageObj.gameId)=='undefined'">最终个人成绩</el-button>
       </div>
     </div>
     <div>
@@ -27,7 +29,7 @@
         style="width: 100%;">
         <el-table-column
           prop="username"
-          label="学号"
+          label="编码"
           width="130">
         </el-table-column>
         <el-table-column
@@ -101,7 +103,7 @@
     <el-dialog v-bind="$attrs" v-on="$listeners" @close="onClose"  :visible.sync="dialogTableVisible">
       <div class="stuInfo">
         <div><label>姓名：</label><span>{{this.scoreForm.nickName}}</span></div>
-        <div><label>学号：</label><span>{{this.scoreForm.username}}</span></div>
+        <div><label>编码：</label><span>{{this.scoreForm.username}}</span></div>
         <div><label>学院：</label> <span>{{this.scoreForm.deptName}}</span></div>
         <div><label>项目：</label><span>{{this.scoreForm.gameName}}</span></div>
       </div>
@@ -153,7 +155,7 @@
     </el-dialog>
 
     <!--  比赛项目成绩  -->
-    <el-dialog :title=this.gName :visible.sync="dialogTableVisibleSearch" v-if="this.dialogTableVisibleSearch" width="60%" style="height: 90%">
+    <el-dialog :title=this.gName :visible.sync="dialogTableVisibleSearch" v-if="this.dialogTableVisibleSearch" width="60%" style="height: 100%">
       <div>
       <el-table
         :data="searchGameData"
@@ -163,7 +165,7 @@
           type="selection"
           width="55">
         </el-table-column>
-        <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <el-table-column property="username" label="编码" width="120"></el-table-column>
         <el-table-column property="deptName" label="学院"></el-table-column>
         <el-table-column property="nickName" label="姓名"></el-table-column>
         <el-table-column property="order" label="名次"></el-table-column>
@@ -182,11 +184,11 @@
 
     <!--  需打印的页面  -->
 
-    <el-dialog :title=this.gName :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%">
+    <el-dialog :title=this.gName :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%" style="height: 100%">
       <div id="print">
-        <span style="margin: 0 auto;">{{this.gName}}成绩名单</span>
-        <el-table :data="selectPrintInf">
-          <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <span style="margin: 0 auto;">{{this.gName}}成绩</span>
+        <el-table :data="selectPrintInf" height="400">
+          <el-table-column property="username" label="编码" width="120"></el-table-column>
           <el-table-column property="deptName" label="学院"></el-table-column>
           <el-table-column property="nickName" label="姓名"></el-table-column>
           <el-table-column property="order" label="名次"></el-table-column>
@@ -207,7 +209,8 @@
 </template>
 
 <script>
-import {getGameWinList, getPlayerByGameId, listGames, registerScore, searchGameListByUserId} from '@/api/system/games'
+import {getGameWinList, getPlayerByGameId, listGames, registerScore, searchGameListByUserId} from '@/api/system/games';
+import { getToken } from '../../../utils/auth'
 export default {
   data(){
     return{
@@ -276,6 +279,9 @@ export default {
     this.getFinishedList()
   },
   methods:{
+    turnTo(url) {
+      window.open(url + '&token=' + getToken());
+    },
     // 获取已完成比赛列表
     getFinishedList(){
       listGames({status:3, pageNum: 1, pageSize: 1000}).then(res => {
@@ -291,12 +297,11 @@ export default {
         this.dataTotal = res.total;
         const {rows} = res;
         this.stuData = rows;
-        console.log(this.stuData)
+        this.gName = this.stuData[0].gameName
       })
     },
     getGameResult(){
       getGameWinList(this.stuData[0].gameId).then(response => {
-        this.gName = name
         const {data} = response
         this.searchGameData = data
         this.dialogTableVisibleSearch = true;

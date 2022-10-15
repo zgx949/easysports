@@ -9,12 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
@@ -30,15 +28,10 @@ import com.ruoyi.system.service.ISportRegistrationsService;
 import com.ruoyi.system.service.ISysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 报名管理Controller
@@ -151,11 +144,11 @@ public class SportRegistrationsController extends BaseController {
         sportRegistrations.setUserId(SecurityUtils.getUserId());
         //查询当前用户报名的比赛集合并且分页
         startPage();
-        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
 
         //遍历集合获取用户每项比赛成绩
-        List<UserSportGradeVo> userSportGradeVoList=sportRegistrationsList.stream().map((item)->{
-            UserSportGradeVo userSportGradeVo= sportRegistrationsService.selectUserSportGrade(item.getGameId());
+        List<UserSportGradeVo> userSportGradeVoList = sportRegistrationsList.stream().map((item) -> {
+            UserSportGradeVo userSportGradeVo = sportRegistrationsService.selectUserSportGrade(item.getGameId());
             return userSportGradeVo;
         }).collect(Collectors.toList());
 
@@ -167,8 +160,7 @@ public class SportRegistrationsController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:registrations:query')")
     @GetMapping("/user/{gameId}")
-    public AjaxResult userScore(@PathVariable("gameId") Long gameId)
-    {
+    public AjaxResult userScore(@PathVariable("gameId") Long gameId) {
         UserSportGradeVo userSportGradeVo = sportRegistrationsService.selectUserSportGrade(gameId);
         return AjaxResult.success(userSportGradeVo);
     }
@@ -188,17 +180,17 @@ public class SportRegistrationsController extends BaseController {
         SportGames sportGames = sportGamesService.selectSportGamesById(sportRegistrations.getGameId());
         Long numOfGames = sportRegistrationsService.numOfRegistrationsGames(sportRegistrations.getGameId());
         //检验比赛报名人数是否已满
-        if(numOfGames>=sportGames.getMaxPerson()){
+        if (numOfGames >= sportGames.getMaxPerson()) {
             return AjaxResult.error("参赛人数已满");
         }
         //检验用户报名性别是否合法
         Integer sportGender = sportGames.getGender();
-        if(Integer.parseInt(userSex)!=sportGender&&sportGender!=-1){
+        if (Integer.parseInt(userSex) != sportGender && sportGender != -1) {
             return AjaxResult.error("用户性别错误");
         }
 
         //判断报名时是否在报名时间段内
-        if(sportGames.getStatus()!=0){
+        if (sportGames.getStatus() != 0) {
             return AjaxResult.error("未在报名时间段内");
         }
 
@@ -211,21 +203,21 @@ public class SportRegistrationsController extends BaseController {
 
         SportItem sportItem = sportItemService.selectSportItemById(sportGames.getItemId());
         Long type = sportItem.getType();//获取当前比赛的类型，是径赛还是田赛还是团体赛
-        Long itemId= sportItem.getId();
+        Long itemId = sportItem.getId();
         //判断是否是田径赛
-        if(type==1L||type==2L){
+        if (type == 1L || type == 2L) {
             //判断是不是接力赛
-            if(itemId==11L||itemId==12L){
-                if(!sportRegistrationsService.RelayGameRegistrationIsLegal(deptId,gameId,8L)){
+            if (itemId == 11L || itemId == 12L) {
+                if (!sportRegistrationsService.RelayGameRegistrationIsLegal(deptId, gameId, 8L)) {
                     return AjaxResult.error("学院接力赛项目报名人数已满");
                 }
-            }else {
+            } else {
                 //判断该院该项目(不包括接力)是否满额(名额限为3)
-                if(!sportRegistrationsService.numOfCollegeRegistrationIsLegal(deptId,gameId,3L)){
+                if (!sportRegistrationsService.numOfCollegeRegistrationIsLegal(deptId, gameId, 3L)) {
                     return AjaxResult.error("所在学院该项目名额已满");
                 }
                 //判断当前用户报名的田径类赛事是否满额(名额限为2)
-                if(!sportRegistrationsService.TrackFieldGameRegistrationIsLegal(userId,2L)){
+                if (!sportRegistrationsService.TrackFieldGameRegistrationIsLegal(userId, 2L)) {
                     return AjaxResult.error("用户已报名2项田径类赛事");
                 }
             }
@@ -245,32 +237,31 @@ public class SportRegistrationsController extends BaseController {
      */
 //    @PreAuthorize("@ss.hasPermi('system:registrations:remove')")
     @DeleteMapping("/user/{gameId}")
-    public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId)
-    {
+    public AjaxResult deleteUserRegistrations(@PathVariable("gameId") Long gameId) {
         SportGames sportGames = sportGamesService.selectSportGamesById(gameId);
 
         //判断用户是否已经报名
-        SportRegistrations sportRegistrations=new SportRegistrations();
+        SportRegistrations sportRegistrations = new SportRegistrations();
         sportRegistrations.setGameId(gameId);
         sportRegistrations.setUserId(SecurityUtils.getUserId());
-        List<SportRegistrations> sportRegistrationsList= sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
-        if(sportRegistrationsList.size()==0){
+        List<SportRegistrations> sportRegistrationsList = sportRegistrationsService.selectSportRegistrationsList(sportRegistrations);
+        if (sportRegistrationsList.size() == 0) {
             return AjaxResult.error("用户未报名该比赛");
         }
 
         //判断报名审核是否通过
         String status = sportRegistrationsList.get(0).getStatus();
-        if(status.equals("1")){
+        if (status.equals("1")) {
             return AjaxResult.error("审核通过，不可取消报名");
         }
 
 
         //判断取消报名时是否在报名时间段内
-        if(sportGames.getStatus()!=0){
+        if (sportGames.getStatus() != 0) {
             return AjaxResult.error("未在报名时间段内");
         }
 
-        return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(),gameId));
+        return toAjax(sportRegistrationsService.deleteUserRegistrations(SecurityUtils.getUserId(), gameId));
     }
 
 
@@ -298,5 +289,27 @@ public class SportRegistrationsController extends BaseController {
 
 
         return AjaxResult.success(gameSequenceBookVOS);
+    }
+
+
+    /**
+     * 晋级决赛
+     */
+    @PreAuthorize("@ss.hasPermi('system:registrations:add')")
+    @Log(title = "报名管理", businessType = BusinessType.INSERT)
+    @ApiOperation("晋级决赛")
+    @PostMapping("/promotion")
+    public AjaxResult promotion(@RequestBody Map<String, String> map) {
+
+        if (map.isEmpty()){
+            return AjaxResult.error("请选择晋级的比赛人员");
+        }
+
+//        return toAjax(sportRegistrationsService.insertSportRegistrations(sportRegistrations));
+        if (!sportRegistrationsService.doPromotion(map)){
+            return AjaxResult.error("晋级失败，请联系管理员");
+        }
+
+        return AjaxResult.success();
     }
 }

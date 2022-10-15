@@ -317,13 +317,12 @@
     <el-dialog :title=this.gName :visible.sync="dialogTableVisible" v-if="this.dialogTableVisible" width="60%">
       <el-table
         :data="gameData"
-        height="400"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
           width="55">
         </el-table-column>
-        <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <el-table-column property="username" label="编码" width="120"></el-table-column>
         <el-table-column property="deptName" label="学院"></el-table-column>
         <el-table-column property="nickName" label="姓名"></el-table-column>
         <el-table-column property="order" label="名次"></el-table-column>
@@ -344,7 +343,7 @@
       <div id="print">
         <span style="margin: 0 auto;">{{this.gName}}成绩名单</span>
       <el-table :data="selectPrintInf">
-        <el-table-column property="username" label="学号" width="120"></el-table-column>
+        <el-table-column property="username" label="编码" width="120"></el-table-column>
         <el-table-column property="deptName" label="学院"></el-table-column>
         <el-table-column property="nickName" label="姓名"></el-table-column>
         <el-table-column property="order" label="名次"></el-table-column>
@@ -683,9 +682,7 @@ export default {
 </script>
 
 <style>
-/*@page{*/
-/*  size: A4 landscape; !*portrait： 纵向打印,  landscape: 横向*!*/
-/*}*/
+
 @media print{
   table,
   tbody,

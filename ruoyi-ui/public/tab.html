@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+    <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+    <style>
+        table {
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            text-align: center;
+        }
+
+        table th {
+            border-left: 1px solid #000000;
+            border-top: 1px solid #000000;
+        }
+
+        table td {
+            border-left: 1px solid #000000;
+            border-top: 1px solid #000000;
+            font-size: 20px;
+            line-height: 70px;
+            /* width: 50px; */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <table align="center" width="800" cellspacing="0">
+            <h2 style="text-align: center;">径赛决赛通知单</h2>
+            <br>
+            <div style="text-align: center;">
+                {{ gender }}&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                组&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{ gameName }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                赛第&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                组
+            </div>
+
+            <br>
+            <thead>
+                <thead>
+                    <tr>
+                        <td width="100">道次</td>
+                        <td width="100">一</td>
+                        <td width="100">二</td>
+                        <td width="100">三</td>
+                        <td width="100">四</td>
+                        <td width="100">五</td>
+                        <td width="100">六</td>
+                        <td width="100">七</td>
+                        <td width="100">八</td>
+                    </tr>
+                    <tr>
+                        <td>号码</td>
+                        <td>{{datas[6].username}}</td>
+                        <td>{{datas[4].username}}</td>
+                        <td>{{datas[2].username}}</td>
+                        <td>{{datas[0].username}}</td>
+                        <td>{{datas[1].username}}</td>
+                        <td>{{datas[3].username}}</td>
+                        <td>{{datas[5].username}}</td>
+                        <td>{{datas[7].username}}</td>
+                    </tr>
+                    <tr>
+                        <td>姓名</td>
+                        <td>{{datas[6].nickName}}</td>
+                        <td>{{datas[4].nickName}}</td>
+                        <td>{{datas[2].nickName}}</td>
+                        <td>{{datas[0].nickName}}</td>
+                        <td>{{datas[1].nickName}}</td>
+                        <td>{{datas[3].nickName}}</td>
+                        <td>{{datas[5].nickName}}</td>
+                        <td>{{datas[7].nickName}}</td>
+                    </tr>
+                    <tr>
+                        <td>单位</td>
+                        <td>{{datas[6].deptName.slice(0,-2)}}</td>
+                        <td>{{datas[4].deptName.slice(0,-2)}}</td>
+                        <td>{{datas[2].deptName.slice(0,-2)}}</td>
+                        <td>{{datas[0].deptName.slice(0,-2)}}</td>
+                        <td>{{datas[1].deptName.slice(0,-2)}}</td>
+                        <td>{{datas[3].deptName.slice(0,-2)}}</td>
+                        <td>{{datas[5].deptName.slice(0,-2)}}</td>
+                        <td>{{datas[7].deptName.slice(0,-2)}}</td>
+                    </tr>
+                    <tr>
+                        <td>备注</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </thead>
+        </table>
+        <br>
+        <div style="text-align: center;">
+            编排记录组长&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            记录员&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            年&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;日
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    function geturlparam(arg) {
+        let that = this
+        // window.location.href 获取地址
+        let url = window.location.href
+        let p = url.split('?')[1]
+        let params = new URLSearchParams(p)
+        return params.get(arg);
+    }
+    window.onload = function () {
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                // msg: 'Hello World!',
+                // url: 'http://sport.lefthand.top/prod-api/system/games/single/55'
+                token: '',
+                datas: [],
+                gameName: '',
+                gender: ''
+            },
+            methods: {
+                getData(gameId) {
+                    axios({
+                        methods: 'get',
+                        url: `http://sport.lefthand.top/prod-api/system/games/single/${gameId}`,
+                        headers: {
+                            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImViZmIxMjdiLTVmNWItNGQxMS04ZTNlLWM0NzMwZThkNDA1OCJ9.kGFLrH0mXG4mBanfNO2cA6K9img0r0h8dCfmyP22LaIXvpys9VmfMb2GPGkORlp-3S-o8suacK-Mo9bdM8Y7xA'
+                        }
+                    }).then(res => {
+                        this.datas = res.data.data;
+                        axios({
+                            methods: 'get',
+                            url: `http://sport.lefthand.top/prod-api/system/games/list?status=3&pageNum=1&pageSize=1000`,
+                            headers: {
+                                'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImViZmIxMjdiLTVmNWItNGQxMS04ZTNlLWM0NzMwZThkNDA1OCJ9.kGFLrH0mXG4mBanfNO2cA6K9img0r0h8dCfmyP22LaIXvpys9VmfMb2GPGkORlp-3S-o8suacK-Mo9bdM8Y7xA'
+                            }
+                        }).then(rres => {
+                            for (let index = 0; index < rres.data.rows.length; index++) {
+                                const element = rres.data.rows[index];
+                                if (element.id == gameId) {
+                                    // this.gameName = element.gameName.split('(')[0].split('】')[1]
+                                    // this.gender = element.gameName.split('(')[0].split('【')[0]
+                                    this.gender = element.gameName.split('(')[0];
+                                    // this.gender = this.gender.splice(0, this.gender.length -1 )
+                                    
+                                }
+                            }
+
+                        })
+                    })
+                }
+            },
+            mounted() {
+                const gameId = geturlparam('gid');
+                const token = geturlparam('token');
+                this.token = this.token;
+                this.getData(gameId)
+            },
+        });
+    }
+</script>
+
+</html>
