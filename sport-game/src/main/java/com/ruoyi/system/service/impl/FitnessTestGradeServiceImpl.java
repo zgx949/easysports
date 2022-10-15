@@ -184,6 +184,14 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
 
             //不存在则插入成绩
             fitnessTestGrade.setCreateTime(DateUtils.getNowDate());
+            SysUser sysUser = sysUserMapper.selectUserByUserName(fitnessTestGrade.getUserId());//根据用户名找用户信息
+            if(!ObjectUtils.isEmpty(sysUser)){//如果该用户存在
+                fitnessTestGrade.setCreateUid(sysUser.getUserId());
+            }else{//如果该用户存不存在
+                //记录到插入失败的列表
+                failInsertList.add(fitnessTestGrade);
+                continue;
+            }
             int index=fitnessTestGradeMapper.insertFitnessTestGrade(fitnessTestGrade);
             if(index==1){
                 successCount++;
