@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 style="text-align: center">50M成绩录入</h1>
+    <h1 style="text-align: center">仰卧起坐成绩录入</h1>
     <el-row :gutter="15">
       <el-form
         ref="elForm"
@@ -84,22 +84,14 @@
         <div class="text item">班级：{{ data.className }}</div>
         <div class="text item">
           成绩：
-          <el-select v-model="data.second" placeholder="请选择" size="small" style="width: 35%">
+          <el-select v-model="data.score" placeholder="请选择" size="small" style="width: 35%">
             <el-option
-              v-for="item in 6"
-              :key="5 + item"
-              :label="5 + item"
-              :value="5 + item">
-            </el-option>
-          </el-select>秒
-          <el-select v-model="data.m" placeholder="请选择" size="small" style="width: 35%">
-            <el-option
-              v-for="item in 99"
+              v-for="item in 100"
               :key="item"
-              :label="item < 10 ? '0' + item : item"
+              :label="item"
               :value="item">
             </el-option>
-          </el-select>
+          </el-select>个
           <!--          <el-input-->
           <!--            v-model="data.score"-->
           <!--            placeholder="请输入成绩"-->
@@ -127,7 +119,7 @@ export default {
   components: {},
   data() {
     return {
-      itemId: 42,
+      itemId: 43,
       // 体测活动字典
       actDict: [],
       cards: [],
@@ -152,7 +144,7 @@ export default {
           userId: item.idcard,
           itemId: this.itemId,
           ftaId: this.formData.actId,
-          score: (item.second ? item.second * 1000 : 0) + (item.m ? item.m : 0)
+          score: item.score
         })
       }
       return data;
@@ -252,25 +244,44 @@ export default {
         alert("请输入学号");
         return;
       }
-      if (this.cards.indexOf(idcard) !== -1) {
-        alert("用户已经添加过");
-        return;
-      }
-      this.cards.push(idcard);
-      console.log(idcard);
+      // if (this.cards.indexOf(idcard) !== -1) {
+      //   alert("用户已经添加过");
+      //   return;
+      // }
+      selectSysUserListByNames([idcard]).then(res => {
+        for (let i = 0; i < res.data.length; i++) {
+          const item = res.data[i];
+          if (this.cards.indexOf(item.userName) !== -1) {
+            alert("用户已经添加过");
+            continue;
+          }
+          this.userDatas.push({
+            insName: item.dept.deptName,
+            name: item.nickName,
+            gender: item.sex,
+            idcard: item.userName,
+            className: item.dept.deptName,
+            score: 0,
+          });
+          this.cards.push(item.userName);
+        }
+        localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
+        localStorage.setItem("cards", JSON.stringify(this.cards));
+      })
+      // this.cards.push(idcard);
+      // console.log(idcard);
 
-      this.userDatas.push({
-        insName: "XX",
-        name: "",
-        gender: "",
-        idcard: idcard,
-        className: "",
-        score: 0,
-      });
+      // this.userDatas.push({
+      //   insName: "XX",
+      //   name: "",
+      //   gender: "",
+      //   idcard: idcard,
+      //   className: "",
+      //   score: 0,
+      // });
 
 
-      localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
-      localStorage.setItem("cards", JSON.stringify(this.cards));
+
     },
     del(index) {
       this.userDatas.splice(index, 1);

@@ -7,6 +7,7 @@ import java.util.List;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.Vo.FitnessTestGradeVo;
 import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
 import com.ruoyi.system.mapper.SysUserMapper;
@@ -175,10 +176,18 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
             //查询该成绩是否存在
             List<FitnessTestGrade> tempList = fitnessTestGradeMapper.selectFitnessTestGrades(fitnessTestGrade);
 
-            //存在则跳过此次循环
+            //存在则更新 跳过此次循环
             if(!CollectionUtils.isEmpty(tempList)){
                 //记录到插入失败的列表
-                failInsertList.add(fitnessTestGrade);
+//                failInsertList.add(fitnessTestGrade);
+                // 更新数据
+                if (fitnessTestGrade.getScore() != 0 && fitnessTestGrade.getScore() != null) {
+                    fitnessTestGrade.setId(tempList.get(0).getId());
+                    fitnessTestGrade.setUpdateUid(SecurityUtils.getUserId());
+                    fitnessTestGradeMapper.updateFitnessTestGrade(fitnessTestGrade);
+                } else {
+                    failInsertList.add(fitnessTestGrade);
+                }
                 continue;
             }
 
@@ -199,7 +208,7 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
         }
         insertFitnessTestGradeVo.setFailInsertList(failInsertList);
         insertFitnessTestGradeVo.setSuccessCount(successCount);
-        if(successCount==fitnessTestGrades.size()){//全部插入
+        if(successCount==fitnessTestGrades.size() || failInsertList.size() == 0){//全部插入
             insertFitnessTestGradeVo.setAllInsertSuccess(true);
         }else{//存在插入失败
             insertFitnessTestGradeVo.setAllInsertSuccess(false);

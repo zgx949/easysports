@@ -104,6 +104,17 @@ public class FitnessTestActivityController extends BaseController
     {
         return toAjax(fitnessTestActivityService.deleteFitnessTestActivityByIds(ids));
     }
+    /*
+    * 查询进行中的体测活动
+    *
+    * */
+    @GetMapping(value = "/testing")
+    public AjaxResult testing()
+    {
+        FitnessTestActivity condition = new FitnessTestActivity();
+        condition.setStatus(2L);
+        return AjaxResult.success(fitnessTestActivityService.selectFitnessTestActivityList(condition));
+    }
 
     @PreAuthorize("@ss.hasPermi('system:activity:query')")
     @GetMapping(value = "/dict")

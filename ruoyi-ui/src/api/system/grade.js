@@ -1,5 +1,25 @@
 import request from '@/utils/request'
 
+
+// 批量查询用户信息
+export function selectSysUserListByNames(data) {
+  return request({
+    url: '/system/grade/sysUserListByNames',
+    method: 'post',
+    data: data
+  })
+}
+
+// 批量插入成绩
+export function insertGradeList(data) {
+  return request({
+    url: '/system/grade/insertGradeList',
+    method: 'post',
+    data: data
+  })
+}
+
+
 // 查询体测成绩列表
 export function listGrade(query) {
   return request({
