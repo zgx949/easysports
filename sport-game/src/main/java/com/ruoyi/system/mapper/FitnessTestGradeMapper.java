@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.FitnessTestGrade;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 体测成绩Mapper接口
@@ -58,4 +59,7 @@ public interface FitnessTestGradeMapper
      * @return 结果
      */
     public int deleteFitnessTestGradeByIds(Long[] ids);
+
+    @Select("select * from fitness_test_grade where user_id=#{userId} and fta_id=#{ftaId} and item_id=#{itemId}")
+    public List<FitnessTestGrade> selectFitnessTestGrades(FitnessTestGrade fitnessTestGrade);
 }

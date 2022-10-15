@@ -2,9 +2,12 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.FitnessTestGrade;
 import com.ruoyi.system.domain.Vo.FitnessTestGradeVo;
+import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 体测成绩Service接口
@@ -70,5 +73,19 @@ public interface IFitnessTestGradeService
     * @Date: 2022-08-25
     */
     public List<FitnessTestGradeVo> queryMyRecord(SysUser user);
+
+    /**
+     * 根据用户名列表查询用户信息
+     * @param userNameList
+     * @return
+     */
+    public List<SysUser> selectSysUserListByNames(List<String>userNameList);
+
+    /**
+     * 批量插入成绩
+     * @param fitnessTestGrades
+     * @return
+     */
+    public InsertFitnessTestGradeVo insertGradeList(List<FitnessTestGrade> fitnessTestGrades);
 
 }
