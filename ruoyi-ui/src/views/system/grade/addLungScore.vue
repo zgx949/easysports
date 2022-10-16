@@ -144,7 +144,7 @@ export default {
           userId: item.idcard,
           itemId: this.itemId,
           ftaId: this.formData.actId,
-          score: item.score
+          score: item.score * 100
         })
       }
       return data;

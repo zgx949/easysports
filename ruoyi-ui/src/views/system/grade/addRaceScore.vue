@@ -135,7 +135,7 @@ export default {
   components: {},
   data() {
     return {
-      itemId: 42,
+      itemId: 48,
       // 体测活动字典
       actDict: [],
       cards: [],
