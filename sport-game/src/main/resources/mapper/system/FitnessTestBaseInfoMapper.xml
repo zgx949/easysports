@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FitnessTestBaseInfoMapper">
+    
+    <resultMap type="FitnessTestBaseInfo" id="FitnessTestBaseInfoResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="dept"    column="dept"    />
+        <result property="classNum"    column="class_num"    />
+        <result property="sex"    column="sex"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectFitnessTestBaseInfoVo">
+        select id, user_id, user_name, dept, class_num, sex, remark from fitness_test_base_info
+    </sql>
+
+    <select id="selectFitnessTestBaseInfoList" parameterType="FitnessTestBaseInfo" resultMap="FitnessTestBaseInfoResult">
+        <include refid="selectFitnessTestBaseInfoVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="dept != null  and dept != ''"> and dept = #{dept}</if>
+            <if test="classNum != null  and classNum != ''"> and class_num = #{classNum}</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+        </where>
+    </select>
+    
+    <select id="selectFitnessTestBaseInfoById" parameterType="Long" resultMap="FitnessTestBaseInfoResult">
+        <include refid="selectFitnessTestBaseInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFitnessTestBaseInfo" parameterType="FitnessTestBaseInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into fitness_test_base_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="dept != null">dept,</if>
+            <if test="classNum != null">class_num,</if>
+            <if test="sex != null">sex,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="dept != null">#{dept},</if>
+            <if test="classNum != null">#{classNum},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFitnessTestBaseInfo" parameterType="FitnessTestBaseInfo">
+        update fitness_test_base_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="dept != null">dept = #{dept},</if>
+            <if test="classNum != null">class_num = #{classNum},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFitnessTestBaseInfoById" parameterType="Long">
+        delete from fitness_test_base_info where id = #{id}
+    </delete>
+
+    <delete id="deleteFitnessTestBaseInfoByIds" parameterType="String">
+        delete from fitness_test_base_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
