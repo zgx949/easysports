@@ -129,6 +129,31 @@
         </trim>
         where id = #{id}
     </update>
+    <update id="updateFitnessTestScoreByuserId">
+        update fitness_test_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="leftEye != null">left_eye = #{leftEye},</if>
+            <if test="rightEye != null">right_eye = #{rightEye},</if>
+            <if test="vitalCapacity != null">vital_capacity = #{vitalCapacity},</if>
+            <if test="fiftyRun != null">fifty_run = #{fiftyRun},</if>
+            <if test="longJump != null">long_jump = #{longJump},</if>
+            <if test="sittingBodyBend != null">sitting_body_bend = #{sittingBodyBend},</if>
+            <if test="enduranceRunning != null">endurance_Running = #{enduranceRunning},</if>
+            <if test="ftaId != null">fta_id = #{ftaId},</if>
+            <if test="otherItem != null">other_item = #{otherItem},</if>
+            <if test="isFree != null">is_free = #{isFree},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUid != null">create_uid = #{createUid},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUid != null">update_uid = #{updateUid},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="grade != null">grade = #{grade},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
 
     <delete id="deleteFitnessTestScoreById" parameterType="Long">
         delete from fitness_test_score where id = #{id}

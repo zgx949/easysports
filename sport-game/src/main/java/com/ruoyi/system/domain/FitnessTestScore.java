@@ -32,11 +32,11 @@ public class FitnessTestScore extends BaseEntity
 
     /** 左眼 */
     @Excel(name = "左眼")
-    private Long leftEye;
+    private Float leftEye;
 
     /** 右眼 */
     @Excel(name = "右眼")
-    private Long rightEye;
+    private Float rightEye;
 
     /** 肺活量 */
     @Excel(name = "肺活量")
@@ -44,7 +44,7 @@ public class FitnessTestScore extends BaseEntity
 
     /** 50米 */
     @Excel(name = "50米")
-    private Long fiftyRun;
+    private Float fiftyRun;
 
     /** 跳远 */
     @Excel(name = "跳远")
@@ -52,11 +52,11 @@ public class FitnessTestScore extends BaseEntity
 
     /** 坐位体前驱 */
     @Excel(name = "坐位体前驱")
-    private Long sittingBodyBend;
+    private Float sittingBodyBend;
 
     /** 耐力跑 */
     @Excel(name = "耐力跑")
-    private Long enduranceRunning;
+    private Float enduranceRunning;
 
     /** 活动id */
     @Excel(name = "活动id")
@@ -82,158 +82,140 @@ public class FitnessTestScore extends BaseEntity
     @Excel(name = "年级")
     private String grade;
 
-    public void setId(Long id)
-    {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getId()
-    {
-        return id;
+    public String getUserId() {
+        return userId;
     }
-    public void setUserId(String userId)
-    {
+
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public String getUserId()
-    {
-        return userId;
+    public Long getHeight() {
+        return height;
     }
-    public void setHeight(Long height)
-    {
+
+    public void setHeight(Long height) {
         this.height = height;
     }
 
-    public Long getHeight()
-    {
-        return height;
+    public Long getWeight() {
+        return weight;
     }
-    public void setWeight(Long weight)
-    {
+
+    public void setWeight(Long weight) {
         this.weight = weight;
     }
 
-    public Long getWeight()
-    {
-        return weight;
+    public Float getLeftEye() {
+        return leftEye;
     }
-    public void setLeftEye(Long leftEye)
-    {
+
+    public void setLeftEye(Float leftEye) {
         this.leftEye = leftEye;
     }
 
-    public Long getLeftEye()
-    {
-        return leftEye;
+    public Float getRightEye() {
+        return rightEye;
     }
-    public void setRightEye(Long rightEye)
-    {
+
+    public void setRightEye(Float rightEye) {
         this.rightEye = rightEye;
     }
 
-    public Long getRightEye()
-    {
-        return rightEye;
+    public Long getVitalCapacity() {
+        return vitalCapacity;
     }
-    public void setVitalCapacity(Long vitalCapacity)
-    {
+
+    public void setVitalCapacity(Long vitalCapacity) {
         this.vitalCapacity = vitalCapacity;
     }
 
-    public Long getVitalCapacity()
-    {
-        return vitalCapacity;
+    public Float getFiftyRun() {
+        return fiftyRun;
     }
-    public void setFiftyRun(Long fiftyRun)
-    {
+
+    public void setFiftyRun(Float fiftyRun) {
         this.fiftyRun = fiftyRun;
     }
 
-    public Long getFiftyRun()
-    {
-        return fiftyRun;
+    public Long getLongJump() {
+        return longJump;
     }
-    public void setLongJump(Long longJump)
-    {
+
+    public void setLongJump(Long longJump) {
         this.longJump = longJump;
     }
 
-    public Long getLongJump()
-    {
-        return longJump;
+    public Float getSittingBodyBend() {
+        return sittingBodyBend;
     }
-    public void setSittingBodyBend(Long sittingBodyBend)
-    {
+
+    public void setSittingBodyBend(Float sittingBodyBend) {
         this.sittingBodyBend = sittingBodyBend;
     }
 
-    public Long getSittingBodyBend()
-    {
-        return sittingBodyBend;
+    public Float getEnduranceRunning() {
+        return enduranceRunning;
     }
-    public void setEnduranceRunning(Long enduranceRunning)
-    {
+
+    public void setEnduranceRunning(Float enduranceRunning) {
         this.enduranceRunning = enduranceRunning;
     }
 
-    public Long getEnduranceRunning()
-    {
-        return enduranceRunning;
+    public Long getFtaId() {
+        return ftaId;
     }
-    public void setFtaId(Long ftaId)
-    {
+
+    public void setFtaId(Long ftaId) {
         this.ftaId = ftaId;
     }
 
-    public Long getFtaId()
-    {
-        return ftaId;
+    public Long getOtherItem() {
+        return otherItem;
     }
-    public void setOtherItem(Long otherItem)
-    {
+
+    public void setOtherItem(Long otherItem) {
         this.otherItem = otherItem;
     }
 
-    public Long getOtherItem()
-    {
-        return otherItem;
+    public Long getIsFree() {
+        return isFree;
     }
-    public void setIsFree(Long isFree)
-    {
+
+    public void setIsFree(Long isFree) {
         this.isFree = isFree;
     }
 
-    public Long getIsFree()
-    {
-        return isFree;
+    public Long getCreateUid() {
+        return createUid;
     }
-    public void setCreateUid(Long createUid)
-    {
+
+    public void setCreateUid(Long createUid) {
         this.createUid = createUid;
     }
 
-    public Long getCreateUid()
-    {
-        return createUid;
+    public Long getUpdateUid() {
+        return updateUid;
     }
-    public void setUpdateUid(Long updateUid)
-    {
+
+    public void setUpdateUid(Long updateUid) {
         this.updateUid = updateUid;
     }
 
-    public Long getUpdateUid()
-    {
-        return updateUid;
-    }
-    public void setGrade(String grade)
-    {
-        this.grade = grade;
+    public String getGrade() {
+        return grade;
     }
 
-    public String getGrade()
-    {
-        return grade;
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 
     @Override

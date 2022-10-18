@@ -82,11 +82,12 @@
         <div class="text item">学院：{{ data.insName }}</div>
         <div class="text item">学号：{{ data.idcard }}</div>
         <div class="text item">班级：{{ data.className }}</div>
+        <div class="text item">性别：{{ data.gender === 0 ? '男' : '女'}}</div>
         <div class="text item">
           成绩：
           <el-select v-model="data.score" placeholder="请选择" size="small" style="width: 35%">
             <el-option
-              v-for="item in 200"
+              v-for="item in 180"
               :key="item + 150"
               :label="item + 150"
               :value="item + 150">
@@ -142,9 +143,7 @@ export default {
         const item = this.userDatas[i];
         data.push({
           userId: item.idcard,
-          itemId: this.itemId,
-          ftaId: this.formData.actId,
-          score: item.score
+          longJump: item.score
         })
       }
       return data;
@@ -221,19 +220,19 @@ export default {
       selectSysUserListByNames(data).then(res => {
         for (let i = 0; i < res.data.length; i++) {
           const item = res.data[i];
-          if (this.cards.indexOf(item.userName) !== -1) {
+          if (this.cards.indexOf(item.userId) !== -1) {
             alert("用户已经添加过");
             continue;
           }
           this.userDatas.push({
-            insName: item.dept.deptName,
-            name: item.nickName,
+            insName: item.dept,
+            name: item.userName,
             gender: item.sex,
-            idcard: item.userName,
-            className: item.dept.deptName,
+            idcard: item.userId,
+            className: item.classNum,
             score: 0,
           });
-          this.cards.push(item.userName);
+          this.cards.push(item.userId);
         }
 
       })
@@ -251,19 +250,19 @@ export default {
       selectSysUserListByNames([idcard]).then(res => {
         for (let i = 0; i < res.data.length; i++) {
           const item = res.data[i];
-          if (this.cards.indexOf(item.userName) !== -1) {
+          if (this.cards.indexOf(item.userId) !== -1) {
             alert("用户已经添加过");
             continue;
           }
           this.userDatas.push({
-            insName: item.dept.deptName,
-            name: item.nickName,
+            insName: item.dept,
+            name: item.userName,
             gender: item.sex,
-            idcard: item.userName,
-            className: item.dept.deptName,
+            idcard: item.userId,
+            className: item.classNum,
             score: 0,
           });
-          this.cards.push(item.userName);
+          this.cards.push(item.userId);
         }
         localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
         localStorage.setItem("cards", JSON.stringify(this.cards));

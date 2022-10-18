@@ -82,9 +82,10 @@
         <div class="text item">学院：{{ data.insName }}</div>
         <div class="text item">学号：{{ data.idcard }}</div>
         <div class="text item">班级：{{ data.className }}</div>
+        <div class="text item">性别：{{ data.gender === 0 ? '男' : '女'}}</div>
         <div class="text item">
           成绩：
-          <el-select v-model="data.min" placeholder="请选择" size="small" style="width: 20%">
+          <el-select v-model="data.min" placeholder="请选择" size="small" style="width: 30%">
             <el-option
               v-for="item in 6"
               :key="item"
@@ -92,7 +93,7 @@
               :value="item">
             </el-option>
           </el-select>分
-          <el-select v-model="data.second" placeholder="请选择" size="small" style="width: 20%">
+          <el-select v-model="data.second" placeholder="请选择" size="small" style="width: 30%">
             <el-option
               v-for="item in 60"
               :key="item - 1"
@@ -100,14 +101,14 @@
               :value="item - 1">
             </el-option>
           </el-select>秒
-          <el-select v-model="data.m" placeholder="请选择" size="small" style="width: 20%">
-            <el-option
-              v-for="item in 99"
-              :key="item"
-              :label="item < 10 ? '0' + item : item"
-              :value="item">
-            </el-option>
-          </el-select>
+<!--          <el-select v-model="data.m" placeholder="请选择" size="small" style="width: 20%">-->
+<!--            <el-option-->
+<!--              v-for="item in 99"-->
+<!--              :key="item"-->
+<!--              :label="item < 10 ? '0' + item : item"-->
+<!--              :value="item">-->
+<!--            </el-option>-->
+<!--          </el-select>-->
           <!--          <el-input-->
           <!--            v-model="data.score"-->
           <!--            placeholder="请输入成绩"-->
@@ -156,11 +157,15 @@ export default {
       let data = [];
       for (let i = 0; i < this.userDatas.length; i++) {
         const item = this.userDatas[i];
+        // data.push({
+        //   userId: item.idcard,
+        //   itemId: this.itemId,
+        //   ftaId: this.formData.actId,
+        //   score: (item.min ? item.min * 60 * 1000 : 0) + (item.second ? item.second * 1000 : 0) + (item.m ? item.m : 0)
+        // })
         data.push({
           userId: item.idcard,
-          itemId: this.itemId,
-          ftaId: this.formData.actId,
-          score: (item.min ? item.min * 60 * 1000 : 0) + (item.second ? item.second * 1000 : 0) + (item.m ? item.m : 0)
+          enduranceRunning: item.min + item.second / 100.0
         })
       }
       return data;
@@ -237,19 +242,19 @@ export default {
       selectSysUserListByNames(data).then(res => {
         for (let i = 0; i < res.data.length; i++) {
           const item = res.data[i];
-          if (this.cards.indexOf(item.userName) !== -1) {
+          if (this.cards.indexOf(item.userId) !== -1) {
             alert("用户已经添加过");
             continue;
           }
           this.userDatas.push({
-            insName: item.dept.deptName,
-            name: item.nickName,
+            insName: item.dept,
+            name: item.userName,
             gender: item.sex,
-            idcard: item.userName,
-            className: item.dept.deptName,
+            idcard: item.userId,
+            className: item.classNum,
             score: 0,
           });
-          this.cards.push(item.userName);
+          this.cards.push(item.userId);
         }
 
       })
@@ -267,19 +272,19 @@ export default {
       selectSysUserListByNames([idcard]).then(res => {
         for (let i = 0; i < res.data.length; i++) {
           const item = res.data[i];
-          if (this.cards.indexOf(item.userName) !== -1) {
+          if (this.cards.indexOf(item.userId) !== -1) {
             alert("用户已经添加过");
             continue;
           }
           this.userDatas.push({
-            insName: item.dept.deptName,
-            name: item.nickName,
+            insName: item.dept,
+            name: item.userName,
             gender: item.sex,
-            idcard: item.userName,
-            className: item.dept.deptName,
+            idcard: item.userId,
+            className: item.classNum,
             score: 0,
           });
-          this.cards.push(item.userName);
+          this.cards.push(item.userId);
         }
         localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
         localStorage.setItem("cards", JSON.stringify(this.cards));
