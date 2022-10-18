@@ -1,12 +1,17 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.Vo.InsertFitnessTestScoreVo;
+import com.ruoyi.system.mapper.FitnessTestBaseInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.FitnessTestScoreMapper;
 import com.ruoyi.system.domain.FitnessTestScore;
 import com.ruoyi.system.service.IFitnessTestScoreService;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 体测成绩Service业务层处理
@@ -19,6 +24,9 @@ public class FitnessTestScoreServiceImpl implements IFitnessTestScoreService
 {
     @Autowired
     private FitnessTestScoreMapper fitnessTestScoreMapper;
+
+    @Autowired
+    private FitnessTestBaseInfoMapper fitnessTestBaseInfoMapper;
 
     /**
      * 查询体测成绩
@@ -92,5 +100,36 @@ public class FitnessTestScoreServiceImpl implements IFitnessTestScoreService
     public int deleteFitnessTestScoreById(Long id)
     {
         return fitnessTestScoreMapper.deleteFitnessTestScoreById(id);
+    }
+
+    /**
+     * 批量插入体测成绩
+     * @param fitnessTestScores
+     * @return
+     */
+    @Override
+    public int insertFitnessTestScoreList(List<FitnessTestScore> fitnessTestScores) {
+        int successCount=0;
+        for(FitnessTestScore fitnessTestScore:fitnessTestScores){
+            String userId = fitnessTestScore.getUserId();
+            Long isFree = fitnessTestScore.getIsFree();
+            if(isFree!=null&&isFree==1){
+                fitnessTestScore.setRemark("免测");
+            }else {
+                fitnessTestScore.setRemark("正常体测");
+                fitnessTestScore.setIsFree(0L);
+            }
+            //查看该学号的用户在体测成绩表中是否有记录
+            if(fitnessTestScoreMapper.selectUserIdIsExit(userId)>0){//有则更新
+                fitnessTestScore.setUpdateTime(DateUtils.getNowDate());
+                fitnessTestScore.setUpdateUid(SecurityUtils.getUserId());
+                successCount+=fitnessTestScoreMapper.updateFitnessTestScoreByuserId(fitnessTestScore);
+            }else{//无则插入
+                fitnessTestScore.setCreateTime(DateUtils.getNowDate());
+                fitnessTestScore.setCreateUid(SecurityUtils.getUserId());
+                successCount+=fitnessTestScoreMapper.insertFitnessTestScore(fitnessTestScore);
+            }
+        }
+        return successCount;
     }
 }

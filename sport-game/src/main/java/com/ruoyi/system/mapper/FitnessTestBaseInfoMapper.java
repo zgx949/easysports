@@ -2,6 +2,8 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.FitnessTestBaseInfo;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 用户信息Mapper接口
@@ -58,4 +60,12 @@ public interface FitnessTestBaseInfoMapper
      * @return 结果
      */
     public int deleteFitnessTestBaseInfoByIds(Long[] ids);
+
+    /**
+     * 通过学号集合查询用户信息集合
+     *
+     * @param userIds
+     * @return
+     */
+    public List<FitnessTestBaseInfo> selectBaseInfoByUserIds(List<String> userIds);
 }

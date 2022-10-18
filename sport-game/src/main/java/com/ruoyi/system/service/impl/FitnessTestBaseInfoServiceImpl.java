@@ -90,4 +90,15 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
     {
         return fitnessTestBaseInfoMapper.deleteFitnessTestBaseInfoById(id);
     }
+
+    /**
+     * 通过学号集合查询用户信息集合
+     * @param userIds
+     * @return
+     */
+    @Override
+    public List<FitnessTestBaseInfo> selectBaseInfoByUserIds(List<String> userIds) {
+        List<FitnessTestBaseInfo> fitnessTestBaseInfos = fitnessTestBaseInfoMapper.selectBaseInfoByUserIds(userIds);
+        return fitnessTestBaseInfos;
+    }
 }

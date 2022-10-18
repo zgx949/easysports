@@ -33,7 +33,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectFitnessTestBaseInfoVo"/>
         where id = #{id}
     </select>
-        
+    <select id="selectBaseInfoByUserIds" resultType="com.ruoyi.system.domain.FitnessTestBaseInfo">
+        <include refid="selectFitnessTestBaseInfoVo"/> where user_id in(
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+
     <insert id="insertFitnessTestBaseInfo" parameterType="FitnessTestBaseInfo" useGeneratedKeys="true" keyProperty="id">
         insert into fitness_test_base_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -72,7 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteFitnessTestBaseInfoByIds" parameterType="String">
-        delete from fitness_test_base_info where id in 
+        delete from fitness_test_base_info where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

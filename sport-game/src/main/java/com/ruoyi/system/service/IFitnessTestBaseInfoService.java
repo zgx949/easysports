@@ -58,4 +58,11 @@ public interface IFitnessTestBaseInfoService
      * @return 结果
      */
     public int deleteFitnessTestBaseInfoById(Long id);
+
+    /**
+     * 通过学号集合查询用户基本信息集合
+     * @param userIds
+     * @return
+     */
+    public List<FitnessTestBaseInfo> selectBaseInfoByUserIds(List<String>userIds);
 }

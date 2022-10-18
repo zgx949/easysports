@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 import com.ruoyi.system.domain.FitnessTestScore;
+import com.ruoyi.system.domain.Vo.InsertFitnessTestScoreVo;
 
 /**
  * 体测成绩Service接口
@@ -58,4 +59,12 @@ public interface IFitnessTestScoreService
      * @return 结果
      */
     public int deleteFitnessTestScoreById(Long id);
+
+    /**
+     * 批量插入体测成绩
+     *
+     * @param fitnessTestScores
+     * @return
+     */
+    public int insertFitnessTestScoreList(List<FitnessTestScore>fitnessTestScores);
 }

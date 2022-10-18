@@ -2,6 +2,8 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.FitnessTestScore;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 体测成绩Mapper接口
@@ -58,4 +60,19 @@ public interface FitnessTestScoreMapper
      * @return 结果
      */
     public int deleteFitnessTestScoreByIds(Long[] ids);
+
+    /**
+     * 查询该学号的用户在体测成绩表中的记录数
+     * @param userId
+     * @return
+     */
+    @Select("select count(*) from fitness_test_score where user_id=#{userId}")
+    public int selectUserIdIsExit(@Param("userId") String userId);
+
+    /**
+     * 通过学号更新用户体测成绩
+     * @param fitnessTestScore
+     * @return
+     */
+    public int updateFitnessTestScoreByuserId(FitnessTestScore fitnessTestScore);
 }

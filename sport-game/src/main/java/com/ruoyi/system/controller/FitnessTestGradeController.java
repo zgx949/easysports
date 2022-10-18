@@ -7,7 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.FitnessTestBaseInfo;
+import com.ruoyi.system.domain.FitnessTestScore;
 import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
+import com.ruoyi.system.service.IFitnessTestBaseInfoService;
+import com.ruoyi.system.service.IFitnessTestScoreService;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +49,12 @@ public class FitnessTestGradeController extends BaseController
 
     @Autowired
     private ISysUserService sysUserService;
+
+    @Autowired
+    private IFitnessTestBaseInfoService fitnessTestBaseInfoService;
+
+    @Autowired
+    private IFitnessTestScoreService fitnessTestScoreService;
 
     /**
      * 查询体测成绩列表
@@ -133,16 +143,35 @@ public class FitnessTestGradeController extends BaseController
      * 根据用户名列表查询用户信息
      */
     @PostMapping("/sysUserListByNames")
-    public AjaxResult selectSysUserListByNames(@RequestBody List<String>userNameList){
+   /* public AjaxResult selectSysUserListByNames(@RequestBody List<String>userNameList){
        return AjaxResult.success(fitnessTestGradeService.selectSysUserListByNames(userNameList));
+    }*/
+    public AjaxResult selectBaseInfoByUserIds(@RequestBody List<String> userIds){
+        if(CollectionUtils.isEmpty(userIds)){
+            return AjaxResult.success("学号集合为空",userIds);
+        }
+        List<FitnessTestBaseInfo> fitnessTestBaseInfos = fitnessTestBaseInfoService.selectBaseInfoByUserIds(userIds);
+        if(fitnessTestBaseInfos.size()==userIds.size()){
+            return AjaxResult.success("全部信息查询成功",fitnessTestBaseInfos);
+        }else {
+            return AjaxResult.success("查出"+fitnessTestBaseInfos.size()+"条数据,与传入学号数不符",fitnessTestBaseInfos);
+        }
     }
 
     /**
      * 批量录入成绩
      */
     @PostMapping("/insertGradeList")
-    public AjaxResult insertGradeList(@RequestBody List<FitnessTestGrade>fitnessTestGrades){
+    /*public AjaxResult insertGradeList(@RequestBody List<FitnessTestGrade>fitnessTestGrades){
         InsertFitnessTestGradeVo insertFitnessTestGradeVo = fitnessTestGradeService.insertGradeList(fitnessTestGrades);
         return insertFitnessTestGradeVo.isAllInsertSuccess()?AjaxResult.success("全部插入成功",insertFitnessTestGradeVo):AjaxResult.success("存在插入失败",insertFitnessTestGradeVo);
+
+    }*/
+    public AjaxResult insertGradeList(@RequestBody List<FitnessTestScore>fitnessTestScores){
+        int successCount = fitnessTestScoreService.insertFitnessTestScoreList(fitnessTestScores);
+        if(successCount!=fitnessTestScores.size()){
+            return AjaxResult.success("录入成绩数与传入成绩数不符",successCount);
+        }
+        return AjaxResult.success("全部成绩录入成功",successCount);
     }
 }

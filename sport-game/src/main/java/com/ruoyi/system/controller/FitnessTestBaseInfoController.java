@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -100,5 +101,21 @@ public class FitnessTestBaseInfoController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(fitnessTestBaseInfoService.deleteFitnessTestBaseInfoByIds(ids));
+    }
+
+    /**
+     * 通过学号集合查询用户信息
+     */
+    @PostMapping("/baseInfoByUserIds")
+    public AjaxResult selectBaseInfoByUserIds(@RequestBody List<String> userIds){
+        if(CollectionUtils.isEmpty(userIds)){
+            return AjaxResult.error("学号集合为空",userIds);
+        }
+        List<FitnessTestBaseInfo> fitnessTestBaseInfos = fitnessTestBaseInfoService.selectBaseInfoByUserIds(userIds);
+        if(fitnessTestBaseInfos.size()==userIds.size()){
+            return AjaxResult.success("全部信息查询成功",fitnessTestBaseInfos);
+        }else {
+            return AjaxResult.success("查出"+fitnessTestBaseInfos.size()+"条数据,与传入学号数不符",fitnessTestBaseInfos);
+        }
     }
 }
