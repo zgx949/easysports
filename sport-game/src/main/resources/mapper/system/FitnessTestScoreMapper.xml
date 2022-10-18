@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FitnessTestScoreMapper">
+    
+    <resultMap type="FitnessTestScore" id="FitnessTestScoreResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="height"    column="height"    />
+        <result property="weight"    column="weight"    />
+        <result property="leftEye"    column="left_eye"    />
+        <result property="rightEye"    column="right_eye"    />
+        <result property="vitalCapacity"    column="vital_capacity"    />
+        <result property="fiftyRun"    column="fifty_run"    />
+        <result property="longJump"    column="long_jump"    />
+        <result property="sittingBodyBend"    column="sitting_body_bend"    />
+        <result property="enduranceRunning"    column="endurance_Running"    />
+        <result property="abdominalCurl"    column="abdominal_curl"    />
+        <result property="pullUp"    column="pull_up"    />
+        <result property="isFree"    column="is_free"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUid"    column="create_uid"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUid"    column="update_uid"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="grade"    column="grade"    />
+    </resultMap>
+
+    <sql id="selectFitnessTestScoreVo">
+        select id, user_id, height, weight, left_eye, right_eye, vital_capacity, fifty_run, long_jump, sitting_body_bend, endurance_Running, abdominal_curl, pull_up, is_free, remark, create_uid, create_time, update_uid, update_time, grade from fitness_test_score
+    </sql>
+
+    <select id="selectFitnessTestScoreList" parameterType="FitnessTestScore" resultMap="FitnessTestScoreResult">
+        <include refid="selectFitnessTestScoreVo"/>
+        <where>  
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="height != null "> and height = #{height}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+            <if test="leftEye != null "> and left_eye = #{leftEye}</if>
+            <if test="rightEye != null "> and right_eye = #{rightEye}</if>
+            <if test="vitalCapacity != null "> and vital_capacity = #{vitalCapacity}</if>
+            <if test="fiftyRun != null "> and fifty_run = #{fiftyRun}</if>
+            <if test="longJump != null "> and long_jump = #{longJump}</if>
+            <if test="sittingBodyBend != null "> and sitting_body_bend = #{sittingBodyBend}</if>
+            <if test="enduranceRunning != null "> and endurance_Running = #{enduranceRunning}</if>
+            <if test="abdominalCurl != null "> and abdominal_curl = #{abdominalCurl}</if>
+            <if test="pullUp != null "> and pull_up = #{pullUp}</if>
+            <if test="isFree != null "> and is_free = #{isFree}</if>
+            <if test="createUid != null "> and create_uid = #{createUid}</if>
+            <if test="updateUid != null "> and update_uid = #{updateUid}</if>
+            <if test="grade != null  and grade != ''"> and grade = #{grade}</if>
+        </where>
+    </select>
+    
+    <select id="selectFitnessTestScoreById" parameterType="Long" resultMap="FitnessTestScoreResult">
+        <include refid="selectFitnessTestScoreVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFitnessTestScore" parameterType="FitnessTestScore" useGeneratedKeys="true" keyProperty="id">
+        insert into fitness_test_score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="height != null">height,</if>
+            <if test="weight != null">weight,</if>
+            <if test="leftEye != null">left_eye,</if>
+            <if test="rightEye != null">right_eye,</if>
+            <if test="vitalCapacity != null">vital_capacity,</if>
+            <if test="fiftyRun != null">fifty_run,</if>
+            <if test="longJump != null">long_jump,</if>
+            <if test="sittingBodyBend != null">sitting_body_bend,</if>
+            <if test="enduranceRunning != null">endurance_Running,</if>
+            <if test="abdominalCurl != null">abdominal_curl,</if>
+            <if test="pullUp != null">pull_up,</if>
+            <if test="isFree != null">is_free,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUid != null">create_uid,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUid != null">update_uid,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="grade != null">grade,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="height != null">#{height},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="leftEye != null">#{leftEye},</if>
+            <if test="rightEye != null">#{rightEye},</if>
+            <if test="vitalCapacity != null">#{vitalCapacity},</if>
+            <if test="fiftyRun != null">#{fiftyRun},</if>
+            <if test="longJump != null">#{longJump},</if>
+            <if test="sittingBodyBend != null">#{sittingBodyBend},</if>
+            <if test="enduranceRunning != null">#{enduranceRunning},</if>
+            <if test="abdominalCurl != null">#{abdominalCurl},</if>
+            <if test="pullUp != null">#{pullUp},</if>
+            <if test="isFree != null">#{isFree},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUid != null">#{createUid},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUid != null">#{updateUid},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="grade != null">#{grade},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFitnessTestScore" parameterType="FitnessTestScore">
+        update fitness_test_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="leftEye != null">left_eye = #{leftEye},</if>
+            <if test="rightEye != null">right_eye = #{rightEye},</if>
+            <if test="vitalCapacity != null">vital_capacity = #{vitalCapacity},</if>
+            <if test="fiftyRun != null">fifty_run = #{fiftyRun},</if>
+            <if test="longJump != null">long_jump = #{longJump},</if>
+            <if test="sittingBodyBend != null">sitting_body_bend = #{sittingBodyBend},</if>
+            <if test="enduranceRunning != null">endurance_Running = #{enduranceRunning},</if>
+            <if test="abdominalCurl != null">abdominal_curl = #{abdominalCurl},</if>
+            <if test="pullUp != null">pull_up = #{pullUp},</if>
+            <if test="isFree != null">is_free = #{isFree},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUid != null">create_uid = #{createUid},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUid != null">update_uid = #{updateUid},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="grade != null">grade = #{grade},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFitnessTestScoreById" parameterType="Long">
+        delete from fitness_test_score where id = #{id}
+    </delete>
+
+    <delete id="deleteFitnessTestScoreByIds" parameterType="String">
+        delete from fitness_test_score where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
