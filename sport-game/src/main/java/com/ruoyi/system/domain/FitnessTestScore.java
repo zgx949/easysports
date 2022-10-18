@@ -32,11 +32,11 @@ public class FitnessTestScore extends BaseEntity
 
     /** 左眼 */
     @Excel(name = "左眼")
-    private Double leftEye;
+    private Long leftEye;
 
     /** 右眼 */
     @Excel(name = "右眼")
-    private Double rightEye;
+    private Long rightEye;
 
     /** 肺活量 */
     @Excel(name = "肺活量")
@@ -44,7 +44,7 @@ public class FitnessTestScore extends BaseEntity
 
     /** 50米 */
     @Excel(name = "50米")
-    private Double fiftyRun;
+    private Long fiftyRun;
 
     /** 跳远 */
     @Excel(name = "跳远")
@@ -52,19 +52,19 @@ public class FitnessTestScore extends BaseEntity
 
     /** 坐位体前驱 */
     @Excel(name = "坐位体前驱")
-    private Double sittingBodyBend;
+    private Long sittingBodyBend;
 
     /** 耐力跑 */
     @Excel(name = "耐力跑")
-    private Double enduranceRunning;
+    private Long enduranceRunning;
 
-    /** 仰卧起坐 */
-    @Excel(name = "仰卧起坐")
-    private Long abdominalCurl;
+    /** 活动id */
+    @Excel(name = "活动id")
+    private Long ftaId;
 
-    /** 引体向上 */
-    @Excel(name = "引体向上")
-    private Long pullUp;
+    /** 附加项目：引体向上/仰卧起坐 */
+    @Excel(name = "附加项目：引体向上/仰卧起坐")
+    private Long otherItem;
 
     /** 是否免测 */
     @Excel(name = "是否免测")
@@ -118,21 +118,21 @@ public class FitnessTestScore extends BaseEntity
     {
         return weight;
     }
-    public void setLeftEye(Double leftEye)
+    public void setLeftEye(Long leftEye)
     {
         this.leftEye = leftEye;
     }
 
-    public Double getLeftEye()
+    public Long getLeftEye()
     {
         return leftEye;
     }
-    public void setRightEye(Double rightEye)
+    public void setRightEye(Long rightEye)
     {
         this.rightEye = rightEye;
     }
 
-    public Double getRightEye()
+    public Long getRightEye()
     {
         return rightEye;
     }
@@ -145,12 +145,12 @@ public class FitnessTestScore extends BaseEntity
     {
         return vitalCapacity;
     }
-    public void setFiftyRun(Double fiftyRun)
+    public void setFiftyRun(Long fiftyRun)
     {
         this.fiftyRun = fiftyRun;
     }
 
-    public Double getFiftyRun()
+    public Long getFiftyRun()
     {
         return fiftyRun;
     }
@@ -163,41 +163,41 @@ public class FitnessTestScore extends BaseEntity
     {
         return longJump;
     }
-    public void setSittingBodyBend(Double sittingBodyBend)
+    public void setSittingBodyBend(Long sittingBodyBend)
     {
         this.sittingBodyBend = sittingBodyBend;
     }
 
-    public Double getSittingBodyBend()
+    public Long getSittingBodyBend()
     {
         return sittingBodyBend;
     }
-    public void setEnduranceRunning(Double enduranceRunning)
+    public void setEnduranceRunning(Long enduranceRunning)
     {
         this.enduranceRunning = enduranceRunning;
     }
 
-    public Double getEnduranceRunning()
+    public Long getEnduranceRunning()
     {
         return enduranceRunning;
     }
-    public void setAbdominalCurl(Long abdominalCurl)
+    public void setFtaId(Long ftaId)
     {
-        this.abdominalCurl = abdominalCurl;
+        this.ftaId = ftaId;
     }
 
-    public Long getAbdominalCurl()
+    public Long getFtaId()
     {
-        return abdominalCurl;
+        return ftaId;
     }
-    public void setPullUp(Long pullUp)
+    public void setOtherItem(Long otherItem)
     {
-        this.pullUp = pullUp;
+        this.otherItem = otherItem;
     }
 
-    public Long getPullUp()
+    public Long getOtherItem()
     {
-        return pullUp;
+        return otherItem;
     }
     public void setIsFree(Long isFree)
     {
@@ -250,8 +250,8 @@ public class FitnessTestScore extends BaseEntity
                 .append("longJump", getLongJump())
                 .append("sittingBodyBend", getSittingBodyBend())
                 .append("enduranceRunning", getEnduranceRunning())
-                .append("abdominalCurl", getAbdominalCurl())
-                .append("pullUp", getPullUp())
+                .append("ftaId", getFtaId())
+                .append("otherItem", getOtherItem())
                 .append("isFree", getIsFree())
                 .append("remark", getRemark())
                 .append("createUid", getCreateUid())

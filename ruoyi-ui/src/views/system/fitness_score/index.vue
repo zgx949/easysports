@@ -81,29 +81,31 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="仰卧起坐" prop="abdominalCurl">
+      <el-form-item label="活动id" prop="ftaId">
         <el-input
-          v-model="queryParams.abdominalCurl"
-          placeholder="请输入仰卧起坐"
+          v-model="queryParams.ftaId"
+          placeholder="请输入活动id"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="引体向上" prop="pullUp">
+      <el-form-item label="附加项目" prop="otherItem">
         <el-input
-          v-model="queryParams.pullUp"
-          placeholder="请输入引体向上"
+          v-model="queryParams.otherItem"
+          placeholder="请输入附加项目"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="是否免测" prop="isFree">
-        <el-input
-          v-model="queryParams.isFree"
-          placeholder="请输入是否免测"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isFree" placeholder="请选择是否免测" clearable>
+          <el-option
+            v-for="dict in dict.type.sys_yes_no"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="创建人" prop="createUid">
         <el-input
@@ -122,12 +124,14 @@
         />
       </el-form-item>
       <el-form-item label="年级" prop="grade">
-        <el-input
-          v-model="queryParams.grade"
-          placeholder="请输入年级"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.grade" placeholder="请选择年级" clearable>
+          <el-option
+            v-for="dict in dict.type.stu_grade"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -143,7 +147,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:fitness_score:add']"
+          v-hasPermi="['system:score:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -154,7 +158,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:fitness_score:edit']"
+          v-hasPermi="['system:score:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -165,7 +169,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:fitness_score:remove']"
+          v-hasPermi="['system:score:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -175,13 +179,13 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:fitness_score:export']"
+          v-hasPermi="['system:score:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="fitness_scoreList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="scoreList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键id" align="center" prop="id" />
       <el-table-column label="学号" align="center" prop="userId" />
@@ -194,13 +198,21 @@
       <el-table-column label="跳远" align="center" prop="longJump" />
       <el-table-column label="坐位体前驱" align="center" prop="sittingBodyBend" />
       <el-table-column label="耐力跑" align="center" prop="enduranceRunning" />
-      <el-table-column label="仰卧起坐" align="center" prop="abdominalCurl" />
-      <el-table-column label="引体向上" align="center" prop="pullUp" />
-      <el-table-column label="是否免测" align="center" prop="isFree" />
+      <el-table-column label="活动id" align="center" prop="ftaId" />
+      <el-table-column label="附加项目" align="center" prop="otherItem" />
+      <el-table-column label="是否免测" align="center" prop="isFree">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_yes_no" :value="scope.row.isFree"/>
+        </template>
+      </el-table-column>
       <el-table-column label="备注信息" align="center" prop="remark" />
       <el-table-column label="创建人" align="center" prop="createUid" />
       <el-table-column label="最后修改的人" align="center" prop="updateUid" />
-      <el-table-column label="年级" align="center" prop="grade" />
+      <el-table-column label="年级" align="center" prop="grade">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.stu_grade" :value="scope.row.grade"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -208,19 +220,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:fitness_score:edit']"
+            v-hasPermi="['system:score:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:fitness_score:remove']"
+            v-hasPermi="['system:score:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -262,17 +274,24 @@
         <el-form-item label="耐力跑" prop="enduranceRunning">
           <el-input v-model="form.enduranceRunning" placeholder="请输入耐力跑" />
         </el-form-item>
-        <el-form-item label="仰卧起坐" prop="abdominalCurl">
-          <el-input v-model="form.abdominalCurl" placeholder="请输入仰卧起坐" />
+        <el-form-item label="活动id" prop="ftaId">
+          <el-input v-model="form.ftaId" placeholder="请输入活动id" />
         </el-form-item>
-        <el-form-item label="引体向上" prop="pullUp">
-          <el-input v-model="form.pullUp" placeholder="请输入引体向上" />
+        <el-form-item label="附加项目" prop="otherItem">
+          <el-input v-model="form.otherItem" placeholder="请输入附加项目" />
         </el-form-item>
         <el-form-item label="是否免测" prop="isFree">
-          <el-input v-model="form.isFree" placeholder="请输入是否免测" />
+          <el-select v-model="form.isFree" placeholder="请选择是否免测">
+            <el-option
+              v-for="dict in dict.type.sys_yes_no"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注信息" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注信息" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="创建人" prop="createUid">
           <el-input v-model="form.createUid" placeholder="请输入创建人" />
@@ -281,7 +300,14 @@
           <el-input v-model="form.updateUid" placeholder="请输入最后修改的人" />
         </el-form-item>
         <el-form-item label="年级" prop="grade">
-          <el-input v-model="form.grade" placeholder="请输入年级" />
+          <el-select v-model="form.grade" placeholder="请选择年级">
+            <el-option
+              v-for="dict in dict.type.stu_grade"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -296,7 +322,8 @@
 import { listFitness_score, getFitness_score, delFitness_score, addFitness_score, updateFitness_score } from "@/api/system/fitness_score";
 
 export default {
-  name: "Fitness_score",
+  name: "Score",
+  dicts: ['sys_yes_no', 'stu_grade'],
   data() {
     return {
       // 遮罩层
@@ -312,7 +339,7 @@ export default {
       // 总条数
       total: 0,
       // 体测成绩表格数据
-      fitness_scoreList: [],
+      scoreList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -331,8 +358,8 @@ export default {
         longJump: null,
         sittingBodyBend: null,
         enduranceRunning: null,
-        abdominalCurl: null,
-        pullUp: null,
+        ftaId: null,
+        otherItem: null,
         isFree: null,
         createUid: null,
         updateUid: null,
@@ -353,7 +380,7 @@ export default {
     getList() {
       this.loading = true;
       listFitness_score(this.queryParams).then(response => {
-        this.fitness_scoreList = response.rows;
+        this.scoreList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -377,8 +404,8 @@ export default {
         longJump: null,
         sittingBodyBend: null,
         enduranceRunning: null,
-        abdominalCurl: null,
-        pullUp: null,
+        ftaId: null,
+        otherItem: null,
         isFree: null,
         remark: null,
         createUid: null,
@@ -453,9 +480,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/fitness_score/export', {
+      this.download('system/score/export', {
         ...this.queryParams
-      }, `fitness_score_${new Date().getTime()}.xlsx`)
+      }, `score_${new Date().getTime()}.xlsx`)
     }
   }
 };
