@@ -1,5 +1,15 @@
 import request from '@/utils/request'
 
+
+// 查询体测列表
+export function getTesting() {
+  return request({
+    url: '/system/activity/testing',
+    method: 'get'
+  })
+}
+
+
 // 查询体测字典
 export function activityDict() {
   return request({

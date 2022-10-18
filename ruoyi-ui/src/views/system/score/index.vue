@@ -16,7 +16,9 @@
         <el-button slot="append" icon="el-icon-search" @click="searchPerson"></el-button>
       </el-input>
       <div style="margin-left: auto">
-        <el-button type="primary" @click="getGameResult()" :disabled="typeof(this.pageObj.gameId)=='undefined'">成绩单</el-button>
+        <el-button type="primary" @click="turnTo(`http://sport.lefthand.top/tab.html?gid=${pageObj.gameId}`)" :disabled="typeof(this.pageObj.gameId)=='undefined'">决赛通知单</el-button>
+        <el-button type="success" @click="getGameResult()" :disabled="typeof(this.pageObj.gameId)=='undefined'">成绩单</el-button>
+        <el-button type="info" @click="turnTo(`http://sport.lefthand.top/print.html?gid=${pageObj.gameId}`)" :disabled="typeof(this.pageObj.gameId)=='undefined'">最终个人成绩</el-button>
       </div>
     </div>
     <div>
@@ -157,6 +159,7 @@
       <div>
       <el-table
         :data="searchGameData"
+        height="400"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
@@ -183,8 +186,8 @@
 
     <el-dialog :title=this.gName :visible.sync="dialogSelectedListVisible" v-if="this.dialogSelectedListVisible" width="60%" style="height: 100%">
       <div id="print">
-        <span style="margin: 0 auto;">{{this.gName}}成绩名单</span>
-        <el-table :data="selectPrintInf">
+        <span style="margin: 0 auto;">{{this.gName}}成绩</span>
+        <el-table :data="selectPrintInf" height="400">
           <el-table-column property="username" label="编码" width="120"></el-table-column>
           <el-table-column property="deptName" label="学院"></el-table-column>
           <el-table-column property="nickName" label="姓名"></el-table-column>
@@ -206,7 +209,8 @@
 </template>
 
 <script>
-import {getGameWinList, getPlayerByGameId, listGames, registerScore, searchGameListByUserId} from '@/api/system/games'
+import {getGameWinList, getPlayerByGameId, listGames, registerScore, searchGameListByUserId} from '@/api/system/games';
+import { getToken } from '../../../utils/auth'
 export default {
   data(){
     return{
@@ -275,6 +279,9 @@ export default {
     this.getFinishedList()
   },
   methods:{
+    turnTo(url) {
+      window.open(url + '&token=' + getToken());
+    },
     // 获取已完成比赛列表
     getFinishedList(){
       listGames({status:3, pageNum: 1, pageSize: 1000}).then(res => {

@@ -1,16 +1,23 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.Vo.FitnessTestGradeVo;
+import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.FitnessTestGradeMapper;
 import com.ruoyi.system.domain.FitnessTestGrade;
 import com.ruoyi.system.service.IFitnessTestGradeService;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 体测成绩Service业务层处理
@@ -23,6 +30,9 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
 {
     @Autowired
     private FitnessTestGradeMapper fitnessTestGradeMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     /**
      * 查询体测成绩
@@ -98,7 +108,6 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
         return fitnessTestGradeMapper.deleteFitnessTestGradeById(id);
     }
 
-
     /**
      * @Description: 查询自身的成绩情况
      * @Param:
@@ -134,5 +143,76 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
             result.add(temp);
         }
         return result;
+    }
+
+    /**
+     * 根据用户名列表查询用户信息
+     * @param userNameList
+     * @return
+     */
+    @Override
+    public List<SysUser> selectSysUserListByNames(List<String> userNameList) {
+        List<SysUser>sysUserList=new ArrayList<>();
+        for(String username:userNameList){
+            SysUser sysUser = sysUserMapper.selectUserByUserName(username);
+            if(ObjectUtils.isEmpty(sysUser)){
+                continue;
+            }
+            sysUserList.add(sysUser);
+        }
+        return sysUserList;
+    }
+
+    /**
+     * 批量插入成绩
+     * @param fitnessTestGrades
+     * @return
+     */
+    public InsertFitnessTestGradeVo insertGradeList(List<FitnessTestGrade> fitnessTestGrades){
+        int successCount=0;//记录插入成功的数量
+        List<FitnessTestGrade>failInsertList=new ArrayList<>();
+        InsertFitnessTestGradeVo insertFitnessTestGradeVo=new InsertFitnessTestGradeVo();
+        for (FitnessTestGrade fitnessTestGrade:fitnessTestGrades){
+            //查询该成绩是否存在
+            List<FitnessTestGrade> tempList = fitnessTestGradeMapper.selectFitnessTestGrades(fitnessTestGrade);
+
+            //存在则更新 跳过此次循环
+            if(!CollectionUtils.isEmpty(tempList)){
+                //记录到插入失败的列表
+//                failInsertList.add(fitnessTestGrade);
+                // 更新数据
+                if (fitnessTestGrade.getScore() != 0 && fitnessTestGrade.getScore() != null) {
+                    fitnessTestGrade.setId(tempList.get(0).getId());
+                    fitnessTestGrade.setUpdateUid(SecurityUtils.getUserId());
+                    fitnessTestGradeMapper.updateFitnessTestGrade(fitnessTestGrade);
+                } else {
+                    failInsertList.add(fitnessTestGrade);
+                }
+                continue;
+            }
+
+            //不存在则插入成绩
+            fitnessTestGrade.setCreateTime(DateUtils.getNowDate());
+            SysUser sysUser = sysUserMapper.selectUserByUserName(fitnessTestGrade.getUserId());//根据用户名找用户信息
+            if(!ObjectUtils.isEmpty(sysUser)){//如果该用户存在
+                fitnessTestGrade.setCreateUid(sysUser.getUserId());
+            }else{//如果该用户存不存在
+                //记录到插入失败的列表
+                failInsertList.add(fitnessTestGrade);
+                continue;
+            }
+            int index=fitnessTestGradeMapper.insertFitnessTestGrade(fitnessTestGrade);
+            if(index==1){
+                successCount++;
+            }
+        }
+        insertFitnessTestGradeVo.setFailInsertList(failInsertList);
+        insertFitnessTestGradeVo.setSuccessCount(successCount);
+        if(successCount==fitnessTestGrades.size() || failInsertList.size() == 0){//全部插入
+            insertFitnessTestGradeVo.setAllInsertSuccess(true);
+        }else{//存在插入失败
+            insertFitnessTestGradeVo.setAllInsertSuccess(false);
+        }
+        return insertFitnessTestGradeVo;
     }
 }

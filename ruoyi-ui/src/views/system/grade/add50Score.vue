@@ -252,25 +252,44 @@ export default {
         alert("请输入学号");
         return;
       }
-      if (this.cards.indexOf(idcard) !== -1) {
-        alert("用户已经添加过");
-        return;
-      }
-      this.cards.push(idcard);
-      console.log(idcard);
+      // if (this.cards.indexOf(idcard) !== -1) {
+      //   alert("用户已经添加过");
+      //   return;
+      // }
+      selectSysUserListByNames([idcard]).then(res => {
+        for (let i = 0; i < res.data.length; i++) {
+          const item = res.data[i];
+          if (this.cards.indexOf(item.userName) !== -1) {
+            alert("用户已经添加过");
+            continue;
+          }
+          this.userDatas.push({
+            insName: item.dept.deptName,
+            name: item.nickName,
+            gender: item.sex,
+            idcard: item.userName,
+            className: item.dept.deptName,
+            score: 0,
+          });
+          this.cards.push(item.userName);
+        }
+        localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
+        localStorage.setItem("cards", JSON.stringify(this.cards));
+      })
+      // this.cards.push(idcard);
+      // console.log(idcard);
 
-      this.userDatas.push({
-        insName: "XX",
-        name: "",
-        gender: "",
-        idcard: idcard,
-        className: "",
-        score: 0,
-      });
+      // this.userDatas.push({
+      //   insName: "XX",
+      //   name: "",
+      //   gender: "",
+      //   idcard: idcard,
+      //   className: "",
+      //   score: 0,
+      // });
 
 
-      localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
-      localStorage.setItem("cards", JSON.stringify(this.cards));
+
     },
     del(index) {
       this.userDatas.splice(index, 1);

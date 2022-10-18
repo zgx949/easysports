@@ -1,12 +1,18 @@
 package com.ruoyi.system.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
+import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,6 +42,9 @@ public class FitnessTestGradeController extends BaseController
 {
     @Autowired
     private IFitnessTestGradeService fitnessTestGradeService;
+
+    @Autowired
+    private ISysUserService sysUserService;
 
     /**
      * 查询体测成绩列表
@@ -118,5 +127,22 @@ public class FitnessTestGradeController extends BaseController
         } else {
             return AjaxResult.error("非法用户");
         }
+    }
+
+    /**
+     * 根据用户名列表查询用户信息
+     */
+    @PostMapping("/sysUserListByNames")
+    public AjaxResult selectSysUserListByNames(@RequestBody List<String>userNameList){
+       return AjaxResult.success(fitnessTestGradeService.selectSysUserListByNames(userNameList));
+    }
+
+    /**
+     * 批量录入成绩
+     */
+    @PostMapping("/insertGradeList")
+    public AjaxResult insertGradeList(@RequestBody List<FitnessTestGrade>fitnessTestGrades){
+        InsertFitnessTestGradeVo insertFitnessTestGradeVo = fitnessTestGradeService.insertGradeList(fitnessTestGrades);
+        return insertFitnessTestGradeVo.isAllInsertSuccess()?AjaxResult.success("全部插入成功",insertFitnessTestGradeVo):AjaxResult.success("存在插入失败",insertFitnessTestGradeVo);
     }
 }

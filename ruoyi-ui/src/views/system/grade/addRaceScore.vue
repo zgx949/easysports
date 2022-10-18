@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 style="text-align: center">50M成绩录入</h1>
+    <h1 style="text-align: center">800/1000成绩录入</h1>
     <el-row :gutter="15">
       <el-form
         ref="elForm"
@@ -84,15 +84,23 @@
         <div class="text item">班级：{{ data.className }}</div>
         <div class="text item">
           成绩：
-          <el-select v-model="data.second" placeholder="请选择" size="small" style="width: 35%">
+          <el-select v-model="data.min" placeholder="请选择" size="small" style="width: 20%">
             <el-option
               v-for="item in 6"
-              :key="5 + item"
-              :label="5 + item"
-              :value="5 + item">
+              :key="item"
+              :label="item"
+              :value="item">
+            </el-option>
+          </el-select>分
+          <el-select v-model="data.second" placeholder="请选择" size="small" style="width: 20%">
+            <el-option
+              v-for="item in 60"
+              :key="item - 1"
+              :label="item - 1"
+              :value="item - 1">
             </el-option>
           </el-select>秒
-          <el-select v-model="data.m" placeholder="请选择" size="small" style="width: 35%">
+          <el-select v-model="data.m" placeholder="请选择" size="small" style="width: 20%">
             <el-option
               v-for="item in 99"
               :key="item"
@@ -152,7 +160,7 @@ export default {
           userId: item.idcard,
           itemId: this.itemId,
           ftaId: this.formData.actId,
-          score: (item.second ? item.second * 1000 : 0) + (item.m ? item.m : 0)
+          score: (item.min ? item.min * 60 * 1000 : 0) + (item.second ? item.second * 1000 : 0) + (item.m ? item.m : 0)
         })
       }
       return data;
@@ -252,25 +260,44 @@ export default {
         alert("请输入学号");
         return;
       }
-      if (this.cards.indexOf(idcard) !== -1) {
-        alert("用户已经添加过");
-        return;
-      }
-      this.cards.push(idcard);
-      console.log(idcard);
+      // if (this.cards.indexOf(idcard) !== -1) {
+      //   alert("用户已经添加过");
+      //   return;
+      // }
+      selectSysUserListByNames([idcard]).then(res => {
+        for (let i = 0; i < res.data.length; i++) {
+          const item = res.data[i];
+          if (this.cards.indexOf(item.userName) !== -1) {
+            alert("用户已经添加过");
+            continue;
+          }
+          this.userDatas.push({
+            insName: item.dept.deptName,
+            name: item.nickName,
+            gender: item.sex,
+            idcard: item.userName,
+            className: item.dept.deptName,
+            score: 0,
+          });
+          this.cards.push(item.userName);
+        }
+        localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
+        localStorage.setItem("cards", JSON.stringify(this.cards));
+      })
+      // this.cards.push(idcard);
+      // console.log(idcard);
 
-      this.userDatas.push({
-        insName: "XX",
-        name: "",
-        gender: "",
-        idcard: idcard,
-        className: "",
-        score: 0,
-      });
+      // this.userDatas.push({
+      //   insName: "XX",
+      //   name: "",
+      //   gender: "",
+      //   idcard: idcard,
+      //   className: "",
+      //   score: 0,
+      // });
 
 
-      localStorage.setItem("userDatas", JSON.stringify(this.userDatas));
-      localStorage.setItem("cards", JSON.stringify(this.cards));
+
     },
     del(index) {
       this.userDatas.splice(index, 1);
