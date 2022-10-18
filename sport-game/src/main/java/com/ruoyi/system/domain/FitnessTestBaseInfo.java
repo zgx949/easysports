@@ -20,7 +20,7 @@ public class FitnessTestBaseInfo extends BaseEntity
 
     /** 学号 */
     @Excel(name = "学号")
-    private Long userId;
+    private String userId;
 
     /** 姓名 */
     @Excel(name = "姓名")
@@ -47,12 +47,12 @@ public class FitnessTestBaseInfo extends BaseEntity
     {
         return id;
     }
-    public void setUserId(Long userId) 
+    public void setUserId(String userId)
     {
         this.userId = userId;
     }
 
-    public Long getUserId() 
+    public String getUserId()
     {
         return userId;
     }

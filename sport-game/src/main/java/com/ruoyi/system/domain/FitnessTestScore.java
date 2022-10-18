@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 体测成绩对象 fitness_test_score
- * 
+ *
  * @author leftHand
  * @date 2022-10-18
  */
@@ -32,11 +32,11 @@ public class FitnessTestScore extends BaseEntity
 
     /** 左眼 */
     @Excel(name = "左眼")
-    private Long leftEye;
+    private Double leftEye;
 
     /** 右眼 */
     @Excel(name = "右眼")
-    private Long rightEye;
+    private Double rightEye;
 
     /** 肺活量 */
     @Excel(name = "肺活量")
@@ -44,7 +44,7 @@ public class FitnessTestScore extends BaseEntity
 
     /** 50米 */
     @Excel(name = "50米")
-    private Long fiftyRun;
+    private Double fiftyRun;
 
     /** 跳远 */
     @Excel(name = "跳远")
@@ -52,11 +52,11 @@ public class FitnessTestScore extends BaseEntity
 
     /** 坐位体前驱 */
     @Excel(name = "坐位体前驱")
-    private Long sittingBodyBend;
+    private Double sittingBodyBend;
 
     /** 耐力跑 */
     @Excel(name = "耐力跑")
-    private Long enduranceRunning;
+    private Double enduranceRunning;
 
     /** 仰卧起坐 */
     @Excel(name = "仰卧起坐")
@@ -82,156 +82,156 @@ public class FitnessTestScore extends BaseEntity
     @Excel(name = "年级")
     private String grade;
 
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setUserId(String userId) 
+    public void setUserId(String userId)
     {
         this.userId = userId;
     }
 
-    public String getUserId() 
+    public String getUserId()
     {
         return userId;
     }
-    public void setHeight(Long height) 
+    public void setHeight(Long height)
     {
         this.height = height;
     }
 
-    public Long getHeight() 
+    public Long getHeight()
     {
         return height;
     }
-    public void setWeight(Long weight) 
+    public void setWeight(Long weight)
     {
         this.weight = weight;
     }
 
-    public Long getWeight() 
+    public Long getWeight()
     {
         return weight;
     }
-    public void setLeftEye(Long leftEye) 
+    public void setLeftEye(Double leftEye)
     {
         this.leftEye = leftEye;
     }
 
-    public Long getLeftEye() 
+    public Double getLeftEye()
     {
         return leftEye;
     }
-    public void setRightEye(Long rightEye) 
+    public void setRightEye(Double rightEye)
     {
         this.rightEye = rightEye;
     }
 
-    public Long getRightEye() 
+    public Double getRightEye()
     {
         return rightEye;
     }
-    public void setVitalCapacity(Long vitalCapacity) 
+    public void setVitalCapacity(Long vitalCapacity)
     {
         this.vitalCapacity = vitalCapacity;
     }
 
-    public Long getVitalCapacity() 
+    public Long getVitalCapacity()
     {
         return vitalCapacity;
     }
-    public void setFiftyRun(Long fiftyRun) 
+    public void setFiftyRun(Double fiftyRun)
     {
         this.fiftyRun = fiftyRun;
     }
 
-    public Long getFiftyRun() 
+    public Double getFiftyRun()
     {
         return fiftyRun;
     }
-    public void setLongJump(Long longJump) 
+    public void setLongJump(Long longJump)
     {
         this.longJump = longJump;
     }
 
-    public Long getLongJump() 
+    public Long getLongJump()
     {
         return longJump;
     }
-    public void setSittingBodyBend(Long sittingBodyBend) 
+    public void setSittingBodyBend(Double sittingBodyBend)
     {
         this.sittingBodyBend = sittingBodyBend;
     }
 
-    public Long getSittingBodyBend() 
+    public Double getSittingBodyBend()
     {
         return sittingBodyBend;
     }
-    public void setEnduranceRunning(Long enduranceRunning) 
+    public void setEnduranceRunning(Double enduranceRunning)
     {
         this.enduranceRunning = enduranceRunning;
     }
 
-    public Long getEnduranceRunning() 
+    public Double getEnduranceRunning()
     {
         return enduranceRunning;
     }
-    public void setAbdominalCurl(Long abdominalCurl) 
+    public void setAbdominalCurl(Long abdominalCurl)
     {
         this.abdominalCurl = abdominalCurl;
     }
 
-    public Long getAbdominalCurl() 
+    public Long getAbdominalCurl()
     {
         return abdominalCurl;
     }
-    public void setPullUp(Long pullUp) 
+    public void setPullUp(Long pullUp)
     {
         this.pullUp = pullUp;
     }
 
-    public Long getPullUp() 
+    public Long getPullUp()
     {
         return pullUp;
     }
-    public void setIsFree(Long isFree) 
+    public void setIsFree(Long isFree)
     {
         this.isFree = isFree;
     }
 
-    public Long getIsFree() 
+    public Long getIsFree()
     {
         return isFree;
     }
-    public void setCreateUid(Long createUid) 
+    public void setCreateUid(Long createUid)
     {
         this.createUid = createUid;
     }
 
-    public Long getCreateUid() 
+    public Long getCreateUid()
     {
         return createUid;
     }
-    public void setUpdateUid(Long updateUid) 
+    public void setUpdateUid(Long updateUid)
     {
         this.updateUid = updateUid;
     }
 
-    public Long getUpdateUid() 
+    public Long getUpdateUid()
     {
         return updateUid;
     }
-    public void setGrade(String grade) 
+    public void setGrade(String grade)
     {
         this.grade = grade;
     }
 
-    public String getGrade() 
+    public String getGrade()
     {
         return grade;
     }
@@ -239,26 +239,26 @@ public class FitnessTestScore extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("userId", getUserId())
-            .append("height", getHeight())
-            .append("weight", getWeight())
-            .append("leftEye", getLeftEye())
-            .append("rightEye", getRightEye())
-            .append("vitalCapacity", getVitalCapacity())
-            .append("fiftyRun", getFiftyRun())
-            .append("longJump", getLongJump())
-            .append("sittingBodyBend", getSittingBodyBend())
-            .append("enduranceRunning", getEnduranceRunning())
-            .append("abdominalCurl", getAbdominalCurl())
-            .append("pullUp", getPullUp())
-            .append("isFree", getIsFree())
-            .append("remark", getRemark())
-            .append("createUid", getCreateUid())
-            .append("createTime", getCreateTime())
-            .append("updateUid", getUpdateUid())
-            .append("updateTime", getUpdateTime())
-            .append("grade", getGrade())
-            .toString();
+                .append("id", getId())
+                .append("userId", getUserId())
+                .append("height", getHeight())
+                .append("weight", getWeight())
+                .append("leftEye", getLeftEye())
+                .append("rightEye", getRightEye())
+                .append("vitalCapacity", getVitalCapacity())
+                .append("fiftyRun", getFiftyRun())
+                .append("longJump", getLongJump())
+                .append("sittingBodyBend", getSittingBodyBend())
+                .append("enduranceRunning", getEnduranceRunning())
+                .append("abdominalCurl", getAbdominalCurl())
+                .append("pullUp", getPullUp())
+                .append("isFree", getIsFree())
+                .append("remark", getRemark())
+                .append("createUid", getCreateUid())
+                .append("createTime", getCreateTime())
+                .append("updateUid", getUpdateUid())
+                .append("updateTime", getUpdateTime())
+                .append("grade", getGrade())
+                .toString();
     }
 }
