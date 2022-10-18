@@ -2,7 +2,6 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 import com.ruoyi.system.domain.FitnessTestScore;
-import com.ruoyi.system.domain.Vo.InsertFitnessTestScoreVo;
 
 /**
  * 体测成绩Service接口

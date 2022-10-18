@@ -1,17 +1,14 @@
 package com.ruoyi.system.service.impl;
 
-import java.util.Date;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.system.domain.Vo.InsertFitnessTestScoreVo;
 import com.ruoyi.system.mapper.FitnessTestBaseInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.FitnessTestScoreMapper;
 import com.ruoyi.system.domain.FitnessTestScore;
 import com.ruoyi.system.service.IFitnessTestScoreService;
-import org.springframework.util.ObjectUtils;
 
 /**
  * 体测成绩Service业务层处理
