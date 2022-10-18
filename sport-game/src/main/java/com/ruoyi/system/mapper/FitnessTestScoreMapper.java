@@ -66,8 +66,8 @@ public interface FitnessTestScoreMapper
      * @param userId
      * @return
      */
-    @Select("select count(*) from fitness_test_score where user_id=#{userId}")
-    public int selectUserIdIsExit(@Param("userId") String userId);
+    @Select("select count(*) from fitness_test_score where user_id=#{userId} and fta_id=#{ftaId}")
+    public int selectFitnessIsExit(@Param("userId") String userId,@Param("ftaId") Long ftaId);
 
     /**
      * 通过学号更新用户体测成绩

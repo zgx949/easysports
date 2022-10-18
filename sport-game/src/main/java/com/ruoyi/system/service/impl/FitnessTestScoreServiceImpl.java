@@ -109,6 +109,7 @@ public class FitnessTestScoreServiceImpl implements IFitnessTestScoreService
         int successCount=0;
         for(FitnessTestScore fitnessTestScore:fitnessTestScores){
             String userId = fitnessTestScore.getUserId();
+            Long ftaId = fitnessTestScore.getFtaId();
             Long isFree = fitnessTestScore.getIsFree();
             if(isFree!=null&&isFree==1){
                 fitnessTestScore.setRemark("免测");
@@ -116,8 +117,8 @@ public class FitnessTestScoreServiceImpl implements IFitnessTestScoreService
                 fitnessTestScore.setRemark("正常体测");
                 fitnessTestScore.setIsFree(0L);
             }
-            //查看该学号的用户在体测成绩表中是否有记录
-            if(fitnessTestScoreMapper.selectUserIdIsExit(userId)>0){//有则更新
+            //查看该学号与该体测活动id的用户在体测成绩表中是否有记录
+            if(fitnessTestScoreMapper.selectFitnessIsExit(userId,ftaId)>0){//有则更新
                 fitnessTestScore.setUpdateTime(DateUtils.getNowDate());
                 fitnessTestScore.setUpdateUid(SecurityUtils.getUserId());
                 successCount+=fitnessTestScoreMapper.updateFitnessTestScoreByuserId(fitnessTestScore);
