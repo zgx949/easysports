@@ -33,14 +33,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectFitnessTestBaseInfoVo"/>
         where id = #{id}
     </select>
-    <select id="selectBaseInfoByUserIds" resultType="com.ruoyi.system.domain.FitnessTestBaseInfo">
-        <include refid="selectFitnessTestBaseInfoVo"/> where user_id in(
-        <foreach collection="list" item="item" separator=",">
-            #{item}
-        </foreach>
-        )
-    </select>
-
     <insert id="insertFitnessTestBaseInfo" parameterType="FitnessTestBaseInfo" useGeneratedKeys="true" keyProperty="id">
         insert into fitness_test_base_info
         <trim prefix="(" suffix=")" suffixOverrides=",">

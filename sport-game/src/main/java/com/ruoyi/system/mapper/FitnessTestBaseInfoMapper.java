@@ -62,10 +62,11 @@ public interface FitnessTestBaseInfoMapper
     public int deleteFitnessTestBaseInfoByIds(Long[] ids);
 
     /**
-     * 通过学号集合查询用户信息集合
+     * 通过学号查询用户信息
      *
-     * @param userIds
+     * @param userId
      * @return
      */
-    public List<FitnessTestBaseInfo> selectBaseInfoByUserIds(List<String> userIds);
+    @Select("select id, user_id, user_name, dept, class_num, sex, remark from fitness_test_base_info where user_id=#{userId}")
+    public FitnessTestBaseInfo selectBaseInfoByUserId(String userId);
 }

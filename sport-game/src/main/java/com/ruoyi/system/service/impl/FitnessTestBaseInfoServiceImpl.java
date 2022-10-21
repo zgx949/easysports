@@ -1,11 +1,13 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.FitnessTestBaseInfoMapper;
 import com.ruoyi.system.domain.FitnessTestBaseInfo;
 import com.ruoyi.system.service.IFitnessTestBaseInfoService;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 用户信息Service业务层处理
@@ -98,7 +100,17 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
      */
     @Override
     public List<FitnessTestBaseInfo> selectBaseInfoByUserIds(List<String> userIds) {
-        List<FitnessTestBaseInfo> fitnessTestBaseInfos = fitnessTestBaseInfoMapper.selectBaseInfoByUserIds(userIds);
+        List<FitnessTestBaseInfo> fitnessTestBaseInfos=new ArrayList<>();
+        for(String userId:userIds){
+            FitnessTestBaseInfo fitnessTestBaseInfo = fitnessTestBaseInfoMapper.selectBaseInfoByUserId(userId);
+            if(ObjectUtils.isEmpty(fitnessTestBaseInfo)){//如果未查询到该用户信息，则仅返回学号
+                FitnessTestBaseInfo unKnowFitnessTestBaseInfo=new FitnessTestBaseInfo();
+                unKnowFitnessTestBaseInfo.setUserId(userId);
+                fitnessTestBaseInfos.add(unKnowFitnessTestBaseInfo);
+            }else {
+                fitnessTestBaseInfos.add(fitnessTestBaseInfo);
+            }
+        }
         return fitnessTestBaseInfos;
     }
 }
