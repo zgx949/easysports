@@ -143,7 +143,8 @@ export default {
         const item = this.userDatas[i];
         data.push({
           userId: item.idcard,
-          longJump: item.score
+          longJump: item.score,
+          ftaId: this.formData.actId
         })
       }
       return data;

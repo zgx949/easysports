@@ -165,7 +165,8 @@ export default {
         // })
         data.push({
           userId: item.idcard,
-          enduranceRunning: item.min + item.second / 100.0
+          enduranceRunning: item.min + item.second / 100.0,
+          ftaId: this.formData.actId
         })
       }
       return data;

@@ -151,7 +151,8 @@ export default {
         const item = this.userDatas[i];
         data.push({
           userId: item.idcard,
-          vitalCapacity: item.score * 100 + (item.score1 ? item.score1 : 0)
+          vitalCapacity: item.score * 100 + (item.score1 ? item.score1 : 0),
+          ftaId: this.formData.actId
         })
       }
       return data;

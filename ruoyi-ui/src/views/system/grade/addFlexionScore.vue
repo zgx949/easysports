@@ -152,7 +152,8 @@ export default {
         const item = this.userDatas[i];
         data.push({
           userId: item.idcard,
-          sittingBodyBend: item.score + (item.score1 ? item.score1 : 0) * 0.01
+          sittingBodyBend: item.score + (item.score1 ? item.score1 : 0) * 0.01,
+          ftaId: this.formData.actId
         })
       }
       return data;

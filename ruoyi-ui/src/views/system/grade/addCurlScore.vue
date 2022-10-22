@@ -143,7 +143,8 @@ export default {
         const item = this.userDatas[i];
         data.push({
           userId: item.idcard,
-          otherItem: item.score
+          otherItem: item.score,
+          ftaId: this.formData.actId
           // itemId: this.itemId,
           // ftaId: this.formData.actId,
           // score: (item.second ? item.second * 1000 : 0) + (item.m ? item.m : 0)
