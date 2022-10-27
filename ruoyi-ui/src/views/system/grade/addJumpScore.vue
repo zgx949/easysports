@@ -87,10 +87,10 @@
           成绩：
           <el-select v-model="data.score" placeholder="请选择" size="small" style="width: 35%">
             <el-option
-              v-for="item in 180"
-              :key="item + 150"
-              :label="item + 150"
-              :value="item + 150">
+              v-for="item in 220"
+              :key="item + 100"
+              :label="item + 100"
+              :value="item + 100">
             </el-option>
           </el-select>CM
           <!--          <el-input-->

@@ -96,9 +96,9 @@
           <el-select v-model="data.score1" placeholder="请选择" size="small" style="width: 35%">
             <el-option
               v-for="item in 99"
-              :key="item < 10 ? '0' + item : item"
+              :key="item"
               :label="item < 10 ? '0' + item : item"
-              :value="item < 10 ? '0' + item : item">
+              :value="item">
             </el-option>
           </el-select>00&nbsp; ML
           <!--          <el-input-->
