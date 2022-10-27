@@ -33,6 +33,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="用户性别" prop="sex">
+        <el-select v-model="queryParams.sex" placeholder="请选择用户性别" clearable>
+          <el-option
+            v-for="dict in dict.type.sys_user_sex"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -92,7 +102,11 @@
       <el-table-column label="姓名" align="center" prop="userName" />
       <el-table-column label="学院" align="center" prop="dept" />
       <el-table-column label="班级" align="center" prop="classNum" />
-      <el-table-column label="用户性别" align="center" prop="sex" />
+      <el-table-column label="用户性别" align="center" prop="sex">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.sex"/>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -113,7 +127,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -125,9 +139,6 @@
     <!-- 添加或修改用户信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="学号" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入学号" />
-        </el-form-item>
         <el-form-item label="姓名" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入姓名" />
         </el-form-item>
@@ -137,8 +148,18 @@
         <el-form-item label="班级" prop="classNum">
           <el-input v-model="form.classNum" placeholder="请输入班级" />
         </el-form-item>
+        <el-form-item label="用户性别" prop="sex">
+          <el-select v-model="form.sex" placeholder="请选择用户性别">
+            <el-option
+              v-for="dict in dict.type.sys_user_sex"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -154,6 +175,7 @@ import { listFitness_info, getFitness_info, delFitness_info, addFitness_info, up
 
 export default {
   name: "Fitness_info",
+  dicts: ['sys_user_sex'],
   data() {
     return {
       // 遮罩层
@@ -183,11 +205,27 @@ export default {
         dept: null,
         classNum: null,
         sex: null,
+        remark: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        userId: [
+          { required: true, message: "学号不能为空", trigger: "blur" }
+        ],
+        userName: [
+          { required: true, message: "姓名不能为空", trigger: "blur" }
+        ],
+        dept: [
+          { required: true, message: "学院不能为空", trigger: "blur" }
+        ],
+        classNum: [
+          { required: true, message: "班级不能为空", trigger: "blur" }
+        ],
+        sex: [
+          { required: true, message: "用户性别不能为空", trigger: "change" }
+        ],
       }
     };
   },
