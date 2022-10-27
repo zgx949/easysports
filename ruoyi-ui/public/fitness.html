@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+  <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <title>江西财经大学体育学院——EasySports体测中心</title>
+  <style>
+    table {
+      border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;
+      text-align: center;
+    }
+
+    table th {
+      border-left: 1px solid #000000;
+      border-top: 1px solid #000000;
+    }
+
+    table td {
+      border-left: 1px solid #000000;
+      border-top: 1px solid #000000;
+      /* font-size: 20px;
+      line-height: 70px; */
+      /* width: 50px; */
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="app">
+  <div class="oprations">
+    请选择班级：
+    <el-select @change="selected" v-model="value" filterable allow-create default-first-option placeholder="请选择班级">
+      <el-option v-for="item in classes" :key="item.class_num" :label="item.class_num" :value="item.class_num">
+      </el-option>
+    </el-select>
+    <el-button onclick="printArea()">打印</el-button>
+  </div>
+
+  <table align="center" width="1000" cellspacing="0">
+    <h2 style="text-align: center;">2022 江西财经大学学生体质测试{{value}}班级测试表（男）</h2>
+    <img :src="manCode" width="100" height="100" alt="" srcset="">
+    <thead>
+    <tr>
+      <th>
+        学号
+      </th>
+      <th>
+        姓名
+      </th>
+      </th>
+      <th>
+        性别
+      </th>
+      </th>
+      <th>
+        身高
+      </th>
+      </th>
+      <th>
+        体重
+      </th>
+      </th>
+      <th>
+        肺活量
+      </th>
+      <th>
+        50米
+      </th>
+      </th>
+      </th>
+      <th>
+        立定跳远
+      </th>
+      </th>
+      <th>
+        体前屈
+      </th>
+      </th>
+      <th>
+        耐力跑
+      </th>
+      </th>
+      <th>
+        引体向上
+      </th>
+      </th>
+      <th>
+        左眼视力
+      </th>
+      </th>
+      <th>
+        右眼视力
+      </th>
+    </thead>
+    <thead>
+    <tr v-for="(item, index) in manData" :key="index">
+      <td>{{ item.user_id }}</td>
+      <td>{{ item.user_name }}</td>
+      <td>{{ item.sex }}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    </thead>
+  </table>
+  <div style="page-break-after: always;"></div>
+  <table align="center" width="1000" cellspacing="0">
+    <h2 style="text-align: center;">2022 江西财经大学学生体质测试{{value}}班级测试表（女）</h2>
+    <img :src="womanCode" width="100" height="100" alt="" srcset="">
+    <thead>
+    <tr>
+      <th>
+        学号
+      </th>
+      <th>
+        姓名
+      </th>
+      </th>
+      <th>
+        性别
+      </th>
+      </th>
+      <th>
+        身高
+      </th>
+      </th>
+      <th>
+        体重
+      </th>
+      </th>
+      <th>
+        肺活量
+      </th>
+      <th>
+        50米
+      </th>
+      </th>
+      </th>
+      <th>
+        立定跳远
+      </th>
+      </th>
+      <th>
+        体前屈
+      </th>
+      </th>
+      <th>
+        耐力跑
+      </th>
+      </th>
+      <th>
+        仰卧起坐
+      </th>
+      </th>
+      <th>
+        左眼视力
+      </th>
+      </th>
+      <th>
+        右眼视力
+      </th>
+    </thead>
+    <thead>
+    <tr v-for="(item, index) in womanData" :key="index">
+      <td>{{ item.user_id }}</td>
+      <td>{{ item.user_name }}</td>
+      <td>{{ item.sex }}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    </thead>
+    <!-- <thead>
+        <tr>
+            <th>
+                <h1>{{ item.deptName }}</h1>
+            </th>
+        </tr>
+    </thead> -->
+  </table>
+</div>
+
+<script type="text/javascript">
+  function printArea() {
+    //设置body隐藏，并设置打印区域为可见
+    // document.body.style.visibility = 'hidden';
+    document.getElementsByClassName('oprations')[0].style.visibility = 'hidden';
+    // document.getElementsByTagName('table')[0].style.visibility = 'visible';
+    window.print();
+    location.href = 'fitness.html'
+    return false;
+  }
+
+  function geturlparam(arg) {
+    let that = this
+    // window.location.href 获取地址
+    let url = window.location.href
+    let p = url.split('?')[1]
+    let params = new URLSearchParams(p)
+    return params.get(arg);
+  }
+  window.onload = function() {
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        options: [{
+          label: 1,
+          value: 1
+        }],
+        value: '',
+        token: '',
+        datas: [],
+        classes: []
+      },
+      computed: {
+        manCode() {
+          const arr = this.datas.filter(i => {
+            return i.sex == '男'
+          });
+          let str = '';
+          arr.forEach(element => {
+            str += `${element.user_id},`
+          });
+          return 'http://api.qrserver.com/v1/create-qr-code/?size=500%C3%97500&data=' + str.slice(0, str.length - 1)
+        },
+        womanCode() {
+          const arr = this.datas.filter(i => {
+            return i.sex == '女'
+          });
+          let str = '';
+          arr.forEach(element => {
+            str += `${element.user_id},`
+          });
+          return 'http://api.qrserver.com/v1/create-qr-code/?size=500%C3%97500&data=' + str.slice(0, str.length - 1)
+        },
+        manData() {
+          console.log()
+          return this.datas.filter(i => {
+            return i.sex == '男'
+          })
+
+        },
+        womanData() {
+          return this.datas.filter(i => {
+            return i.sex == '女'
+          })
+        },
+      },
+      methods: {
+        getData(gameId) {
+          axios({
+            methods: 'get',
+            url: `http://sport.lefthand.top/class.php`,
+            headers: {
+              'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImZiYzNiYTBiLTdhNTAtNDA1OC1hNWJkLTAyNjhmNmVhYzI1ZCJ9.de7ACH_CNZZ1XZBRNM8jSVnlqhJ2Fbn9qbqSr7GuwyLHHeWeOb8hTTittjjlgS18r4PgiPQ968Za-KiJRsIRvQ'
+            }
+          }).then(res => {
+            this.classes = res.data;
+          })
+        },
+        selected() {
+          axios({
+            methods: 'get',
+            url: `http://sport.lefthand.top/people.php?class_num=${this.value}`,
+            headers: {
+              'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImZiYzNiYTBiLTdhNTAtNDA1OC1hNWJkLTAyNjhmNmVhYzI1ZCJ9.de7ACH_CNZZ1XZBRNM8jSVnlqhJ2Fbn9qbqSr7GuwyLHHeWeOb8hTTittjjlgS18r4PgiPQ968Za-KiJRsIRvQ'
+            }
+          }).then(res => {
+            this.datas = res.data;
+          })
+        }
+      },
+      mounted() {
+        // const gameId = geturlparam('gid');
+        // const token = geturlparam('token');
+        // this.token = this.token;
+        // this.getData(gameId);
+        this.getData(0);
+      },
+    });
+  }
+</script>
+
+</html>
