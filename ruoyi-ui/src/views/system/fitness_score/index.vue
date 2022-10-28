@@ -9,78 +9,78 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="身高" prop="height">
-        <el-input
-          v-model="queryParams.height"
-          placeholder="请输入身高"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="体重" prop="weight">
-        <el-input
-          v-model="queryParams.weight"
-          placeholder="请输入体重"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="左眼" prop="leftEye">
-        <el-input
-          v-model="queryParams.leftEye"
-          placeholder="请输入左眼"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="右眼" prop="rightEye">
-        <el-input
-          v-model="queryParams.rightEye"
-          placeholder="请输入右眼"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="肺活量" prop="vitalCapacity">
-        <el-input
-          v-model="queryParams.vitalCapacity"
-          placeholder="请输入肺活量"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="50米" prop="fiftyRun">
-        <el-input
-          v-model="queryParams.fiftyRun"
-          placeholder="请输入50米"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="跳远" prop="longJump">
-        <el-input
-          v-model="queryParams.longJump"
-          placeholder="请输入跳远"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="坐位体前驱" prop="sittingBodyBend">
-        <el-input
-          v-model="queryParams.sittingBodyBend"
-          placeholder="请输入坐位体前驱"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="耐力跑" prop="enduranceRunning">
-        <el-input
-          v-model="queryParams.enduranceRunning"
-          placeholder="请输入耐力跑"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="身高" prop="height">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.height"-->
+<!--          placeholder="请输入身高"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="体重" prop="weight">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.weight"-->
+<!--          placeholder="请输入体重"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="左眼" prop="leftEye">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.leftEye"-->
+<!--          placeholder="请输入左眼"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="右眼" prop="rightEye">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.rightEye"-->
+<!--          placeholder="请输入右眼"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="肺活量" prop="vitalCapacity">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.vitalCapacity"-->
+<!--          placeholder="请输入肺活量"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="50米" prop="fiftyRun">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.fiftyRun"-->
+<!--          placeholder="请输入50米"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="跳远" prop="longJump">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.longJump"-->
+<!--          placeholder="请输入跳远"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="坐位体前驱" prop="sittingBodyBend">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.sittingBodyBend"-->
+<!--          placeholder="请输入坐位体前驱"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="耐力跑" prop="enduranceRunning">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.enduranceRunning"-->
+<!--          placeholder="请输入耐力跑"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="活动id" prop="ftaId">
         <el-input
           v-model="queryParams.ftaId"
@@ -89,14 +89,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="附加项目" prop="otherItem">
-        <el-input
-          v-model="queryParams.otherItem"
-          placeholder="请输入附加项目"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="附加项目" prop="otherItem">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.otherItem"-->
+<!--          placeholder="请输入附加项目"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="是否免测" prop="isFree">
         <el-select v-model="queryParams.isFree" placeholder="请选择是否免测" clearable>
           <el-option
@@ -107,22 +107,22 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建人" prop="createUid">
-        <el-input
-          v-model="queryParams.createUid"
-          placeholder="请输入创建人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="最后修改的人" prop="updateUid">
-        <el-input
-          v-model="queryParams.updateUid"
-          placeholder="请输入最后修改的人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="创建人" prop="createUid">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.createUid"-->
+<!--          placeholder="请输入创建人"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="最后修改的人" prop="updateUid">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.updateUid"-->
+<!--          placeholder="请输入最后修改的人"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="年级" prop="grade">
         <el-select v-model="queryParams.grade" placeholder="请选择年级" clearable>
           <el-option
@@ -138,7 +138,6 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -147,7 +146,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:score:add']"
+          v-hasPermi="['system:fitness_score:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -158,7 +157,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:score:edit']"
+          v-hasPermi="['system:fitness_score:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -169,7 +168,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:score:remove']"
+          v-hasPermi="['system:fitness_score:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -179,7 +178,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:score:export']"
+          v-hasPermi="['system:fitness_score:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -188,23 +187,23 @@
     <el-table v-loading="loading" :data="scoreList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键id" align="center" prop="id" />
-      <el-table-column label="学号" align="center" prop="userId" />
-      <el-table-column label="身高" align="center" prop="height" />
-      <el-table-column label="体重" align="center" prop="weight" />
-      <el-table-column label="左眼" align="center" prop="leftEye" />
-      <el-table-column label="右眼" align="center" prop="rightEye" />
-      <el-table-column label="肺活量" align="center" prop="vitalCapacity" />
-      <el-table-column label="50米" align="center" prop="fiftyRun" />
-      <el-table-column label="跳远" align="center" prop="longJump" />
-      <el-table-column label="坐位体前驱" align="center" prop="sittingBodyBend" />
-      <el-table-column label="耐力跑" align="center" prop="enduranceRunning" />
       <el-table-column label="活动id" align="center" prop="ftaId" />
-      <el-table-column label="附加项目" align="center" prop="otherItem" />
+      <el-table-column label="学号" align="center" prop="userId" />
       <el-table-column label="是否免测" align="center" prop="isFree">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_yes_no" :value="scope.row.isFree"/>
         </template>
       </el-table-column>
+      <el-table-column label="肺活量" align="center" prop="vitalCapacity" />
+      <el-table-column label="50米" align="center" prop="fiftyRun" />
+      <el-table-column label="跳远" align="center" prop="longJump" />
+      <el-table-column label="坐位体前驱" align="center" prop="sittingBodyBend" />
+      <el-table-column label="耐力跑" align="center" prop="enduranceRunning" />
+      <el-table-column label="附加项目" align="center" prop="otherItem" />
+      <el-table-column label="身高" align="center" prop="height" />
+      <el-table-column label="体重" align="center" prop="weight" />
+      <el-table-column label="左眼" align="center" prop="leftEye" />
+      <el-table-column label="右眼" align="center" prop="rightEye" />
       <el-table-column label="备注信息" align="center" prop="remark" />
       <el-table-column label="创建人" align="center" prop="createUid" />
       <el-table-column label="最后修改的人" align="center" prop="updateUid" />
@@ -220,14 +219,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:score:edit']"
+            v-hasPermi="['system:fitness_score:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:score:remove']"
+            v-hasPermi="['system:fitness_score:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
