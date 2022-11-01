@@ -161,6 +161,7 @@ public class FitnessTestGradeController extends BaseController
     /**
      * 批量录入成绩
      */
+    @Log(title = "体测成绩", businessType = BusinessType.INSERT)
     @PostMapping("/insertGradeList")
     /*public AjaxResult insertGradeList(@RequestBody List<FitnessTestGrade>fitnessTestGrades){
         InsertFitnessTestGradeVo insertFitnessTestGradeVo = fitnessTestGradeService.insertGradeList(fitnessTestGrades);
