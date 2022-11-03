@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.Vo.FitnessPassStatusVo;
 import com.ruoyi.system.domain.Vo.FitnessTestGradeVo;
 import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
 import com.ruoyi.system.mapper.SysUserMapper;
@@ -214,5 +215,17 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
             insertFitnessTestGradeVo.setAllInsertSuccess(false);
         }
         return insertFitnessTestGradeVo;
+    }
+
+    /**
+     * 查询成绩合格情况
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public FitnessPassStatusVo queryPass(String userId) {
+        //TODO：查询成绩合格情况
+        return null;
     }
 }

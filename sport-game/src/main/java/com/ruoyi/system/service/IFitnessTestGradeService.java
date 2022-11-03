@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.FitnessTestGrade;
+import com.ruoyi.system.domain.Vo.FitnessPassStatusVo;
 import com.ruoyi.system.domain.Vo.FitnessTestGradeVo;
 import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -87,5 +88,12 @@ public interface IFitnessTestGradeService
      * @return
      */
     public InsertFitnessTestGradeVo insertGradeList(List<FitnessTestGrade> fitnessTestGrades);
+
+    /**
+     * 查询成绩合格情况
+     * @param userId
+     * @return
+     */
+    public FitnessPassStatusVo queryPass(String userId);
 
 }

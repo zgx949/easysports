@@ -7,8 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.FitnessTestBaseInfo;
 import com.ruoyi.system.domain.FitnessTestScore;
+import com.ruoyi.system.domain.Vo.FitnessPassStatusVo;
 import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
 import com.ruoyi.system.service.IFitnessTestBaseInfoService;
 import com.ruoyi.system.service.IFitnessTestScoreService;
@@ -175,4 +177,21 @@ public class FitnessTestGradeController extends BaseController
         }
         return AjaxResult.success("全部成绩录入成功",successCount);
     }
+    /**
+     * 查询成绩合格情况
+     */
+    @Log(title = "体测成绩", businessType = BusinessType.INSERT)
+    @GetMapping("/pass")
+    public AjaxResult queryPass(String user_id){
+        // 这里的userid是学号
+        user_id = user_id.trim();
+        if (StringUtils.isEmpty(user_id)) {
+            return AjaxResult.error("学号不得为空");
+        } else if (user_id.length() != 7) {
+            return AjaxResult.error("学号必须是7位");
+        }
+
+        return AjaxResult.success("查询成功", fitnessTestGradeService.queryPass(user_id));
+    }
+
 }
