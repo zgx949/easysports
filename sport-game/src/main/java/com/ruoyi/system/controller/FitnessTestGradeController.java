@@ -2,9 +2,12 @@ package com.ruoyi.system.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.annotation.DelPassCache;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
@@ -57,6 +60,9 @@ public class FitnessTestGradeController extends BaseController
 
     @Autowired
     private IFitnessTestScoreService fitnessTestScoreService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询体测成绩列表
@@ -164,12 +170,8 @@ public class FitnessTestGradeController extends BaseController
      * 批量录入成绩
      */
     @Log(title = "体测成绩", businessType = BusinessType.INSERT)
+    @DelPassCache // 自动删除成绩信息的缓存
     @PostMapping("/insertGradeList")
-    /*public AjaxResult insertGradeList(@RequestBody List<FitnessTestGrade>fitnessTestGrades){
-        InsertFitnessTestGradeVo insertFitnessTestGradeVo = fitnessTestGradeService.insertGradeList(fitnessTestGrades);
-        return insertFitnessTestGradeVo.isAllInsertSuccess()?AjaxResult.success("全部插入成功",insertFitnessTestGradeVo):AjaxResult.success("存在插入失败",insertFitnessTestGradeVo);
-
-    }*/
     public AjaxResult insertGradeList(@RequestBody List<FitnessTestScore>fitnessTestScores){
         int successCount = fitnessTestScoreService.insertFitnessTestScoreList(fitnessTestScores);
         if(successCount!=fitnessTestScores.size()){
@@ -180,18 +182,27 @@ public class FitnessTestGradeController extends BaseController
     /**
      * 查询成绩合格情况
      */
-    @Log(title = "体测成绩", businessType = BusinessType.INSERT)
     @GetMapping("/pass")
-    public AjaxResult queryPass(String user_id){
+    public AjaxResult queryPass(String userId){
         // 这里的userid是学号
-        user_id = user_id.trim();
-        if (StringUtils.isEmpty(user_id)) {
+        if (StringUtils.isEmpty(userId)) {
             return AjaxResult.error("学号不得为空");
-        } else if (user_id.length() != 7) {
+        }
+        userId = userId.trim();
+        if (userId.length() != 7) {
             return AjaxResult.error("学号必须是7位");
         }
 
-        return AjaxResult.success("查询成功", fitnessTestGradeService.queryPass(user_id));
+        String key = "fitness:pass:" + userId;
+        FitnessPassStatusVo result = redisCache.getCacheObject(key);
+        // 不存在缓存
+        if (result == null) {
+            result = fitnessTestGradeService.queryPass(userId);
+            // 缓存十分钟
+            redisCache.setCacheObject(key, result, 10, TimeUnit.MINUTES);
+        }
+
+        return AjaxResult.success("查询成功", result);
     }
 
 }

@@ -243,12 +243,14 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
         // 用户基本信息
         FitnessBaseInfoVo baseInfoVo = new FitnessBaseInfoVo();
 
+        if (baseInfo != null) {
+            baseInfoVo.setDept(baseInfo.getDept());
+            baseInfoVo.setUserId(baseInfo.getUserId());
+            baseInfoVo.setUserName(baseInfo.getUserName());
+            baseInfoVo.setSex(baseInfo.getSex());
+            baseInfoVo.setClassNum(baseInfo.getClassNum());
+        }
 
-        baseInfoVo.setDept(baseInfo.getDept());
-        baseInfoVo.setUserId(baseInfo.getUserId());
-        baseInfoVo.setUserName(baseInfo.getUserName());
-        baseInfoVo.setSex(baseInfo.getSex());
-        baseInfoVo.setClassNum(baseInfo.getClassNum());
         result.setUserInfo(baseInfoVo);
 
         // 成绩查询条件
@@ -257,7 +259,13 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
         List<FitnessTestScore> scores = fitnessTestScoreMapper.selectFitnessTestScoreList(condition);
         for (FitnessTestScore score : scores) {
             FitnessPassScoreVo tempPassScoreVo = new FitnessPassScoreVo();
-            tempPassScoreVo.setActivityName(fitnessTestActivityMapper.selectFitnessTestActivityById(score.getFtaId()).getName());
+            FitnessTestActivity activity = fitnessTestActivityMapper.selectFitnessTestActivityById(score.getFtaId());
+            if (activity == null) {
+                tempPassScoreVo.setActivityName("未知活动");
+            } else {
+                tempPassScoreVo.setActivityName(activity.getName());
+            }
+
             tempPassScoreVo.setHeight(score.getHeight());
             tempPassScoreVo.setWeight(score.getWeight());
             tempPassScoreVo.setLeftEye(score.getLeftEye());
@@ -270,9 +278,11 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
             tempPassScoreVo.setOtherItemPass(true);
             tempPassScoreVo.setVitalCapacityPass(true);
 
+            scorePassList.add(tempPassScoreVo);
+
         }
 
         result.setScores(scorePassList);
-        return null;
+        return result;
     }
 }
