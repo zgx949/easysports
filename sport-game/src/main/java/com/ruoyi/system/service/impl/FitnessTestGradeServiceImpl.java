@@ -8,13 +8,13 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.system.domain.Vo.FitnessPassStatusVo;
-import com.ruoyi.system.domain.Vo.FitnessTestGradeVo;
-import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
-import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.system.domain.FitnessTestActivity;
+import com.ruoyi.system.domain.FitnessTestBaseInfo;
+import com.ruoyi.system.domain.FitnessTestScore;
+import com.ruoyi.system.domain.Vo.*;
+import com.ruoyi.system.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.system.mapper.FitnessTestGradeMapper;
 import com.ruoyi.system.domain.FitnessTestGrade;
 import com.ruoyi.system.service.IFitnessTestGradeService;
 import org.springframework.util.CollectionUtils;
@@ -31,6 +31,15 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
 {
     @Autowired
     private FitnessTestGradeMapper fitnessTestGradeMapper;
+
+    @Autowired
+    private FitnessTestBaseInfoMapper fitnessTestBaseInfoMapper;
+
+    @Autowired
+    private FitnessTestScoreMapper fitnessTestScoreMapper;
+
+    @Autowired
+    private FitnessTestActivityMapper fitnessTestActivityMapper;
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -225,7 +234,45 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
      */
     @Override
     public FitnessPassStatusVo queryPass(String userId) {
-        //TODO：查询成绩合格情况
+        // TODO：查询成绩合格情况
+        // 出参
+        FitnessPassStatusVo result = new FitnessPassStatusVo();
+        FitnessTestBaseInfo baseInfo = fitnessTestBaseInfoMapper.selectBaseInfoByUserId(userId);
+        // 成绩合格情况集合
+        List<FitnessPassScoreVo> scorePassList = new ArrayList<>();
+        // 用户基本信息
+        FitnessBaseInfoVo baseInfoVo = new FitnessBaseInfoVo();
+
+
+        baseInfoVo.setDept(baseInfo.getDept());
+        baseInfoVo.setUserId(baseInfo.getUserId());
+        baseInfoVo.setUserName(baseInfo.getUserName());
+        baseInfoVo.setSex(baseInfo.getSex());
+        baseInfoVo.setClassNum(baseInfo.getClassNum());
+        result.setUserInfo(baseInfoVo);
+
+        // 成绩查询条件
+        FitnessTestScore condition = new FitnessTestScore();
+        condition.setUserId(userId);
+        List<FitnessTestScore> scores = fitnessTestScoreMapper.selectFitnessTestScoreList(condition);
+        for (FitnessTestScore score : scores) {
+            FitnessPassScoreVo tempPassScoreVo = new FitnessPassScoreVo();
+            tempPassScoreVo.setActivityName(fitnessTestActivityMapper.selectFitnessTestActivityById(score.getFtaId()).getName());
+            tempPassScoreVo.setHeight(score.getHeight());
+            tempPassScoreVo.setWeight(score.getWeight());
+            tempPassScoreVo.setLeftEye(score.getLeftEye());
+            tempPassScoreVo.setRightEye(score.getLeftEye());
+            // TODO: 设置补测们限值
+            tempPassScoreVo.setEnduranceRunningPass(false);
+            tempPassScoreVo.setFiftyRunPass(false);
+            tempPassScoreVo.setSittingBodyBendPass(false);
+            tempPassScoreVo.setLongJumpPass(true);
+            tempPassScoreVo.setOtherItemPass(true);
+            tempPassScoreVo.setVitalCapacityPass(true);
+
+        }
+
+        result.setScores(scorePassList);
         return null;
     }
 }
