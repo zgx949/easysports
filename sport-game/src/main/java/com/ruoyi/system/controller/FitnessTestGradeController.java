@@ -180,7 +180,6 @@ public class FitnessTestGradeController extends BaseController
     /**
      * 查询成绩合格情况
      */
-    @Log(title = "体测成绩", businessType = BusinessType.INSERT)
     @GetMapping("/pass")
     public AjaxResult queryPass(String user_id){
         // 这里的userid是学号
