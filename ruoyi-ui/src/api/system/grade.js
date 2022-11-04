@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// 查询体测合格情况
+export function queryPass(userId) {
+  return request({
+    url: '/system/grade/pass',
+    method: 'get',
+    params: {userId: userId}
+  })
+}
 
 // 批量查询用户信息
 export function selectSysUserListByNames(data) {

@@ -39,7 +39,7 @@ import VueMeta from 'vue-meta'
 import DictData from '@/components/DictData'
 // 打印PDF
 // import htmlToPdf from '@/utils/htmlToPdf'
-
+import '@/assets/iconfont/iconfont.css'
 
 
 // 全局方法挂载

@@ -1,0 +1,37 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "16328021",
+      "name": "成绩",
+      "font_class": "chengji",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "18251903",
+      "name": "反馈",
+      "font_class": "fankui",
+      "unicode": "ef51",
+      "unicode_decimal": 61265
+    },
+    {
+      "icon_id": "26813554",
+      "name": "邀请加入",
+      "font_class": "yaoqingjiaru",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "29474671",
+      "name": "关于1",
+      "font_class": "guanyu1",
+      "unicode": "e692",
+      "unicode_decimal": 59026
+    }
+  ]
+}
