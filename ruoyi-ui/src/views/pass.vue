@@ -1,69 +1,77 @@
 <template>
   <div class="main">
-    <div style="display: flex; justify-content:center;"><img :src="logo" width="100" height="100"/></div>
-    <div class="headline">补测资格审查</div>
+    <!-- <div style="display: flex; justify-content:center;"><img :src="logo" width="100" height="100"/></div> -->
+    <div class="headline">EasySports补测资格审查</div>
     <el-row :gutter="10">
       <el-col :span="6">
-        <button>错误反馈</button>
+        <button class="menu">错误反馈</button>
       </el-col>
       <el-col :span="6">
-        <button>成绩查询</button>
+        <button class="menu">成绩查询</button>
       </el-col>
       <el-col :span="6">
-        <button>关于我们</button>
+        <button class="menu">关于我们</button>
       </el-col>
       <el-col :span="6">
-        <button>加入我们</button>
+        <button class="menu">加入我们</button>
       </el-col>
     </el-row>
-    <div class="info">
-      <el-descriptions class="margin-top" title="个人信息" :column="2" :size="'large'" border>
-        <template slot="extra">
-          <el-button type="primary" size="small">补测码</el-button>
-        </template>
-        <el-descriptions-item>
-          <template slot="label">
-            <i class="el-icon-location-outline"></i>
-            班级
-          </template>
-          {{ userInfo.dept }} - {{ userInfo.classNum }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
-            <i class="el-icon-question"></i>
-            性别
-          </template>
-          <el-tag size="small">{{ userInfo.sex == 0 ? '男' : userInfo.sex == 1 ? '女' : '未知' }}</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
-            <i class="el-icon-info"></i>
-            学号
-          </template>
-          {{ userInfo.userId }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label">
-            <i class="el-icon-user"></i>
-            姓名
-          </template>
-          {{ userInfo.userName }}
-        </el-descriptions-item>
-      </el-descriptions>
-    </div>
-    <el-dialog
-      title="请先设置学号绑定设备"
-      :visible.sync="dialogVisible"
-      width="90%">
+    <el-row :gutter="10">
+      <el-col :span="12">
+        <div class="info">
+          <el-descriptions class="margin-top" title="个人信息" :column="1" :size="'large'" border>
+            <el-descriptions-item label-class-name="desc-item" content-class-name="desc-item">
+              <template slot="label">
+                <i class="el-icon-location-outline"></i>
+                班级
+              </template>
+              <!-- {{ userInfo.dept }} -  -->
+              {{ userInfo.classNum }}
+            </el-descriptions-item>
+            <el-descriptions-item  label-class-name="desc-item1" content-class-name="desc-item1">
+              <template slot="label">
+                <i class="el-icon-question"></i>
+                性别
+              </template>
+              <el-tag size="small">{{ userInfo.sex == 0 ? '男' : userInfo.sex == 1 ? '女' : '未知' }}</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item  label-class-name="desc-item" content-class-name="desc-item">
+              <template slot="label">
+                <i class="el-icon-info"></i>
+                学号
+              </template>
+              {{ userInfo.userId }}
+            </el-descriptions-item>
+            <el-descriptions-item label-class-name="desc-item1" content-class-name="desc-item1">
+              <template slot="label">
+                <i class="el-icon-user"></i>
+                姓名
+              </template>
+              {{ userInfo.userName }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <input type="text" placeholder="七位数学号" style="background-color: #F18962; padding-left: 1rem; margin-left: 1rem; width: 60%; height: 40px; border: 0; border-radius: 20px;">
+        <el-button class="menu" icon="el-icon-search" circle></el-button>
+        <!-- <button><i class="el-icon-search"></i></button> -->
+        <div class="info">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=500%C3%97500&data=0200932" width="100%" height="100%">
+        </div>
+      </el-col>
+    </el-row>
+
+    <el-dialog title="请先设置学号绑定设备" :visible.sync="dialogVisible" width="90%">
 
       <el-form :rules="rules" ref="ruleForm">
         <el-form-item label="请输入学号" prop="userId">
           <el-input v-model="userId"></el-input>
         </el-form-item>
       </el-form>
-<!--      <el-input v-model="userId">请输入学号</el-input>-->
+      <!--      <el-input v-model="userId">请输入学号</el-input>-->
       <span slot="footer" class="dialog-footer">
-<!--        <el-button @click="dialogVisible = false">取 消</el-button>-->
+        <!--        <el-button @click="dialogVisible = false">取 消</el-button>-->
         <el-button type="primary" @click="setUserId">确 定</el-button>
       </span>
     </el-dialog>
@@ -77,25 +85,25 @@
             </el-descriptions-item>
             <el-descriptions-item label="体重KG">{{ item.weight }}</el-descriptions-item>
             <el-descriptions-item label="肺活量">
-              <el-tag :type="item.vitalCapacityPass? 'success' : 'danger'">{{
+              <el-tag :type="item.vitalCapacityPass ? 'success' : 'danger'">{{
                   item.vitalCapacityPass ? '合格' : '不合格'
-                }}
+              }}
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="立定跳">
-              <el-tag :type="item.longJumpPass? 'success' : 'danger'">{{ item.longJumpPass ? '合格' : '不合格' }}</el-tag>
+              <el-tag :type="item.longJumpPass ? 'success' : 'danger'">{{ item.longJumpPass ? '合格' : '不合格' }}</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="坐位体前屈">
-              <el-tag :type="item.sittingBodyBendPass? 'success' : 'danger'">{{
+              <el-tag :type="item.sittingBodyBendPass ? 'success' : 'danger'">{{
                   item.sittingBodyBendPass ? '合格' : '不合格'
-                }}
+              }}
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="50米">
-              <el-tag :type="item.fiftyRunPass? 'success' : 'danger'">{{ item.fiftyRunPass ? '合格' : '不合格' }}</el-tag>
+              <el-tag :type="item.fiftyRunPass ? 'success' : 'danger'">{{ item.fiftyRunPass ? '合格' : '不合格' }}</el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="耐力跑">
-              <el-tag :type="item.enduranceRunningPass? 'success' : 'danger'">
+              <el-tag :type="item.enduranceRunningPass ? 'success' : 'danger'">
                 {{ item.enduranceRunningPass ? '合格' : '不合格' }}
               </el-tag>
             </el-descriptions-item>
@@ -108,8 +116,8 @@
 
 <script>
 import logoImg from '@/assets/logo/logo.png'
-import {queryPass} from "@/api/system/grade";
-import {getData} from "@/api/system/dict/data";
+import { queryPass } from "@/api/system/grade";
+import { getData } from "@/api/system/dict/data";
 import userInfo from "@/views/system/user/profile/userInfo";
 
 export default {
@@ -139,7 +147,7 @@ export default {
     }
   },
   methods: {
-    setUserId () {
+    setUserId() {
       if (/[054]\d{6}/.test(this.userId)) {
         this.getData(this.userId);
         this.dialogVisible = false;
@@ -169,13 +177,34 @@ export default {
         .then(_ => {
           done();
         })
-        .catch(_ => {});
+        .catch(_ => { });
     }
   }
 }
 </script>
 
-<style scoped>
+<!-- <style scoped> -->
+<style>
+
+.desc-item1 {
+  background: #F18962;
+}
+.desc-item {
+  background: #F1B59B;
+}
+.el-row {
+  margin-top: 1rem;
+}
+.menu {
+  font-weight: 800;
+  border-radius: 20px;
+  /* outline: none; */
+  padding: 10px;
+  background-color: #F18962;
+  border: 0;
+  margin: 0.3rem;
+}
+
 .records {
   padding: 1rem;
 }
@@ -185,10 +214,14 @@ export default {
   width: 100%;
   /*opacity:0.4;*/
   height: 100%;
+  background-color: #F8EDEB;
 }
 
 .info {
-  padding: 1rem;
+  border-radius: 10px;
+  padding: 0.5rem;
+  border: 5px solid #F18962;
+  margin: 0.5rem;
 }
 
 el-row {
@@ -205,7 +238,7 @@ el-row {
   margin: 1rem;
   font-family: headLine;
   text-align: center;
-  font-size: 30px;
+  font-size: 20px;
 
 }
 
@@ -213,7 +246,7 @@ el-row {
   font-family: "headLine";
   font-weight: 400;
   src: url("//at.alicdn.com/wf/webfont/xzgZre3sndSn/wq76e_3J9jZVmxkSFKmjG.woff2") format("woff2"),
-  url("//at.alicdn.com/wf/webfont/xzgZre3sndSn/tKI7IpX54pdGDZV_VnuvV.woff") format("woff");
+    url("//at.alicdn.com/wf/webfont/xzgZre3sndSn/tKI7IpX54pdGDZV_VnuvV.woff") format("woff");
   font-display: swap;
 }
 </style>
