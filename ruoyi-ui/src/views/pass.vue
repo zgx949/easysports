@@ -49,8 +49,6 @@
           </template>
           {{ userInfo.userName }}
         </el-descriptions-item>
-
-
       </el-descriptions>
     </div>
 
