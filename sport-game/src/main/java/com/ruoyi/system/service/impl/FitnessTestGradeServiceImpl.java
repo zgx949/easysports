@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.FitnessTestActivity;
@@ -13,6 +14,7 @@ import com.ruoyi.system.domain.FitnessTestBaseInfo;
 import com.ruoyi.system.domain.FitnessTestScore;
 import com.ruoyi.system.domain.Vo.*;
 import com.ruoyi.system.mapper.*;
+import com.ruoyi.system.utils.PassFitnessUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.domain.FitnessTestGrade;
@@ -43,6 +45,12 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private RedisCache redisCache;
+
+    @Autowired
+    private PassFitnessUtils passFitnessUtils;
 
     /**
      * 查询体测成绩
@@ -270,13 +278,20 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
             tempPassScoreVo.setWeight(score.getWeight());
             tempPassScoreVo.setLeftEye(score.getLeftEye());
             tempPassScoreVo.setRightEye(score.getLeftEye());
-            // TODO: 设置补测们限值
-            tempPassScoreVo.setEnduranceRunningPass(false);
-            tempPassScoreVo.setFiftyRunPass(false);
-            tempPassScoreVo.setSittingBodyBendPass(false);
-            tempPassScoreVo.setLongJumpPass(true);
-            tempPassScoreVo.setOtherItemPass(true);
-            tempPassScoreVo.setVitalCapacityPass(true);
+
+            if (baseInfo != null && baseInfo.getSex() != null) {
+
+                Long sex = baseInfo.getSex();
+                // TODO: 设置补测们限值
+
+                tempPassScoreVo.setEnduranceRunningPass(passFitnessUtils.longRun(sex, score.getEnduranceRunning()));
+                tempPassScoreVo.setFiftyRunPass(passFitnessUtils.fifRun(sex, score.getFiftyRun()));
+                tempPassScoreVo.setSittingBodyBendPass(passFitnessUtils.flex(sex, score.getSittingBodyBend()));
+                tempPassScoreVo.setLongJumpPass(passFitnessUtils.jump(sex, score.getLongJump()));
+                tempPassScoreVo.setOtherItemPass(passFitnessUtils.other(sex, score.getOtherItem()));
+                tempPassScoreVo.setVitalCapacityPass(passFitnessUtils.lung(sex, score.getVitalCapacity()));
+            }
+
 
             scorePassList.add(tempPassScoreVo);
 
