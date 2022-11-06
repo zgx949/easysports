@@ -39,7 +39,7 @@ import VueMeta from 'vue-meta'
 import DictData from '@/components/DictData'
 // 打印PDF
 // import htmlToPdf from '@/utils/htmlToPdf'
-import '@/assets/iconfont/iconfont.css'
+import './assets/iconfont/iconfont'
 
 
 // 全局方法挂载
@@ -78,14 +78,14 @@ DictData.install()
  */
 
 Vue.use(Element, {
-  size: Cookies.get('size') || 'medium' // set element-ui default size
+    size: Cookies.get('size') || 'medium' // set element-ui default size
 })
 
 Vue.config.productionTip = false
 
 new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
 })
