@@ -35,4 +35,91 @@ public class FitnessPassScoreVo {
     /** 耐力跑 */
     private Boolean otherItemPass;
 
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
+
+    public Long getHeight() {
+        return height;
+    }
+
+    public void setHeight(Long height) {
+        this.height = height;
+    }
+
+    public Long getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Long weight) {
+        this.weight = weight;
+    }
+
+    public Float getLeftEye() {
+        return leftEye;
+    }
+
+    public void setLeftEye(Float leftEye) {
+        this.leftEye = leftEye;
+    }
+
+    public Float getRightEye() {
+        return rightEye;
+    }
+
+    public void setRightEye(Float rightEye) {
+        this.rightEye = rightEye;
+    }
+
+    public Boolean getVitalCapacityPass() {
+        return vitalCapacityPass;
+    }
+
+    public void setVitalCapacityPass(Boolean vitalCapacityPass) {
+        this.vitalCapacityPass = vitalCapacityPass;
+    }
+
+    public Boolean getFiftyRunPass() {
+        return fiftyRunPass;
+    }
+
+    public void setFiftyRunPass(Boolean fiftyRunPass) {
+        this.fiftyRunPass = fiftyRunPass;
+    }
+
+    public Boolean getLongJumpPass() {
+        return longJumpPass;
+    }
+
+    public void setLongJumpPass(Boolean longJumpPass) {
+        this.longJumpPass = longJumpPass;
+    }
+
+    public Boolean getSittingBodyBendPass() {
+        return sittingBodyBendPass;
+    }
+
+    public void setSittingBodyBendPass(Boolean sittingBodyBendPass) {
+        this.sittingBodyBendPass = sittingBodyBendPass;
+    }
+
+    public Boolean getEnduranceRunningPass() {
+        return enduranceRunningPass;
+    }
+
+    public void setEnduranceRunningPass(Boolean enduranceRunningPass) {
+        this.enduranceRunningPass = enduranceRunningPass;
+    }
+
+    public Boolean getOtherItemPass() {
+        return otherItemPass;
+    }
+
+    public void setOtherItemPass(Boolean otherItemPass) {
+        this.otherItemPass = otherItemPass;
+    }
 }
