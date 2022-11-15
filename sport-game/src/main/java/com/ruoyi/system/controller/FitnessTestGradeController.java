@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.ruoyi.common.annotation.DelPassCache;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -18,6 +20,7 @@ import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
 import com.ruoyi.system.service.IFitnessTestBaseInfoService;
 import com.ruoyi.system.service.IFitnessTestScoreService;
 import com.ruoyi.system.service.ISysUserService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -64,6 +67,8 @@ public class FitnessTestGradeController extends BaseController
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
     /**
      * 查询体测成绩列表
      */
@@ -173,11 +178,13 @@ public class FitnessTestGradeController extends BaseController
     @DelPassCache // 自动删除成绩信息的缓存
     @PostMapping("/insertGradeList")
     public AjaxResult insertGradeList(@RequestBody List<FitnessTestScore>fitnessTestScores){
-        int successCount = fitnessTestScoreService.insertFitnessTestScoreList(fitnessTestScores);
-        if(successCount!=fitnessTestScores.size()){
-            return AjaxResult.success("录入成绩数与传入成绩数不符",successCount);
-        }
-        return AjaxResult.success("全部成绩录入成功",successCount);
+        rabbitTemplate.convertAndSend("topicExchange", fitnessTestScores);
+        return AjaxResult.success("提交成功");
+//        int successCount = fitnessTestScoreService.insertFitnessTestScoreList(fitnessTestScores);
+//        if(successCount!=fitnessTestScores.size()){
+//            return AjaxResult.success("录入成绩数与传入成绩数不符",successCount);
+//        }
+//        return AjaxResult.success("全部成绩录入成功",successCount);
     }
     /**
      * 查询成绩合格情况
