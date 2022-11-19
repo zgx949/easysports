@@ -2,6 +2,8 @@ package com.ruoyi.system.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.annotation.DelPassCache;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 体测成绩Controller
- * 
+ *
  * @author leftHand
  * @date 2022-10-18
  */
@@ -84,6 +86,7 @@ public class FitnessTestScoreController extends BaseController
      * 修改体测成绩
      */
     @PreAuthorize("@ss.hasPermi('system:fitness_score:edit')")
+    @DelPassCache
     @Log(title = "体测成绩", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody FitnessTestScore fitnessTestScore)

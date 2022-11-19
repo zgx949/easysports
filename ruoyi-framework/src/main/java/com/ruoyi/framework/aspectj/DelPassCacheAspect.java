@@ -45,14 +45,27 @@ public class DelPassCacheAspect {
     public void doAfterReturning(JoinPoint joinPoint, DelPassCache controllerDelPassCache, Object jsonResult)
     {
         String jsonString = JSONObject.toJSONString(joinPoint.getArgs()[0]);
-        List list = JSONArray.parseArray(jsonString);
-        for (Object o : list) {
-            Map<String, Object> mp = (Map<String, Object>) o;
-            String userId = String.valueOf(mp.get("userId"));
-
+        char c = jsonString.charAt(0);
+        // 入参是对象类型
+        if (c == '{') {
+            JSONObject item = JSONObject.parseObject(jsonString);
+            String userId = String.valueOf(item.get("userId"));
             // 删除缓存
             boolean delResult = redisCache.deleteObject("fitness:pass" + userId);
             logger.info("学号：{}, 存在新成绩录入, 删除缓存:{}", userId, delResult);
+
+            // 入参是数组类型
+        } else if (c == '['){
+            List list = JSONArray.parseArray(jsonString);
+            for (Object o : list) {
+                Map<String, Object> mp = (Map<String, Object>) o;
+                String userId = String.valueOf(mp.get("userId"));
+
+                // 删除缓存
+                boolean delResult = redisCache.deleteObject("fitness:pass" + userId);
+                logger.info("学号：{}, 存在新成绩录入, 删除缓存:{}", userId, delResult);
+            }
         }
+
     }
 }

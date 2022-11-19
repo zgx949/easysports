@@ -1,6 +1,7 @@
 package com.ruoyi.system.domain.Vo;
 
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.system.domain.FitnessTestScore;
 
 public class FitnessPassScoreVo {
     private String activityName;
@@ -34,6 +35,16 @@ public class FitnessPassScoreVo {
 
     /** 耐力跑 */
     private Boolean otherItemPass;
+
+    private FitnessTestScore score;
+
+    public FitnessTestScore getScore() {
+        return score;
+    }
+
+    public void setScore(FitnessTestScore score) {
+        this.score = score;
+    }
 
     public String getActivityName() {
         return activityName;

@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.hutool.crypto.digest.MD5;
 import com.ruoyi.common.annotation.DelPassCache;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.sign.Md5Utils;
 import com.ruoyi.system.domain.FitnessTestBaseInfo;
 import com.ruoyi.system.domain.FitnessTestScore;
 import com.ruoyi.system.domain.Vo.FitnessPassStatusVo;
@@ -18,6 +20,7 @@ import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
 import com.ruoyi.system.service.IFitnessTestBaseInfoService;
 import com.ruoyi.system.service.IFitnessTestScoreService;
 import com.ruoyi.system.service.ISysUserService;
+import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -158,6 +161,7 @@ public class FitnessTestGradeController extends BaseController
         if(CollectionUtils.isEmpty(userIds)){
             return AjaxResult.success("学号集合为空",userIds);
         }
+
         List<FitnessTestBaseInfo> fitnessTestBaseInfos = fitnessTestBaseInfoService.selectBaseInfoByUserIds(userIds);
         if(fitnessTestBaseInfos.size()==userIds.size()){
             return AjaxResult.success("全部信息查询成功",fitnessTestBaseInfos);

@@ -267,6 +267,7 @@ public class FitnessTestGradeServiceImpl implements IFitnessTestGradeService
         List<FitnessTestScore> scores = fitnessTestScoreMapper.selectFitnessTestScoreList(condition);
         for (FitnessTestScore score : scores) {
             FitnessPassScoreVo tempPassScoreVo = new FitnessPassScoreVo();
+            tempPassScoreVo.setScore(score);
             FitnessTestActivity activity = fitnessTestActivityMapper.selectFitnessTestActivityById(score.getFtaId());
             if (activity == null) {
                 tempPassScoreVo.setActivityName("未知活动");

@@ -2,6 +2,11 @@ package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.sign.Md5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.FitnessTestBaseInfoMapper;
@@ -11,19 +16,21 @@ import org.springframework.util.ObjectUtils;
 
 /**
  * 用户信息Service业务层处理
- * 
+ *
  * @author leftHand
  * @date 2022-10-17
  */
 @Service
-public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoService 
+public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoService
 {
     @Autowired
     private FitnessTestBaseInfoMapper fitnessTestBaseInfoMapper;
 
+    @Autowired
+    private RedisCache redisCache;
     /**
      * 查询用户信息
-     * 
+     *
      * @param id 用户信息主键
      * @return 用户信息
      */
@@ -35,7 +42,7 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
 
     /**
      * 查询用户信息列表
-     * 
+     *
      * @param fitnessTestBaseInfo 用户信息
      * @return 用户信息
      */
@@ -47,7 +54,7 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
 
     /**
      * 新增用户信息
-     * 
+     *
      * @param fitnessTestBaseInfo 用户信息
      * @return 结果
      */
@@ -59,7 +66,7 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
 
     /**
      * 修改用户信息
-     * 
+     *
      * @param fitnessTestBaseInfo 用户信息
      * @return 结果
      */
@@ -71,7 +78,7 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
 
     /**
      * 批量删除用户信息
-     * 
+     *
      * @param ids 需要删除的用户信息主键
      * @return 结果
      */
@@ -83,7 +90,7 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
 
     /**
      * 删除用户信息信息
-     * 
+     *
      * @param id 用户信息主键
      * @return 结果
      */
@@ -100,6 +107,14 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
      */
     @Override
     public List<FitnessTestBaseInfo> selectBaseInfoByUserIds(List<String> userIds) {
+        // 如果缓存已有数据
+        String hash = Md5Utils.hash(userIds.toString());
+        List<FitnessTestBaseInfo> cacheObject = redisCache.getCacheObject(String.format("qrCodeCache:%s", hash));
+        // 缓存存在，并且第一个学号和缓存一致（防止哈希冲突问题）
+        if (cacheObject != null && cacheObject.size() > 0 && cacheObject.get(0).getUserId().equals(userIds.get(0))) {
+            return cacheObject;
+        }
+
         List<FitnessTestBaseInfo> fitnessTestBaseInfos=new ArrayList<>();
         for(String userId:userIds){
             FitnessTestBaseInfo fitnessTestBaseInfo = fitnessTestBaseInfoMapper.selectBaseInfoByUserId(userId);
@@ -111,6 +126,8 @@ public class FitnessTestBaseInfoServiceImpl implements IFitnessTestBaseInfoServi
                 fitnessTestBaseInfos.add(fitnessTestBaseInfo);
             }
         }
+        // 缓存
+        redisCache.setCacheObject(String.format("qrCodeCache:%s", hash), fitnessTestBaseInfos, 12,TimeUnit.HOURS);
         return fitnessTestBaseInfos;
     }
 }
