@@ -73,10 +73,12 @@
         </div>
       </el-col>
       <el-col :span="12">
-        <input type="text" 
+        <input type="text"
           placeholder="七位数学号"
           v-model="userId"
-          style="background-color: #F18962; padding-left: 1rem; margin-left: 1rem; width: 60%; height: 40px; border: 0; border-radius: 20px;" />
+           onfocus="this.placeholder=''"
+           onblur="this.placeholder='七位数学号'"
+          style="background-color: #F18962; padding-left: 1rem; margin-left: 1rem; width: 60%; height: 40px; border: 0; border-radius: 8px;" />
         <el-button class="menu" icon="el-icon-search" circle @click="getData(userId)"></el-button>
         <div class="info">
           <div style="text-align: center; margin: 3px; font-family: headLine;font-size: 20px;">补测码: </div>
@@ -121,13 +123,13 @@
           <el-tag class="tag">胡友</el-tag>
           <el-tag class="tag">郑国相</el-tag>
       </el-card>
-      
-      
+
+
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="setUserId">确 定</el-button>
       </span>
     </el-dialog>
-  
+
     <div class="records">
       <el-divider>成绩记录</el-divider>
       <div v-for="(item, index) in scores" :key="index">
@@ -169,6 +171,39 @@
         </el-card>
       </div>
     </div>
+
+    <el-dialog
+    :visible.sync="queryVisible"
+    width="80%">
+      <div v-for="(item, index) in scores" :key="index">
+        <el-card class="box-card">
+          <el-descriptions title="体测成绩单" :column="1" border>
+            <el-descriptions-item label="身高CM" label-class-name="my-label" content-class-name="my-content">
+              {{ item.score.height }}
+            </el-descriptions-item>
+            <el-descriptions-item label="体重KG">{{ item.score.weight }}</el-descriptions-item>
+            <el-descriptions-item label="肺活量">
+              {{item.score.vitalCapacity}}
+            </el-descriptions-item>
+            <el-descriptions-item label="立定跳">
+              {{item.score.longJump}}
+            </el-descriptions-item>
+            <el-descriptions-item label="坐位体前屈">
+              {{item.score.sittingBodyBend}}
+            </el-descriptions-item>
+            <el-descriptions-item label="50米">
+              {{item.score.fiftyRun}}
+            </el-descriptions-item>
+            <el-descriptions-item label="耐力跑">
+              {{item.score.enduranceRunning}}
+            </el-descriptions-item>
+            <el-descriptions-item label="附加项目">
+              {{item.score.otherItem}}
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-card>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -188,6 +223,7 @@ export default {
       scores: [],
       userId: '',
       dialogVisible: false,
+      queryVisible: false,
       rules: {
         userId: [
           { required: true, message: '请输入7位数学号', trigger: 'blur' },
@@ -210,7 +246,11 @@ export default {
       window.open(url);
     },
     toQyeryScore() {
-      this.$message.error("成绩查询暂未开放")
+      if(!this.userInfo.userId){
+        this.$message.warning("未查询到学号")
+        return
+      }
+      this.queryVisible = true;
     },
     about() {
       this.dialogVisible = true;
@@ -238,7 +278,6 @@ export default {
           this.$message.error(res.msg);
           localStorage.removeItem('userId');
         }
-        console.log(res.data);
       })
     },
     handleClose(done) {
@@ -254,6 +293,9 @@ export default {
 
 <!-- <style scoped> -->
 <style>
+input::placeholder{
+  color: #FFFFFF;
+}
 .tag {
   margin: 3px;
 }
