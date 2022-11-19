@@ -5,6 +5,8 @@ import com.ruoyi.system.mapper.SportRegistrationsMapper;
 import com.ruoyi.system.service.impl.SportRegistrationsServiceImpl;
 import com.ruoyi.system.utils.WordUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
@@ -62,6 +64,13 @@ public class SportRegistrationsTest {
 
         WordUtils.fileWriterMethod("C:\\Users\\Administrator\\Desktop\\模板\\1.doc", xml);
 
+    }
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Test
+    public void sendMsg() {
+        rabbitTemplate.convertAndSend("topicExchange","{\"test\":0}");
     }
 
 
