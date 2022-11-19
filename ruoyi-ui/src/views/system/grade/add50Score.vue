@@ -149,9 +149,10 @@ export default {
       let data = [];
       for (let i = 0; i < this.userDatas.length; i++) {
         const item = this.userDatas[i];
+        debugger
         data.push({
           userId: item.idcard,
-          fiftyRun: item.second + 0.01 * item.m,
+          fiftyRun: item.second + 0.01 * (item.m? item.m : 0),
           ftaId: this.formData.actId
           // itemId: this.itemId,
           // ftaId: this.formData.actId,
