@@ -6,6 +6,7 @@ import com.ruoyi.system.domain.FitnessTestActivity;
 import com.ruoyi.system.domain.FitnessTestGrade;
 import com.ruoyi.system.domain.SportItem;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * @author: LeftHand
  * @create: 2022-08-25 18:48
  **/
-public class FitnessTestGradeVo {
+public class FitnessTestGradeVo implements Serializable {
     private Long userId;
 
     private String userName;

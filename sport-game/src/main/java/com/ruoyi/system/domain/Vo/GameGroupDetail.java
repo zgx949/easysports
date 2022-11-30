@@ -1,12 +1,14 @@
 package com.ruoyi.system.domain.Vo;
 
+import java.io.Serializable;
+
 /**
  * @program: Ruoyi-Vue
  * @description: 比赛分组详细信息
  * @author: zgx
  * @create: 2022-09-17 09:26
  **/
-public class GameGroupDetail {
+public class GameGroupDetail implements Serializable {
     private String groupName;
     private String groupTitle;
     private String yi = "一";

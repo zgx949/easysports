@@ -1,8 +1,9 @@
 package com.ruoyi.system.domain.Vo;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class FitnessPassStatusVo {
+public class FitnessPassStatusVo implements Serializable {
     private FitnessBaseInfoVo userInfo;
     private List<FitnessPassScoreVo> scores;
 

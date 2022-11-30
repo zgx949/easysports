@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.Vo;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @author: LeftHand
  * @create: 2022-09-15 21:05
  **/
-public class RegisterReportVo {
+public class RegisterReportVo implements Serializable {
     private String num;
     private String name;
     private String userType;

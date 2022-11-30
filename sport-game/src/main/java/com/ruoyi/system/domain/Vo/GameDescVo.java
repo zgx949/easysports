@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.Vo;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @author: LeftHand
  * @create: 2022-09-16 12:29
  **/
-public class GameDescVo {
+public class GameDescVo implements Serializable {
     private int index;
     public String gameName;
     public String groupCount;

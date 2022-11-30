@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class GameResultVo {
+public class GameResultVo implements Serializable {
 
     private String username;
 

@@ -2,6 +2,7 @@ package com.ruoyi.system.domain.Vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
  * @Data 2022/9/15 11:34
  */
 @Data
-public class GameSequenceBookVO {
+public class GameSequenceBookVO implements Serializable {
 
     private String leader;
 

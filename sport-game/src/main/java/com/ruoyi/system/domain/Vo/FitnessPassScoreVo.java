@@ -1,9 +1,12 @@
 package com.ruoyi.system.domain.Vo;
 
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
 import com.ruoyi.system.domain.FitnessTestScore;
 
-public class FitnessPassScoreVo {
+import java.io.Serializable;
+
+public class FitnessPassScoreVo implements Serializable {
     private String activityName;
 
     @Excel(name = "身高")

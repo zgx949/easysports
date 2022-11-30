@@ -1,8 +1,11 @@
 package com.ruoyi.system.domain.Vo;
 
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
 
-public class FitnessBaseInfoVo {
+import java.io.Serializable;
+
+public class FitnessBaseInfoVo extends BaseEntity {
 
     /** 学号 */
     private String userId;

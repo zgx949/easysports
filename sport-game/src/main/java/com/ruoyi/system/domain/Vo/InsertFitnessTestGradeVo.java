@@ -2,6 +2,7 @@ package com.ruoyi.system.domain.Vo;
 
 import com.ruoyi.system.domain.FitnessTestGrade;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * Date: 2022/10/15 15:38
  * Description :
  */
-public class InsertFitnessTestGradeVo {
+public class InsertFitnessTestGradeVo implements Serializable {
     private int successCount;
     private List<FitnessTestGrade> failInsertList;
     private boolean isAllInsertSuccess;
