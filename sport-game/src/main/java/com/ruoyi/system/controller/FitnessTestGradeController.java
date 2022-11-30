@@ -17,6 +17,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.sign.Md5Utils;
 import com.ruoyi.system.domain.FitnessTestBaseInfo;
 import com.ruoyi.system.domain.FitnessTestScore;
+import com.ruoyi.system.domain.Vo.FitnessBaseInfoVo;
 import com.ruoyi.system.domain.Vo.FitnessPassStatusVo;
 import com.ruoyi.system.domain.Vo.InsertFitnessTestGradeVo;
 import com.ruoyi.system.service.IFitnessTestBaseInfoService;
@@ -210,6 +211,8 @@ public class FitnessTestGradeController extends BaseController
             result = fitnessTestGradeService.queryPass(userId);
             // 缓存十分钟
             redisCache.setCacheObject(key, result, 10, TimeUnit.MINUTES);
+            // 预热班级里其他同学的缓存
+            rabbitTemplate.convertAndSend("cacheClass", result.getUserInfo());
         }
 
         return AjaxResult.success("查询成功", result);
