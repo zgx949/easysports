@@ -69,7 +69,7 @@ public class FitnessScoreConsumer {
     public void consumeCacheClassScore(FitnessBaseInfoVo info) {
         // 防止空条件导致把所有信息调出来
         if (info.getClassNum() == null || info.getSex() == null) {
-            logger.info("调剂为空，班级 -> {}，性别 -> {}", null, null);
+            logger.info("条件为空，班级 -> {}，性别 -> {}", null, null);
             return;
         }
         logger.info("出现查询，缓存预热: 班级 ->{}, 性别 ->{}", info.getClassNum(), info.getSex());
@@ -77,6 +77,7 @@ public class FitnessScoreConsumer {
         condition.setSex(info.getSex());
         condition.setClassNum(info.getClassNum());
         List<FitnessTestBaseInfo> users = fitnessTestBaseInfo.selectFitnessTestBaseInfoList(condition);
+        int count = 0;
         for (FitnessTestBaseInfo user : users) {
             String key = "fitness:pass:" + user.getUserId();
             FitnessPassStatusVo result = redisCache.getCacheObject(key);
@@ -86,6 +87,9 @@ public class FitnessScoreConsumer {
             }
             // 缓存十分钟
             redisCache.setCacheObject(key, result, 10, TimeUnit.MINUTES);
+            count++;
+            // 限制缓存上限为60
+            if (count > 60) break;
         }
     }
 }
