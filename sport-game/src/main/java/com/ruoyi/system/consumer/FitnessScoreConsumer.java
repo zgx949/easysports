@@ -67,6 +67,11 @@ public class FitnessScoreConsumer {
 
     @RabbitListener(queues = "cacheClass")
     public void consumeCacheClassScore(FitnessBaseInfoVo info) {
+        // 防止空条件导致把所有信息调出来
+        if (info.getClassNum() == null || info.getSex() == null) {
+            logger.info("调剂为空，班级 -> {}，性别 -> {}", null, null);
+            return;
+        }
         logger.info("出现查询，缓存预热: 班级 ->{}, 性别 ->{}", info.getClassNum(), info.getSex());
         FitnessTestBaseInfo condition = new FitnessTestBaseInfo();
         condition.setSex(info.getSex());
