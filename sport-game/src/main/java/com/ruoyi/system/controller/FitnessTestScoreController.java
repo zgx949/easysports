@@ -132,4 +132,10 @@ public class FitnessTestScoreController extends BaseController
         }
 
     }
+
+    @Log(title = "体测成绩", businessType = BusinessType.UPDATE)
+    @PutMapping("/updateFourBasicScore")
+    public AjaxResult updateFourBasicScore(@RequestBody FitnessTestScore fitnessTestScore){
+        return toAjax(fitnessTestScoreService.updateFourBasicScore(fitnessTestScore));
+    }
 }

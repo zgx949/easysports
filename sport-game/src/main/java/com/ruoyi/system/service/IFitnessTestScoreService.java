@@ -79,4 +79,11 @@ public interface IFitnessTestScoreService
 
 
 
+
+    /**
+     * 通过学号和体测活动id更新身高、体重、左右眼视力四项基本数据
+     * @param fitnessTestScore
+     * @return
+     */
+    public int updateFourBasicScore(FitnessTestScore fitnessTestScore);
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.FitnessTestScoreMapper;
 import com.ruoyi.system.domain.FitnessTestScore;
 import com.ruoyi.system.service.IFitnessTestScoreService;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 体测成绩Service业务层处理
@@ -134,5 +135,16 @@ public class FitnessTestScoreServiceImpl implements IFitnessTestScoreService
     @Override
     public int refreshScore(List<FitnessTestScore> fitnessTestScores) {
         return 0;
+    }
+
+
+    /**
+     * 通过学号和体测活动id更新身高、体重、左右眼视力四项基本数据
+     * @param fitnessTestScore
+     * @return
+     */
+    @Override
+    public int updateFourBasicScore( FitnessTestScore fitnessTestScore) {
+        return fitnessTestScoreMapper.updateFourBasicScore(fitnessTestScore);
     }
 }
