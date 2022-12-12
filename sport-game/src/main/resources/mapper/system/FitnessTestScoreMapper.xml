@@ -153,6 +153,17 @@
         where user_id = #{userId} and fta_id = #{ftaId}
     </update>
 
+    <update id="updateFourBasicScore">
+        update fitness_test_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="height != null">height = #{height},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="leftEye != null">left_eye = #{leftEye},</if>
+            <if test="rightEye != null">right_eye = #{rightEye},</if>
+        </trim>
+        where user_id = #{userId} and fta_id = #{ftaId}
+    </update>
+
     <delete id="deleteFitnessTestScoreById" parameterType="Long">
         delete from fitness_test_score where id = #{id}
     </delete>

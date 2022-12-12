@@ -4,6 +4,7 @@ import java.util.List;
 import com.ruoyi.system.domain.FitnessTestScore;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * 体测成绩Mapper接口
@@ -75,4 +76,11 @@ public interface FitnessTestScoreMapper
      * @return
      */
     public int updateFitnessTestScoreByuserId(FitnessTestScore fitnessTestScore);
+
+    /**
+     * 通过学号和体测活动id更新身高、体重、左右眼视力四项基本数据
+     * @param fitnessTestScore
+     * @return
+     */
+    public int updateFourBasicScore(FitnessTestScore fitnessTestScore);
 }
