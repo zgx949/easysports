@@ -112,6 +112,7 @@ public class FitnessScoreConsumer {
         for (FitnessTestScore score : scores) {
             FitnessTestBaseInfo user = infoMapper.selectBaseInfoByUserId(score.getUserId());
             FitnessTestScore updateData = new FitnessTestScore();
+            updateData.setId(score.getId());
 
             if (user == null) {
                 logger.info("无个人信息 -> 学号：{}", score.getUserId());
