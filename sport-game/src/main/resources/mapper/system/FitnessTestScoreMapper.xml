@@ -50,6 +50,7 @@
             <if test="createUid != null "> and create_uid = #{createUid}</if>
             <if test="updateUid != null "> and update_uid = #{updateUid}</if>
             <if test="grade != null  and grade != ''"> and grade = #{grade}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
         </where>
     </select>
 

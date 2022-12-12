@@ -108,7 +108,9 @@ public class FitnessScoreConsumer {
 
     @RabbitListener(queues = "refreshScore")
     public void consumeRefreshScore() {
-        List<FitnessTestScore> scores = scoreMapper.selectFitnessTestScoreList(null);
+        FitnessTestScore condition = new FitnessTestScore();
+//        condition.setRemark("正常体测");
+        List<FitnessTestScore> scores = scoreMapper.selectFitnessTestScoreList(condition);
         for (FitnessTestScore score : scores) {
             FitnessTestBaseInfo user = infoMapper.selectBaseInfoByUserId(score.getUserId());
             FitnessTestScore updateData = new FitnessTestScore();
