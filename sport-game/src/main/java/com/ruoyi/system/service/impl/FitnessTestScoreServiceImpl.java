@@ -130,4 +130,9 @@ public class FitnessTestScoreServiceImpl implements IFitnessTestScoreService
         }
         return successCount;
     }
+
+    @Override
+    public int refreshScore(List<FitnessTestScore> fitnessTestScores) {
+        return 0;
+    }
 }

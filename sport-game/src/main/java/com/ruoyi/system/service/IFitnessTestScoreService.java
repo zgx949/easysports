@@ -5,15 +5,15 @@ import com.ruoyi.system.domain.FitnessTestScore;
 
 /**
  * 体测成绩Service接口
- * 
+ *
  * @author leftHand
  * @date 2022-10-18
  */
-public interface IFitnessTestScoreService 
+public interface IFitnessTestScoreService
 {
     /**
      * 查询体测成绩
-     * 
+     *
      * @param id 体测成绩主键
      * @return 体测成绩
      */
@@ -21,7 +21,7 @@ public interface IFitnessTestScoreService
 
     /**
      * 查询体测成绩列表
-     * 
+     *
      * @param fitnessTestScore 体测成绩
      * @return 体测成绩集合
      */
@@ -29,7 +29,7 @@ public interface IFitnessTestScoreService
 
     /**
      * 新增体测成绩
-     * 
+     *
      * @param fitnessTestScore 体测成绩
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface IFitnessTestScoreService
 
     /**
      * 修改体测成绩
-     * 
+     *
      * @param fitnessTestScore 体测成绩
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface IFitnessTestScoreService
 
     /**
      * 批量删除体测成绩
-     * 
+     *
      * @param ids 需要删除的体测成绩主键集合
      * @return 结果
      */
@@ -53,7 +53,7 @@ public interface IFitnessTestScoreService
 
     /**
      * 删除体测成绩信息
-     * 
+     *
      * @param id 体测成绩主键
      * @return 结果
      */
@@ -66,4 +66,17 @@ public interface IFitnessTestScoreService
      * @return
      */
     public int insertFitnessTestScoreList(List<FitnessTestScore>fitnessTestScores);
+
+
+    /**
+     * 刷新全部体测成绩
+     *
+     * @param fitnessTestScores
+     * @return
+     */
+    public int refreshScore(List<FitnessTestScore>fitnessTestScores);
+
+
+
+
 }

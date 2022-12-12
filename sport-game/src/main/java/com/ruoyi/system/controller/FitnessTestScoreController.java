@@ -1,9 +1,12 @@
 package com.ruoyi.system.controller;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.annotation.DelPassCache;
+import com.ruoyi.common.core.redis.RedisCache;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +38,13 @@ public class FitnessTestScoreController extends BaseController
 {
     @Autowired
     private IFitnessTestScoreService fitnessTestScoreService;
+
+    @Autowired
+    private RedisCache redisCache;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
 
     /**
      * 查询体测成绩列表
@@ -103,5 +113,23 @@ public class FitnessTestScoreController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(fitnessTestScoreService.deleteFitnessTestScoreByIds(ids));
+    }
+
+    @Log(title = "刷新计算体测成绩", businessType = BusinessType.UPDATE)
+    @GetMapping("/refresh")
+    public AjaxResult refresh() {
+        // 状态字： 0->刷新中， 1 -> 完成
+        Integer status = redisCache.getCacheObject("fitness:score:refresh");
+        if (status == null) {
+            redisCache.setCacheObject("fitness:score:refresh", 0, 3000, TimeUnit.SECONDS);
+            // 发送异步刷新消息
+            rabbitTemplate.convertAndSend("refreshScore", "");
+            return AjaxResult.success("已请求刷新");
+        } else if (status == 0){
+            return AjaxResult.error("正在刷新中");
+        } else {
+            return AjaxResult.success("刷新成功");
+        }
+
     }
 }
