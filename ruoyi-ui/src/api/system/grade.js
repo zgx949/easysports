@@ -70,3 +70,12 @@ export function delGrade(id) {
     method: 'delete'
   })
 }
+
+// 添加身高体重视力信息
+export function addInfo(data) {
+  return request({
+    url: '/system/fitness_score/updateFourBasicScore',
+    method: 'put',
+    data:data
+  })
+}

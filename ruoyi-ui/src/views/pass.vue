@@ -135,6 +135,10 @@
       <div v-for="(item, index) in scores" :key="index">
         <el-card class="box-card">
           <el-descriptions :title="item.activityName" :column="1" border>
+            <template slot="extra">
+              <el-button type="warning" icon="el-icon-edit" circle @click="openInputInfoBox()"></el-button>
+            </template>
+
             <el-descriptions-item label="身高CM" label-class-name="my-label" content-class-name="my-content">
               {{ item.height }}
             </el-descriptions-item>
@@ -204,12 +208,32 @@
         </el-card>
       </div>
     </el-dialog>
+
+    <el-dialog :visible.sync="inputInfoVisible" width="80%">
+      <el-form :model="infoData" :rules="rules" ref="infoData" label-position="left"  label-width="90px" >
+        <el-form-item label="身高(cm):"  prop="height">
+          <el-input v-model="infoData.height" placeholder="例如：175"></el-input>
+        </el-form-item>
+        <el-form-item label="体重(kg):"  prop="weight">
+          <el-input v-model="infoData.weight" placeholder="例如：55"></el-input>
+        </el-form-item>
+        <el-form-item label="左眼视力:"  prop="leftEye">
+          <el-input v-model="infoData.leftEye" placeholder="例如：4.0"></el-input>
+        </el-form-item>
+        <el-form-item label="右眼视力:"  prop="rightEye">
+          <el-input v-model="infoData.rightEye" placeholder="例如：4.0"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit" style="margin-left: 66%;">提交</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import logoImg from '@/assets/logo/logo.png'
-import { queryPass } from "@/api/system/grade";
+import {addInfo, queryPass} from "@/api/system/grade";
 import { getData } from "@/api/system/dict/data";
 import userInfo from "@/views/system/user/profile/userInfo";
 
@@ -224,11 +248,35 @@ export default {
       userId: '',
       dialogVisible: false,
       queryVisible: false,
+      inputInfoVisible:false,
+      infoData:{
+        height:'',
+        weight:'',
+        leftEye:'',
+        rightEye:'',
+        userId:'',
+        ftaId:''
+
+      },
       rules: {
         userId: [
           { required: true, message: '请输入7位数学号', trigger: 'blur' },
           { min: 7, max: 7, message: '请输入7位数学号', trigger: 'blur' }
         ],
+        height:[
+          { required: true, message: '请输入身高', trigger: 'blur' },
+          { min: 3, max: 3, message: '请输入正确身高', trigger: 'blur' },
+        ],
+        weight:[
+          { required: true, message: '请输入体重', trigger: 'blur' },
+          { min: 2, max: 3, message: '请输入正确体重', trigger: 'blur' }
+        ],
+        leftEye:[
+          { required: true, message: '请输入左眼视力', trigger: 'blur' },
+        ],
+        rightEye:[
+          { required: true, message: '请输入右眼视力', trigger: 'blur' },
+        ]
       }
     }
   },
@@ -279,6 +327,32 @@ export default {
           localStorage.removeItem('userId');
         }
       })
+    },
+
+    // 添加身高体重视力信息
+    onSubmit(){
+      this.$refs['infoData'].validate((valid) => {
+        if(valid){
+          this.infoData.ftaId = this.scores[0].score.ftaId
+          this.infoData.userId = this.userInfo.userId
+          addInfo(this.infoData).then( res => {
+            if(res.code === 200){
+              this.$message.success(res.msg);
+            }else{
+              this.$message.error(res.msg);
+            }
+          })
+        }else{
+          this.$message.error("信息有误")
+        }
+
+      })
+
+
+
+    },
+    openInputInfoBox(){
+      this.inputInfoVisible = true;
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
