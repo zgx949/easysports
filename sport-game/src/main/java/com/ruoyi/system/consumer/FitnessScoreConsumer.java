@@ -109,7 +109,7 @@ public class FitnessScoreConsumer {
     @RabbitListener(queues = "refreshScore")
     public void consumeRefreshScore() {
         FitnessTestScore condition = new FitnessTestScore();
-//        condition.setRemark("正常体测");
+        condition.setRemark("无个人基本信息, 无法计算成绩");
         List<FitnessTestScore> scores = scoreMapper.selectFitnessTestScoreList(condition);
         for (FitnessTestScore score : scores) {
             FitnessTestBaseInfo user = infoMapper.selectBaseInfoByUserId(score.getUserId());
@@ -124,7 +124,7 @@ public class FitnessScoreConsumer {
             }
 
             String grade = score.getGrade();
-            if (grade == null) {
+            if (grade == null || grade.equals("")) {
                 updateData.setRemark("无个人年级信息");
                 scoreMapper.updateFitnessTestScore(updateData);
                 logger.info("无年级信息 -> 学号：{}", score.getUserId());
