@@ -3,7 +3,7 @@
 # 数据源配置
 spring:
   rabbitmq:
-    host: 218.244.146.160
+    host: 127.0.0.1
     port: 5672
     username: guest
     password: guest

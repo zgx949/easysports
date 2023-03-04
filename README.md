@@ -1,34 +1,37 @@
 <p align="center">
-	<img alt="logo" src="https://oscimg.oschina.net/oscnet/up-d3d0a9303e11d522a06cd263f3079027715.png">
+	<img width="200" height="200" alt="logo" src="http://sport.lefthand.top/static/img/logo.21648fa9.png">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">RuoYi v3.8.3</h1>
-<h4 align="center">基于SpringBoot+Vue前后端分离的Java快速开发框架</h4>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">EasySports高校综合服务平台（RuoYi v3.8.3）</h1>
+<h4 align="center">RuoYi基于SpringBoot+Vue前后端分离的Java快速开发框架</h4>
 <p align="center">
 	<a href="https://gitee.com/y_project/RuoYi-Vue/stargazers"><img src="https://gitee.com/y_project/RuoYi-Vue/badge/star.svg?theme=dark"></a>
 	<a href="https://gitee.com/y_project/RuoYi-Vue"><img src="https://img.shields.io/badge/RuoYi-v3.8.3-brightgreen.svg"></a>
 	<a href="https://gitee.com/y_project/RuoYi-Vue/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
 </p>
 
-test
 
-## 平台简介
+## EasySports平台简介
 
-若依是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
+EasySports是基于RuoYi的一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
+> 本项目已在我就读的学校运行中，原计划商业化，由于本人正在考研，还有很多功能只能放弃开发，希望大家能够帮助我一同完善该项目。该项目还存在着许多地方尚未完善，数据库首次将数据部分脱敏，可能会存在部分问题，欢迎与我交流   ----一个热爱计算机的体育生
 
-* 前端采用Vue、Element UI。
-* 后端采用Spring Boot、Spring Security、Redis & Jwt。
+* 前端采用Vue、Element UI-Plus。
+* 后端采用Spring Boot、MyBatis-Plus、Spring Security、MySql、RabbitMQ、Redis & Jwt等后端主流技术。
+* 接口管理采用Knife4j
 * 权限认证使用Jwt，支持多终端认证系统。
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 * 提供了技术栈（[Vue3](https://v3.cn.vuejs.org) [Element Plus](https://element-plus.org/zh-CN) [Vite](https://cn.vitejs.dev)）版本[RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3)，保持同步更新。
-* 提供了单应用版本[RuoYi-Vue-fast](https://github.com/yangzongzhuan/RuoYi-Vue-fast)，Oracle版本[RuoYi-Vue-Oracle](https://github.com/yangzongzhuan/RuoYi-Vue-Oracle)，保持同步更新。
-* 不分离版本，请移步[RuoYi](https://gitee.com/y_project/RuoYi)，微服务版本，请移步[RuoYi-Cloud](https://gitee.com/y_project/RuoYi-Cloud)
 * 特别鸣谢：[element](https://github.com/ElemeFE/element)，[vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)，[eladmin-web](https://github.com/elunez/eladmin-web)。
-* 阿里云折扣场：[点我进入](http://aly.ruoyi.vip)，腾讯云秒杀场：[点我进入](http://txy.ruoyi.vip)&nbsp;&nbsp;
-* 阿里云优惠券：[点我领取](https://www.aliyun.com/minisite/goods?userCode=brki8iof&share_source=copy_link)，腾讯云优惠券：[点我领取](https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console)&nbsp;&nbsp;
+## 目录结构
+1. ruoyi-ui: 后台管理系统
+2. uniapp-ui: 用户端UniAPP
+3. docker: doker相关文件及数据库文件
+4. bin: 编译脚本
+5. 其他: 均为后端程序（启动项目为：ruoyi-admin）
 
 ## 内置功能
-
+### RuoYi框架内置
 1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
 2.  部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持数据权限。
 3.  岗位管理：配置系统用户所属担任职务。
@@ -48,15 +51,42 @@ test
 17. 在线构建器：拖动表单元素生成相应的HTML代码。
 18. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
 
-## 在线体验
+### EasySports功能
 
-- admin/admin123
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
+[项目计划、架构及文档](https://docs.qq.com/sheet/DT3FrcUNxSkZQd25M?tab=mo5m36&viewId=vh6ZPi)
+1. 运动会比赛报名
+2. 赛程安排模块
+3. 运动会个人成绩查询
+4. 获奖公示查询及打印
+5. 反馈信息
+6. UniApp用户端比赛排名界面
+7. 报名审核后进行校验
+8. 编排秩序册
+9. 比赛成绩公示打印
+10. 成绩输入
+11. 报名约束条件校验
+12. 时间编排
+13. 径赛比赛单位换算
+14. 晋级进入决赛名单导入
+15. 成绩管理界面新功能
+16. 微信云Docker流水线自动部署配置
+17. APP逆向UI
+18. 建立体测数据模型
+19. 二维码生成
+20. 各体测成绩录入界面
+21. 成绩合格情况/补测资格审核
+22. 合格情况/补测资格
+23. 增加二维码扫码缓存
+24. 成绩录入解耦
+25. 增加成绩展示
+26. 成绩查询缓存优化（空间局部性、时间局部性）
+
+## RuoYi在线体验
 
 演示地址：http://vue.ruoyi.vip  
-文档地址：http://doc.ruoyi.vip
+RuoYi文档地址：http://doc.ruoyi.vip
 
-## 演示图
+## RuoYi后台演示图
 
 <table>
     <tr>
@@ -93,7 +123,33 @@ test
     </tr>
 </table>
 
+## EasySports演示图
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)
+![img.png](img/img.png)
+![img_1.png](img/img_1.png)
+![img_2.png](img/img_2.png)
+![img_3.png](img/img_3.png)
+![img_4.png](img/img_4.png)
+![img_5.png](img/img_5.png)
+![img_6.png](img/img_6.png)
+![img_7.png](img/img_7.png)
+![img_8.png](img/img_8.png)
+![img_9.png](img/img_9.png)
+![img_10.png](img/img_10.png)
+![img_11.png](img/img_11.png)
+![img_12.png](img/img_12.png)
+![img_13.png](img/img_13.png)
+![img_14.png](img/img_14.png)
+![img_15.png](img/img_15.png)
+![img_16.png](img/img_16.png)
+![img_17.png](img/img_17.png)
+![img_18.png](img/img_18.png)
+![img_19.png](img/img_19.png)
+![img_20.png](img/img_20.png)
+![img_21.png](img/img_21.png)
+![img_22.png](img/img_22.png)
+![img_23.png](img/img_23.png)
+![img.png](img.png)
 
-## 若依前后端分离交流群
-
-QQ群： [![加入QQ群](https://img.shields.io/badge/已满-937441-blue.svg)](https://jq.qq.com/?_wv=1027&k=5bVB1og) [![加入QQ群](https://img.shields.io/badge/已满-887144332-blue.svg)](https://jq.qq.com/?_wv=1027&k=5eiA4DH) [![加入QQ群](https://img.shields.io/badge/已满-180251782-blue.svg)](https://jq.qq.com/?_wv=1027&k=5AxMKlC) [![加入QQ群](https://img.shields.io/badge/已满-104180207-blue.svg)](https://jq.qq.com/?_wv=1027&k=51G72yr) [![加入QQ群](https://img.shields.io/badge/已满-186866453-blue.svg)](https://jq.qq.com/?_wv=1027&k=VvjN2nvu) [![加入QQ群](https://img.shields.io/badge/已满-201396349-blue.svg)](https://jq.qq.com/?_wv=1027&k=5vYAqA05) [![加入QQ群](https://img.shields.io/badge/已满-101456076-blue.svg)](https://jq.qq.com/?_wv=1027&k=kOIINEb5) [![加入QQ群](https://img.shields.io/badge/已满-101539465-blue.svg)](https://jq.qq.com/?_wv=1027&k=UKtX5jhs) [![加入QQ群](https://img.shields.io/badge/已满-264312783-blue.svg)](https://jq.qq.com/?_wv=1027&k=EI9an8lJ) [![加入QQ群](https://img.shields.io/badge/已满-167385320-blue.svg)](https://jq.qq.com/?_wv=1027&k=SWCtLnMz) [![加入QQ群](https://img.shields.io/badge/139821253-blue.svg)](https://jq.qq.com/?_wv=1027&k=njiWDmkj) 点击按钮入群。
