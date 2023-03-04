@@ -1,0 +1,17 @@
+// 定义混入指令，用于在非nvue环境下的flex定义，因为nvue没有display属性，会报错
+@mixin vue-flex($direction: row) {
+	/* #ifndef APP-NVUE */
+	display: flex;
+	/* #endif */
+	flex-direction: $direction;
+}
+
+.fy_dropdown {width: 750rpx;position: relative;}
+.fy_flex{@include vue-flex(row);align-items: center;}
+.fy_dropdown__menu{@include vue-flex(row);position: relative;align-items: center;justify-content: space-between;}
+.fy_border-bottom{border-bottom: 1px solid #f2f2f2;}
+.fy_dropdown__menu_mian{@include vue-flex(row);align-items: center;justify-content: space-between;flex: 1;background-color: #ffffff}
+.fy_dropdown__menu__center{@include vue-flex(row);align-items: center;justify-content: space-between;flex: 1;}
+.fy_dropdown__menu__item {@include vue-flex(row);justify-content: center;align-items: center;flex: 1;}
+.fy_dropdown__menu__item__text{font-size: 28rpx;color: #606266;}
+.fy_dropdown__menu__item__arrow{@include vue-flex(row);margin-left: 5rpx;margin-top: 3rpx;transition-property: transform;transition-duration: 0.3s; transform: scale(0.8);align-items: center;}

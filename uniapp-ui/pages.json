@@ -1,0 +1,185 @@
+{
+	"easycom": {
+		"^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [{
+		"path": "pages/login",
+		"style": {
+			"navigationBarTitleText": "登录"
+		}
+	}, {
+		"path": "pages/index",
+		"style": {
+			"navigationBarTitleText": "EasySports移动端",
+			"navigationStyle": "custom"
+		}
+	}, {
+		"path": "pages/work/index",
+		"style": {
+			"navigationBarTitleText": "工作台"
+		}
+	}, {
+		"path": "pages/mine/index",
+		"style": {
+			"navigationBarTitleText": "我的"
+		}
+	}, {
+		"path": "pages/mine/avatar/index",
+		"style": {
+			"navigationBarTitleText": "修改头像"
+		}
+	}, {
+		"path": "pages/mine/info/index",
+		"style": {
+			"navigationBarTitleText": "个人信息"
+		}
+	}, {
+		"path": "pages/mine/info/edit",
+		"style": {
+			"navigationBarTitleText": "编辑资料"
+		}
+	}, {
+		"path": "pages/mine/pwd/index",
+		"style": {
+			"navigationBarTitleText": "修改密码"
+		}
+	}, {
+		"path": "pages/mine/setting/index",
+		"style": {
+			"navigationBarTitleText": "应用设置"
+		}
+	}, {
+		"path": "pages/mine/help/index",
+		"style": {
+			"navigationBarTitleText": "常见问题"
+		}
+	}, {
+		"path": "pages/mine/about/index",
+		"style": {
+			"navigationBarTitleText": "关于我们"
+		}
+	}, {
+		"path": "pages/common/webview/index",
+		"style": {
+			"navigationBarTitleText": "浏览网页"
+		}
+	}, {
+		"path": "pages/common/textview/index",
+		"style": {
+			"navigationBarTitleText": "浏览文本"
+		}
+	}, {
+		"path": "pages/work/fitnesstest/activities/activities",
+		"style": {
+			"navigationBarTitleText": "体测活动",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/work/fitnesstest/signup/signup",
+		"style": {
+			"navigationBarTitleText": "体测报名",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/work/fitnesstest/verify/verify",
+		"style": {
+			"navigationBarTitleText": "二维码验证",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/work/fitnesstest/score/score",
+		"style": {
+			"navigationBarTitleText": "体测成绩",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/work/sportmeeting/games/games",
+		"style": {
+			"navigationBarTitleText": "所有比赛",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/work/sportmeeting/mygames/mygames",
+		"style": {
+			"navigationBarTitleText": "我的比赛",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/work/sportmeeting/games/register/register",
+		"style": {
+			"navigationBarTitleText": "比赛报名",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/work/sportmeeting/result/result",
+		"style": {
+			"navigationBarTitleText": "报名结果",
+			"enablePullDownRefresh": false
+		}
+
+	}    ,{
+            "path" : "pages/work/sportmeeting/result/gameRank/gameRank",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/work/sportmeeting/mygames/gameDetail/gameDetail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/work/fitnesstest/scanf/scanf",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "体测成绩录入",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+	"tabBar": {
+		"color": "#000000",
+		"selectedColor": "#000000",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [{
+			"pagePath": "pages/index",
+			"style": {
+				"enablePullDownRefresh": true
+			},
+			"iconPath": "static/images/tabbar/home.png",
+			"selectedIconPath": "static/images/tabbar/home_.png",
+			"text": "首页"
+		}, {
+			"pagePath": "pages/work/index",
+			"iconPath": "static/images/tabbar/work.png",
+			"selectedIconPath": "static/images/tabbar/work_.png",
+			"text": "工作台"
+		}, {
+			"pagePath": "pages/mine/index",
+			"iconPath": "static/images/tabbar/mine.png",
+			"selectedIconPath": "static/images/tabbar/mine_.png",
+			"text": "我的"
+		}]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "EastSports",
+		"navigationBarBackgroundColor": "#FFFFFF"
+	}
+}

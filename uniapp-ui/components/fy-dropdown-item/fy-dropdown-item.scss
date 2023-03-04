@@ -1,0 +1,11 @@
+// 定义混入指令，用于在非nvue环境下的flex定义，因为nvue没有display属性，会报错
+@mixin vue-flex($direction: row) {
+	/* #ifndef APP-NVUE */
+	display: flex;
+	/* #endif */
+	flex-direction: $direction;
+}
+
+.fy_dropdown-item_scroll{@include vue-flex(column);border-top: 1px solid #f2f2f2;}
+.fy_dropdown-item_scroll_cell{@include vue-flex(row);padding: 0 30rpx;justify-content: space-between;align-items: center;border-bottom: 1px solid #f6f6f6;background-color: #FFFFFF;}
+.fy_cell_title{font-size: 30rpx;text-align: left;color: #909399;}
